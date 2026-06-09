@@ -1,0 +1,9 @@
+[
+  { "key":"player", "name":"The Crownbound", "glyph":"@", "color":"White", "className":"actor.controlled", "hp":32, "stamina":18, "attack":6, "sight":8, "blocking":true, "isActor":true, "canTalk":false },
+  { "key":"pale_elf", "name":"Lirael, Pale Witness", "glyph":"E", "color":"Cyan", "className":"actor.npc.witness", "hp":18, "stamina":12, "attack":2, "sight":6, "blocking":true, "isActor":true, "canTalk":true },
+  { "key":"dark_elf", "name":"Noxara, Shadow Blade", "glyph":"e", "color":"Magenta", "className":"actor.npc.shadow", "hp":22, "stamina":12, "attack":5, "sight":7, "blocking":true, "isActor":true, "canTalk":true },
+  { "key":"wolf", "name":"Ash Wolf", "glyph":"w", "color":"Red", "className":"actor.mob.beast", "hp":10, "stamina":10, "attack":3, "sight":7, "blocking":true, "isActor":true },
+  { "key":"bandit", "name":"Ruin Bandit", "glyph":"b", "color":"DarkRed", "className":"actor.mob.human", "hp":14, "stamina":10, "attack":4, "sight":6, "blocking":true, "isActor":true },
+  { "key":"shard", "name":"Memory Shard", "glyph":"*", "color":"Cyan", "className":"symbol.shard", "hp":1, "stamina":0, "attack":0, "sight":0, "blocking":false, "isPickup":true },
+  { "key":"herb", "name":"Bitter Herb", "glyph":"+", "color":"Green", "className":"item.herb", "hp":1, "stamina":0, "attack":0, "sight":0, "blocking":false, "isPickup":true }
+]
