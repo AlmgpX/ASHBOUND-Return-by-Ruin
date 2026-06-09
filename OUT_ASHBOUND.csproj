@@ -8,7 +8,10 @@
     <RootNamespace>OUT_ASHBOUND</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="OUT_Content\*.json" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="OUT_Assets\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <PackageReference Include="Raylib-cs" Version="6.1.1"></PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="OUT_Content\*.json" CopyToOutputDirectory="PreserveNewest"></Content>
+    <Content Include="OUT_Assets\**\*.*" CopyToOutputDirectory="PreserveNewest"></Content>
   </ItemGroup>
 </Project>
