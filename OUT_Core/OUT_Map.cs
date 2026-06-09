@@ -15,7 +15,12 @@ public sealed class OUT_Map
     private OUT_Map(string[] rows, List<OUT_TileDef> tiles)
     {
         this.rows = rows;
-        this.tiles = tiles.ToDictionary(t => t.Ch[0], t => t);
+        // Guard against duplicate tile character definitions (e.g. 'X' already present in base tiles
+        // and added again for local maps). When duplicates exist, prefer the first occurrence.
+        this.tiles = tiles
+            .Where(t => !string.IsNullOrEmpty(t.Ch))
+            .GroupBy(t => t.Ch[0])
+            .ToDictionary(g => g.Key, g => g.First());
     }
 
     public static OUT_Map FromRows(string[] rows, List<OUT_TileDef> tiles) => new(rows, tiles);
