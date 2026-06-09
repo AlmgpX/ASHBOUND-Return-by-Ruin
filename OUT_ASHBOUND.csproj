@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>OUT_ASHBOUND</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="OUT_Content\*.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="OUT_Assets\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
