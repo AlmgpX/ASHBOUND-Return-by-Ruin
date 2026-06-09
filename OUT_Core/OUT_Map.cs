@@ -15,10 +15,8 @@ public sealed class OUT_Map
     private OUT_Map(string[] rows, List<OUT_TileDef> tiles)
     {
         this.rows = rows;
-        // Guard against duplicate tile character definitions (e.g. 'X' already present in base tiles
-        // and added again for local maps). When duplicates exist, prefer the first occurrence.
         this.tiles = tiles
-            .Where(t => !string.IsNullOrEmpty(t.Ch))
+            .Where(t => !string.IsNullOrWhiteSpace(t.Ch))
             .GroupBy(t => t.Ch[0])
             .ToDictionary(g => g.Key, g => g.First());
     }
@@ -48,12 +46,7 @@ public sealed class OUT_Map
         exit[16] = 'X';
         rows[14] = new string(exit);
 
-        var tiles = baseTiles.Concat(new[]
-        {
-            new OUT_TileDef { Key = "exit", Name = "Exit", Ch = "X", Glyph = "X", Color = "Yellow", Cost = 1, Walkable = true }
-        }).ToList();
-
-        return new OUT_Map(rows, tiles);
+        return new OUT_Map(rows, baseTiles);
     }
 
     public bool InBounds(OUT_Pos p) => p.X >= 0 && p.Y >= 0 && p.Y < rows.Length && p.X < rows[p.Y].Length;
