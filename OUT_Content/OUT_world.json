@@ -1,0 +1,37 @@
+{
+  "seed": 2040,
+  "start": { "x": 3, "y": 8 },
+  "tiles": [
+    { "key": "plain", "name": "Ash Plain", "ch": ".", "glyph": ".", "color": "DarkGray", "cost": 1, "walkable": true, "randomEventChance": 4 },
+    { "key": "forest", "name": "Silver Forest", "ch": "T", "glyph": "♣", "color": "Green", "cost": 2, "walkable": true, "randomEventChance": 11 },
+    { "key": "water", "name": "Black Water", "ch": "~", "glyph": "≈", "color": "Blue", "cost": 99, "walkable": false, "randomEventChance": 0 },
+    { "key": "mountain", "name": "Dead Teeth Mountains", "ch": "^", "glyph": "▲", "color": "Gray", "cost": 99, "walkable": false, "randomEventChance": 0 },
+    { "key": "road", "name": "Broken Road", "ch": "=", "glyph": "·", "color": "Yellow", "cost": 1, "walkable": true, "randomEventChance": 5 },
+    { "key": "ruin", "name": "Ruin Stone", "ch": "#", "glyph": "░", "color": "DarkGray", "cost": 2, "walkable": true, "randomEventChance": 9 },
+    { "key": "exit", "name": "Exit", "ch": "X", "glyph": "X", "color": "Yellow", "cost": 1, "walkable": true, "randomEventChance": 0 }
+  ],
+  "map": [
+    "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "^^^........TTTTT......^^^^^^^..............^^^^",
+    "^^.....TTTTTTTTT......^^^^^^.....TTTTTT....^^^^",
+    "^....TTTTT....===..............TTTTTTTT......^^",
+    "^....TTT......=.=....~~~~~~....TTT....=.......^",
+    "^............==.=....~~~~~~..........==.......^",
+    "^.......######..=....~~..~~....######=........^",
+    "^.......#....#..======...=======#....=........^",
+    "^..=====#....#..........TTT.....#....=.....G..^",
+    "^.......######.....TTTTTTTTT....######........^",
+    "^..................TTTTTTTTT..................^",
+    "^....TTTT.........TTTTT......~~~~~~...........^",
+    "^....TTTT....................~~~~~~....^^^^...^",
+    "^^...........R...........======.........^^^^..^^",
+    "^^^^.................TTT.=....=........^^^^^^^",
+    "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+  ],
+  "locations": [
+    { "key": "start", "name": "Faint Village", "kind": "settlement", "pos": { "x": 3, "y": 8 }, "glyph": "H", "color": "DarkYellow", "localSpawns": [ { "def": "pale_elf", "count": 1 }, { "def": "herb", "count": 2 } ] },
+    { "key": "node", "name": "Ruin Node of First Return", "kind": "ruin_node", "pos": { "x": 12, "y": 13 }, "glyph": "R", "color": "Magenta", "localSpawns": [ { "def": "dark_elf", "count": 1 }, { "def": "shard", "count": 1 }, { "def": "wolf", "count": 2 } ] },
+    { "key": "gate", "name": "Gate of the Crown", "kind": "gate", "pos": { "x": 43, "y": 8 }, "glyph": "Ω", "color": "Magenta", "localSpawns": [ { "def": "bandit", "count": 2 }, { "def": "shard", "count": 1 } ] },
+    { "key": "keep", "name": "Fallen Keep", "kind": "dungeon", "pos": { "x": 8, "y": 7 }, "glyph": "K", "color": "Red", "localSpawns": [ { "def": "bandit", "count": 3 }, { "def": "shard", "count": 1 }, { "def": "herb", "count": 1 } ] }
+  ]
+}
