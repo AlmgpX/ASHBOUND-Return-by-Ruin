@@ -1,0 +1,15 @@
+{
+  "title":"OUT_ASHBOUND: Return by Ruin",
+  "formula":"Story=Project(Update(World,Event,Genome)); Y=PI(F(W,X,G)); Ftheta(Wt,Xt,Gt)->(Wt+1,Yt,Gt+1)",
+  "entityVector":"E=(C,S,H,A,I)",
+  "beats":[
+    { "tag":"ACTOR", "meaning":"who carries state" },
+    { "tag":"SYMBOL", "meaning":"where state becomes visible" },
+    { "tag":"THRESHOLD", "meaning":"where transition becomes possible" },
+    { "tag":"SIGNAL", "meaning":"what breaks equilibrium" },
+    { "tag":"SHADOW", "meaning":"what returns from repression" },
+    { "tag":"CHOICE", "meaning":"what the hero does instead of automatic reaction" },
+    { "tag":"REACTION", "meaning":"how the world confirms transition" },
+    { "tag":"RESIDUE", "meaning":"what remains unresolved" }
+  ]
+}
