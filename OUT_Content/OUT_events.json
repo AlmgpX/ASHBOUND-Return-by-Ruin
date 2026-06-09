@@ -1,0 +1,7 @@
+[
+  { "key":"ash_dream", "terrain":"plain", "text":"Ash falls upward. You remember dying somewhere you have not reached.", "hpDelta":0, "residueDelta":1 },
+  { "key":"forest_whisper", "terrain":"forest", "text":"The forest repeats your footsteps before you make them.", "hpDelta":0, "residueDelta":1 },
+  { "key":"road_ambush", "terrain":"road", "text":"A broken arrow sings from nowhere.", "hpDelta":-2, "residueDelta":0 },
+  { "key":"ruin_cut", "terrain":"ruin", "text":"Stone teeth tear your palm. The ruin learns your blood.", "hpDelta":-1, "residueDelta":1 },
+  { "key":"lost_coin", "terrain":"any", "text":"You find an old coin with your face scratched out.", "hpDelta":0, "residueDelta":0, "item":"old_coin", "itemCount":1 }
+]
