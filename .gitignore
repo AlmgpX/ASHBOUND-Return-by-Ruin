@@ -1,0 +1,6 @@
+bin/
+obj/
+OUT_Save/*.json
+*.user
+*.suo
+.vs/
