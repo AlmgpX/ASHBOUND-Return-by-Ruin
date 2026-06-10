@@ -24,6 +24,7 @@ public sealed class OUT_RaylibApp
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
         Raylib.InitWindow(1280, 720, "OUT_ASHBOUND: Return by Ruin");
         Raylib.SetTargetFPS(60);
+        renderer.Load();
 
         try
         {
@@ -31,11 +32,13 @@ public sealed class OUT_RaylibApp
             {
                 OUT_Validator.Validate(state);
                 HandleInput();
+                OUT_Fx.Tick(state);
                 renderer.Render(state);
             }
         }
         finally
         {
+            renderer.Unload();
             Raylib.CloseWindow();
         }
     }
@@ -76,6 +79,21 @@ public sealed class OUT_RaylibApp
             return;
         }
 
+        if (Raylib.IsKeyPressed(KeyboardKey.R))
+        {
+            state.WorldMap = OUT_WorldGenerator.Generate(state.Content.World, Environment.TickCount);
+            state.Table.DropScope(OUT_Scope.Local);
+            state.Mode = OUT_Mode.World;
+            if (state.Player != null)
+            {
+                state.Player.Scope = OUT_Scope.World;
+                state.Player.Pos = state.Content.World.Start;
+                state.Player.WorldPos = state.Content.World.Start;
+            }
+            OUT_Log.Add(state, "[GEN] procedural world regenerated");
+            return;
+        }
+
         if (Raylib.IsKeyPressed(KeyboardKey.Tab))
         {
             ToggleLayer();
@@ -85,6 +103,20 @@ public sealed class OUT_RaylibApp
         if (Raylib.IsKeyPressed(KeyboardKey.I))
         {
             state.ShowInventory = !state.ShowInventory;
+            return;
+        }
+
+        if (Raylib.IsKeyPressed(KeyboardKey.P))
+        {
+            DrinkPotion();
+            EndTurn();
+            return;
+        }
+
+        if (Raylib.IsKeyPressed(KeyboardKey.F))
+        {
+            Shoot();
+            EndTurn();
             return;
         }
 
@@ -116,9 +148,61 @@ public sealed class OUT_RaylibApp
 
         if (dir != OUT_Pos.Zero)
         {
+            state.LastAim = dir;
             commands.Send(OUT_Command.Move(state.PlayerId, dir));
             EndTurn();
         }
+    }
+
+    private void DrinkPotion()
+    {
+        var player = state.Player;
+        if (player == null) return;
+
+        if (!player.Bag.TryGetValue("potion", out int count) || count <= 0)
+        {
+            OUT_Log.Add(state, "[ITEM] no potion");
+            return;
+        }
+
+        player.Bag["potion"] = count - 1;
+        effects.ModifyHp(player.Id, 8);
+        OUT_Log.Add(state, "[ITEM] potion used +8 HP");
+    }
+
+    private void Shoot()
+    {
+        var player = state.Player;
+        if (player == null) return;
+
+        if (!player.Bag.TryGetValue("arrow", out int count) || count <= 0)
+        {
+            OUT_Log.Add(state, "[SHOT] no arrows");
+            return;
+        }
+
+        player.Bag["arrow"] = count - 1;
+        OUT_Scope scope = state.Mode == OUT_Mode.World ? OUT_Scope.World : OUT_Scope.Local;
+        OUT_Pos pos = player.Pos;
+
+        for (int i = 0; i < 8; i++)
+        {
+            pos += state.LastAim;
+            OUT_Fx.Shot(state, scope, pos);
+            bool inBounds = scope == OUT_Scope.World ? state.WorldMap.InBounds(pos) : state.LocalMap.InBounds(pos);
+            bool walkable = scope == OUT_Scope.World ? state.WorldMap.TileAt(pos).Walkable : state.LocalMap.TileAt(pos).Walkable;
+            if (!inBounds || !walkable) break;
+
+            var target = state.Table.BlockingAt(pos, scope);
+            if (target != null && target.Id != player.Id)
+            {
+                effects.Hurt(player.Id, target.Id, 7);
+                OUT_Log.Add(state, "[SHOT] arrow hits " + target.Def.Name);
+                return;
+            }
+        }
+
+        OUT_Log.Add(state, "[SHOT] arrow lost to the world's excellent emptiness");
     }
 
     private void ToggleLayer()
