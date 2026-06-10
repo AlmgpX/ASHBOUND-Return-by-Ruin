@@ -14,6 +14,8 @@ public static class OUT_Bootstrap
         player.TargetName = "player";
         player.ClassName = "actor.controlled";
         player.OUT_Put("old_coin", 2);
+        player.OUT_Put("potion", 2);
+        player.OUT_Put("arrow", 12);
 
         foreach (var loc in content.World.Locations)
         {
@@ -26,6 +28,7 @@ public static class OUT_Bootstrap
 
         OUT_Log.Add(state, "[ACTOR] The Crownbound wakes under a crown-shaped wound in the sky.");
         OUT_Log.Add(state, "[SYMBOL] Shards are visible memory. Gate opens at 3.");
+        OUT_Log.Add(state, "[ITEM] Starter kit: 2 potions, 12 arrows. Civilization peaked.");
         return state;
     }
 }
