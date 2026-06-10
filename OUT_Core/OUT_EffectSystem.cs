@@ -18,10 +18,12 @@ public sealed class OUT_EffectSystem
         if (source == null || target == null) return;
 
         target.Stats.Hp = Math.Max(0, target.Stats.Hp - Math.Max(0, amount));
+        OUT_Fx.Blood(state, target.Scope, target.Pos);
         state.Events.Emit(OUT_Event.Message("[SIGNAL] " + source.Def.Name + " strikes " + target.Def.Name + " for " + amount));
 
         if (target.Stats.Hp <= 0 && target.Id != state.PlayerId)
         {
+            OUT_Fx.Guts(state, target.Scope, target.Pos);
             state.Events.Emit(OUT_Event.Message("[SHADOW] " + target.Def.Name + " falls"));
             state.Table.Drop(target.Id);
         }
@@ -32,6 +34,8 @@ public sealed class OUT_EffectSystem
         var obj = state.Table.Get(id);
         if (obj == null) return;
         obj.Stats.Hp = Math.Clamp(obj.Stats.Hp + delta, 0, obj.Stats.MaxHp);
+        if (delta > 0) OUT_Fx.Potion(state, obj.Scope, obj.Pos);
+        if (delta < 0) OUT_Fx.Blood(state, obj.Scope, obj.Pos);
     }
 
     public void ModifyStamina(int id, int delta)
