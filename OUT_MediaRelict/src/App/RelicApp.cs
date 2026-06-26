@@ -53,10 +53,12 @@ public sealed class RelicApp : IAsyncDisposable
 
         State.Mode = RelicMode.Ready;
         State.Status = "READY. DROP MEDIA, PRESS O, OR PRESS P FOR FOLDER";
+        MarkVisualEvent("READY");
     }
 
     public async Task OpenFileAsync(string path)
     {
+        MarkVisualEvent("OPEN FILE");
         State.Playlist.Clear();
         State.PlaylistIndex = -1;
         await LoadMediaAsync(path);
@@ -72,6 +74,7 @@ public sealed class RelicApp : IAsyncDisposable
 
         try
         {
+            MarkVisualEvent("FOLDER SCAN");
             State.Mode = RelicMode.Loading;
             State.Status = "SCANNING FOLDER, FILTERING TRASH < 15s...";
 
@@ -93,11 +96,13 @@ public sealed class RelicApp : IAsyncDisposable
             {
                 State.Mode = RelicMode.Ready;
                 State.Status = $"NO PLAYABLE FILES. SKIPPED SHORT {scan.SkippedShortCount}, BROKEN {scan.SkippedBrokenCount}";
+                MarkVisualEvent("FOLDER EMPTY");
                 return;
             }
 
             await LoadMediaAsync(State.Playlist[0]);
             State.Status = $"FOLDER READY: {State.Playlist.Count} TRACKS, SKIPPED <15s {scan.SkippedShortCount}, BROKEN {scan.SkippedBrokenCount}";
+            MarkVisualEvent("PLAYLIST READY");
         }
         catch (Exception ex)
         {
@@ -110,11 +115,13 @@ public sealed class RelicApp : IAsyncDisposable
         if (string.IsNullOrWhiteSpace(State.MediaPath))
         {
             State.Status = "NO TRACK LOADED";
+            MarkVisualEvent("NO TRACK");
             return;
         }
 
         try
         {
+            MarkVisualEvent("COVER APPLY");
             var coverPath = CoverService.ApplySidecarCover(State.MediaPath, imagePath);
 
             _sampler?.InvalidateForPath(State.MediaPath);
@@ -124,6 +131,7 @@ public sealed class RelicApp : IAsyncDisposable
             _logger.Info($"Cover applied: {coverPath}");
 
             await UpdatePreviewAsync();
+            MarkVisualEvent("COVER READY");
         }
         catch (Exception ex)
         {
@@ -141,6 +149,7 @@ public sealed class RelicApp : IAsyncDisposable
             using var cts = ShortCts();
             await _mpv.TogglePauseAsync(cts.Token);
             await PollAsync();
+            MarkVisualEvent(State.IsPaused ? "PAUSE" : "PLAY");
         }
         catch (Exception ex)
         {
@@ -158,6 +167,7 @@ public sealed class RelicApp : IAsyncDisposable
             using var cts = ShortCts();
             await _mpv.SeekRelativeAsync(seconds, cts.Token);
             await PollAsync();
+            MarkVisualEvent(seconds >= 0 ? "SEEK +" : "SEEK -");
         }
         catch (Exception ex)
         {
@@ -178,6 +188,7 @@ public sealed class RelicApp : IAsyncDisposable
             await _mpv.SetSpeedAsync(speed, cts.Token);
             State.Speed = speed;
             State.Status = $"SPEED {speed:0.00}x";
+            MarkVisualEvent("SPEED");
         }
         catch (Exception ex)
         {
@@ -198,6 +209,7 @@ public sealed class RelicApp : IAsyncDisposable
             await _mpv.SetVolumeAsync(volume, cts.Token);
             State.Volume = volume;
             State.Status = $"VOLUME {volume:0}%";
+            MarkVisualEvent("VOLUME");
         }
         catch (Exception ex)
         {
@@ -218,6 +230,7 @@ public sealed class RelicApp : IAsyncDisposable
             await _mpv.SetLoopAsync(State.IsLooping, cts.Token);
 
             State.Status = State.IsLooping ? "LOOP: ∞" : "LOOP: OFF";
+            MarkVisualEvent(State.IsLooping ? "LOOP ON" : "LOOP OFF");
         }
         catch (Exception ex)
         {
@@ -238,6 +251,7 @@ public sealed class RelicApp : IAsyncDisposable
             await _mpv.SetReverbAsync(State.IsReverbEnabled, cts.Token);
 
             State.Status = State.IsReverbEnabled ? "REVERB: ON" : "REVERB: OFF";
+            MarkVisualEvent(State.IsReverbEnabled ? "FX ON" : "FX OFF");
         }
         catch (Exception ex)
         {
@@ -254,6 +268,7 @@ public sealed class RelicApp : IAsyncDisposable
         {
             State.Mode = RelicMode.ScanningSilence;
             State.Status = "SCANNING SILENCE...";
+            MarkVisualEvent("SILENCE SCAN");
 
             using var cts = LongCts();
 
@@ -276,6 +291,7 @@ public sealed class RelicApp : IAsyncDisposable
 
             State.Status = $"SILENCE SCAN DONE: {silences.Count} SILENCES, {State.SoundRanges.Count} CUTS";
             State.Mode = State.IsPaused ? RelicMode.Paused : RelicMode.Playing;
+            MarkVisualEvent("SCAN DONE");
 
             _logger.Info($"Silence scan: silences={silences.Count}; cuts={State.SoundRanges.Count}; media={State.MediaPath}");
         }
@@ -298,17 +314,23 @@ public sealed class RelicApp : IAsyncDisposable
             if (State.SoundRanges.Count == 0)
             {
                 State.Status = "NO CUTS TO EXPORT";
+                MarkVisualEvent("NO CUTS");
                 return;
             }
 
             State.Mode = RelicMode.Exporting;
+            MarkVisualEvent("EXPORT");
 
             var dir = Path.Combine(
                 Path.GetDirectoryName(State.MediaPath) ?? Environment.CurrentDirectory,
                 "MediaRelic_Cuts",
                 DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
-            var progress = new Progress<string>(message => State.Status = message);
+            var progress = new Progress<string>(message =>
+            {
+                State.Status = message;
+                MarkVisualEvent("EXPORT TICK");
+            });
 
             using var cts = LongCts();
 
@@ -321,6 +343,7 @@ public sealed class RelicApp : IAsyncDisposable
 
             State.Status = "EXPORT DONE: " + dir;
             State.Mode = State.IsPaused ? RelicMode.Paused : RelicMode.Playing;
+            MarkVisualEvent("EXPORT DONE");
 
             _logger.Info($"Export done: {dir}");
         }
@@ -335,6 +358,7 @@ public sealed class RelicApp : IAsyncDisposable
         if (!State.HasPlaylist)
         {
             State.Status = "NO PLAYLIST";
+            MarkVisualEvent("NO PLAYLIST");
             return;
         }
 
@@ -345,6 +369,7 @@ public sealed class RelicApp : IAsyncDisposable
             next += count;
 
         State.PlaylistIndex = next;
+        MarkVisualEvent(offset >= 0 ? "NEXT" : "BACK");
         await LoadMediaAsync(State.Playlist[next]);
     }
 
@@ -407,10 +432,22 @@ public sealed class RelicApp : IAsyncDisposable
         }
     }
 
+    public async Task KillPlaybackAsync()
+    {
+        if (_mpv is null)
+            return;
+
+        MarkVisualEvent("MPV KILL");
+        _logger.Info("Killing mpv process");
+        await _mpv.DisposeAsync();
+        _mpv = null;
+        State.Mode = RelicMode.Ready;
+        State.IsPaused = true;
+    }
+
     public async ValueTask DisposeAsync()
     {
-        if (_mpv is not null)
-            await _mpv.DisposeAsync();
+        await KillPlaybackAsync();
     }
 
     private async Task LoadMediaAsync(string path)
@@ -434,6 +471,7 @@ public sealed class RelicApp : IAsyncDisposable
             State.SoundRanges.Clear();
             State.Preview = GlyphFrame.Empty(Config.PreviewMaxWidth, Config.PreviewMaxHeight);
             State.Status = "LOADING " + Path.GetFileName(path);
+            MarkVisualEvent("LOAD");
 
             using var cts = ShortCts();
 
@@ -446,6 +484,7 @@ public sealed class RelicApp : IAsyncDisposable
             State.Duration = await _ffmpeg.ProbeDurationAsync(path, cts.Token);
             State.Mode = RelicMode.Playing;
             State.Status = "LOADED";
+            MarkVisualEvent("LOADED");
 
             _logger.Info($"Loaded media: {path}; duration={State.Duration:0.000}");
         }
@@ -470,6 +509,7 @@ public sealed class RelicApp : IAsyncDisposable
 
         try
         {
+            MarkVisualEvent("AUTO NEXT");
             await PlayRelativeAsync(+1);
         }
         finally
@@ -478,10 +518,18 @@ public sealed class RelicApp : IAsyncDisposable
         }
     }
 
+    private void MarkVisualEvent(string name)
+    {
+        State.VisualEvent = name;
+        State.VisualEventTick = Environment.TickCount64;
+        State.VisualEventCounter++;
+    }
+
     private void SetError(string message, Exception? exception = null)
     {
         State.Mode = RelicMode.Error;
         State.Status = message;
+        MarkVisualEvent("ERROR");
         _logger.Error(message, exception);
     }
 
