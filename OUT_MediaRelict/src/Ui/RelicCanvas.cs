@@ -110,6 +110,13 @@ public sealed class RelicCanvas : Control
         return logical.Y >= 10 && logical.Y <= 62 && !_minimizeRect.Contains(logical) && !_closeRect.Contains(logical);
     }
 
+    private Point ToLogical(Point point)
+    {
+        return new Point(
+            (int)Math.Round(point.X / UiScale),
+            (int)Math.Round(point.Y / UiScale));
+    }
+
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
@@ -808,13 +815,6 @@ public sealed class RelicCanvas : Control
 
         seconds = hours * 3600.0 + minutes * 60.0 + sec;
         return true;
-    }
-
-    private Point ToLogical(Point point)
-    {
-        return new Point(
-            (int)Math.Round(point.X / UiScale),
-            (int)Math.Round(point.Y / UiScale));
     }
 
     private static Color Blend(Color a, Color b, double t)
