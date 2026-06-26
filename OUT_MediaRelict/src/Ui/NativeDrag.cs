@@ -18,4 +18,10 @@ public static class NativeDrag
         ReleaseCapture();
         SendMessage(handle, WmNclButtonDown, HtCaption, 0);
     }
+
+    public static void ResizeWindow(IntPtr handle, int hitTestCode)
+    {
+        ReleaseCapture();
+        SendMessage(handle, WmNclButtonDown, hitTestCode, 0);
+    }
 }
