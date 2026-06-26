@@ -3,7 +3,7 @@
 **MEDIA RELIC v0.1 by Alex Merqury**  
 **Delirium Interactive**
 
-Minimalist always-on-top Unicode media relic for Windows.
+Minimalist Unicode media relic for Windows.
 
 It uses:
 
@@ -56,6 +56,8 @@ Drag file   open file
 Drag folder open folder as playlist
 Space       play / pause
 Left/Right  seek -5s / +5s
+A / D       seek -5s / +5s
+PgDown/PgUp seek -30s / +30s
 Up/Down     volume +5 / -5
 [ / ]       speed -0.1 / +0.1
 Backspace   speed 1.0
@@ -67,11 +69,28 @@ S           scan silence
 X           export non-silent chunks
 T           topmost toggle
 M           minimize window
-Esc         stop playback and close app
-Q           stop playback and close app
+F11         maximize / restore window
++ / -       UI scale up / down
+0           reset UI scale
+Esc / Q     stop playback and close app
 Mouse       drag top area
 Edges       resize borderless window
 ```
+
+The player now starts **not topmost** by default. Press `T` if you want it above other windows. Revolutionary: an overlay that does not immediately sit on your face.
+
+## Living UI
+
+The text UI has a lightweight idle animation:
+
+```text
+- tiny color pulse on borders/status/header
+- occasional decorative glyph morph on frame/progress lines
+- no per-pixel particle soup
+- no extra worker thread
+```
+
+It rides on the existing 250 ms UI timer. Cheap, visible, and less likely to turn the player into a tiny space heater.
 
 ## Architecture pass
 
@@ -103,9 +122,11 @@ Defaults are compiled in, but you can copy `mediarelic.config.example.json` to `
 ```json
 {
   "minPlaylistDurationSeconds": 15,
-  "previewMaxWidth": 256,
-  "previewMaxHeight": 256,
-  "defaultVolume": 100
+  "previewMaxWidth": 96,
+  "previewMaxHeight": 96,
+  "defaultVolume": 100,
+  "startTopMost": false,
+  "uiScale": 1.0
 }
 ```
 
@@ -144,12 +165,12 @@ color      -> glyph foreground color
 
 For audio-only files without cover art, MEDIA RELIC shows a static `NO COVER ART` card. No fake spectrum, no decorative waveform cosplay.
 
-## 256 rune cover mode
+## 96 rune cover mode
 
 Cover preview now uses a maximum grid of:
 
 ```text
-256 × 256 glyph cells
+96 × 96 glyph cells
 ```
 
 The glyph grid follows the real image aspect ratio:
@@ -161,12 +182,12 @@ glyph_columns / glyph_rows ~= image_width / image_height
 Examples:
 
 ```text
-184 × 184 cover  -> square Unicode frame, up to 256 × 256 cells
+184 × 184 cover  -> square Unicode frame, up to 96 × 96 cells
 1920 × 1080 art  -> 16:9 Unicode frame
 800 × 1200 art   -> portrait Unicode frame
 ```
 
-The renderer uses visible rune shading and edge glyphs instead of half-block pixel art. The previous half-block renderer was accurate and spiritually dead, like a spreadsheet pretending to be an album cover. This version keeps the stylized Unicode look but samples the source at much higher density.
+`256 × 256` was impressive in the way a dump truck in a living room is impressive. This version keeps the stylized Unicode look without making the UI obese.
 
 ## Folder playlist
 
