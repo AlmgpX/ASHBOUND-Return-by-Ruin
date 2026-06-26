@@ -19,9 +19,11 @@ No NuGet packages. No mega-script. The code is split into small modules, because
 MediaRelic_v0_1/
   MediaRelic.csproj
   src/
-    Domain/
-    Infra/
-    Ui/
+    App/        command/config/app-core/logging
+    Domain/     tiny data objects
+    Infra/      mpv, ffmpeg, process, tools
+    Playlist/   folder scanning and filtering
+    Ui/         WinForms shell and Unicode canvas
   tools/
     put mpv.exe here
     put ffmpeg.exe here
@@ -70,6 +72,44 @@ Q           stop playback and close app
 Mouse       drag top area
 Edges       resize borderless window
 ```
+
+## Architecture pass
+
+The app is now split so the UI is intentionally dumb:
+
+```text
+Input -> MainForm -> RelicApp -> mpv / ffmpeg / preview / playlist
+State -> RelicCanvas -> Unicode UI
+```
+
+Important pieces:
+
+```text
+App/RelicApp.cs          owns app flow, playback actions, playlist actions, scan/export actions
+App/RelicConfig.cs       loads optional runtime settings
+App/RelicLogger.cs       writes MediaRelic.log without killing playback if logging fails
+App/RelicCommand.cs      explicit command vocabulary for future input remapping
+Domain/RelicMode.cs      explicit app mode instead of magic bool soup
+Playlist/PlaylistScanner.cs filters folders and rejects files shorter than the configured limit
+Ui/MainForm.cs           thin shell: dialogs, key mapping, drag/drop, window resize/move
+```
+
+`MainForm` should not grow tentacles again. If a new feature needs mpv, ffmpeg, preview, playlist, or export logic, it belongs outside `Ui/`. Humanity has suffered enough from god-forms.
+
+## Runtime config
+
+Defaults are compiled in, but you can copy `mediarelic.config.example.json` to `mediarelic.config.json` and tune:
+
+```json
+{
+  "minPlaylistDurationSeconds": 15,
+  "previewMaxWidth": 256,
+  "previewMaxHeight": 256,
+  "defaultVolume": 100
+}
+```
+
+The config loader checks the current folder and the app folder.
 
 ## Silence slicing
 
@@ -130,9 +170,9 @@ The renderer uses visible rune shading and edge glyphs instead of half-block pix
 
 ## Folder playlist
 
-Press `P` or drag a folder into the window. MEDIA RELIC scans only the top folder level and accepts supported media files with duration `>= 15 seconds`.
+Press `P` or drag a folder into the window. MEDIA RELIC scans only the top folder level and accepts supported media files with duration `>= 15 seconds` by default.
 
-Tiny trash files under 15 seconds are skipped.
+Tiny trash files under the configured duration are skipped.
 
 Use `N` and `B` for next/previous. When a track ends, the next item starts automatically unless loop is enabled.
 
