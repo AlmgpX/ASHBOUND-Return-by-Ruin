@@ -7,8 +7,11 @@ namespace MediaRelic.Infra;
 
 public sealed class UnicodeFrameSampler
 {
-    private const int ExtractedBitmapWidth = 768;
-    private const int MinPreviewCells = 12;
+    private const int ExtractedBitmapWidth = 1024;
+    private const int MinPreviewCells = 16;
+
+    private static readonly char[] DensityRamp =
+        " .'`^,:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$█".ToCharArray();
 
     private static readonly string[] CoverNames =
     {
@@ -338,33 +341,57 @@ public sealed class UnicodeFrameSampler
 
         var cells = new GlyphCell[width * height];
 
-        // The grid itself now has the same aspect ratio as the source pixels:
-        //   width / height ~= bitmap.Width / bitmap.Height
-        //
-        // No padding into a fake rectangle. No stretching. No "creative" deformation,
-        // because that path led directly to visual soup.
+        // The number of glyph columns and rows follows the source pixel aspect.
+        // Square cover -> square glyph grid. 16:9 -> 16:9 glyph grid.
+        // This renderer intentionally uses visible runes instead of half-block pixels,
+        // because half-blocks were accurate and spiritually dead.
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                var top = SampleNormalized(bitmap, x, y, width, height, 0.25);
-                var bottom = SampleNormalized(bitmap, x, y, width, height, 0.75);
+                var center = SampleNormalized(bitmap, x, y, width, height, 0.5, 0.5);
+                var right = SampleNormalized(bitmap, Math.Min(x + 1, width - 1), y, width, height, 0.5, 0.5);
+                var down = SampleNormalized(bitmap, x, Math.Min(y + 1, height - 1), width, height, 0.5, 0.5);
 
-                var topColor = GradeColor(top);
-                var bottomColor = GradeColor(bottom);
+                var luma = Luma(center);
+                var dx = Luma(right) - luma;
+                var dy = Luma(down) - luma;
+                var edge = Math.Abs(dx) + Math.Abs(dy);
+
+                var rune = PickRune(luma, dx, dy, edge);
+                var color = GradeColor(center);
 
                 cells[y * width + x] = new GlyphCell(
-                    '▀',
-                    topColor.R,
-                    topColor.G,
-                    topColor.B,
-                    bottomColor.R,
-                    bottomColor.G,
-                    bottomColor.B);
+                    rune,
+                    color.R,
+                    color.G,
+                    color.B,
+                    3,
+                    5,
+                    8);
             }
         }
 
         return new GlyphFrame(width, height, cells);
+    }
+
+    private static char PickRune(double luma, double dx, double dy, double edge)
+    {
+        if (edge > 0.28)
+        {
+            if (Math.Abs(dx) > Math.Abs(dy) * 1.7)
+                return '│';
+
+            if (Math.Abs(dy) > Math.Abs(dx) * 1.7)
+                return '─';
+
+            return Math.Sign(dx) == Math.Sign(dy) ? '╲' : '╱';
+        }
+
+        var index = (int)Math.Round(luma * (DensityRamp.Length - 1));
+        index = Math.Clamp(index, 0, DensityRamp.Length - 1);
+
+        return DensityRamp[index];
     }
 
     private static (int Width, int Height) ComputeAspectLockedCellSize(
@@ -418,10 +445,11 @@ public sealed class UnicodeFrameSampler
         int cellY,
         int cellsWidth,
         int cellsHeight,
-        double verticalPart)
+        double partX,
+        double partY)
     {
-        var u = (cellX + 0.5) / Math.Max(1.0, cellsWidth);
-        var v = (cellY + verticalPart) / Math.Max(1.0, cellsHeight);
+        var u = (cellX + partX) / Math.Max(1.0, cellsWidth);
+        var v = (cellY + partY) / Math.Max(1.0, cellsHeight);
 
         var sx = Math.Clamp((int)Math.Round(u * (bitmap.Width - 1)), 0, bitmap.Width - 1);
         var sy = Math.Clamp((int)Math.Round(v * (bitmap.Height - 1)), 0, bitmap.Height - 1);
