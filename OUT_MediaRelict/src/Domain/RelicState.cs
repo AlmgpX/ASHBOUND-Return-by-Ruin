@@ -22,6 +22,10 @@ public sealed class RelicState
     public List<string> Playlist { get; set; } = new();
     public int PlaylistIndex { get; set; } = -1;
 
+    public string VisualEvent { get; set; } = "BOOT";
+    public long VisualEventTick { get; set; } = Environment.TickCount64;
+    public int VisualEventCounter { get; set; }
+
     public bool HasPlaylist => Playlist.Count > 0 && PlaylistIndex >= 0 && PlaylistIndex < Playlist.Count;
 
     public string PlaylistLabel
