@@ -1,6 +1,8 @@
 {
   "minPlaylistDurationSeconds": 15,
-  "previewMaxWidth": 256,
-  "previewMaxHeight": 256,
-  "defaultVolume": 100
+  "previewMaxWidth": 96,
+  "previewMaxHeight": 96,
+  "defaultVolume": 100,
+  "startTopMost": false,
+  "uiScale": 1.0
 }
