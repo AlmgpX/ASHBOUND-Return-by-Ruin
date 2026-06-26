@@ -111,6 +111,13 @@ public sealed class RelicCanvas : Control
         return logical.Y >= 10 && logical.Y <= 62 && !_minimizeRect.Contains(logical) && !_closeRect.Contains(logical);
     }
 
+    private Point ToLogical(Point point)
+    {
+        return new Point(
+            (int)Math.Round(point.X / UiScale),
+            (int)Math.Round(point.Y / UiScale));
+    }
+
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
@@ -149,8 +156,8 @@ public sealed class RelicCanvas : Control
         DrawLine(g, 12, y, BodyLine(widthChars, "CLICK BUTTONS  SPACE PLAY  L LOOP  HOME/ENTER RESTART  ←/→ SEEK  ↑/↓ VOL  CTRL+WHEEL SCALE"), _dim, true); y += charH;
         DrawLine(g, 12, y, MidBorder(widthChars), play ? _playDark : _dim, true); y += charH;
 
-        var danceX = play ? (int)Math.Round(Math.Sin(State.Position * 11.0) * beat * 3.0) : 0;
-        var danceY = play ? (int)Math.Round(Math.Cos(State.Position * 9.0) * beat * 2.0) : 0;
+        var danceX = play ? (int)Math.Round(Math.Sin((State.Position + LocalFrameOffset()) * 11.0) * beat * 3.0) : 0;
+        var danceY = play ? (int)Math.Round(Math.Cos((State.Position + LocalFrameOffset()) * 9.0) * beat * 2.0) : 0;
         var previewX = 22 + danceX;
         var previewY = y + 2 + danceY;
 
@@ -165,7 +172,7 @@ public sealed class RelicCanvas : Control
         DrawLine(g, 12, y, BodyLine(widthChars, State.Status), statusColor, true); y += charH;
         DrawLine(g, 12, y, BottomBorder(widthChars), play ? _playRose : _cold, true);
 
-        DrawUnicodeGlitchLayer(g, logicalWidth, logicalHeight);
+        DrawVhsGlitchLayer(g, logicalWidth, logicalHeight);
     }
 
     private void DrawWindowGlyphs(Graphics g, int y)
@@ -453,17 +460,73 @@ public sealed class RelicCanvas : Control
             g.DrawLine(coldPen, x, y + height, x + Math.Min(width - 8, 240), y + height);
     }
 
-    private void DrawUnicodeGlitchLayer(Graphics g, int width, int height)
+    private void DrawVhsGlitchLayer(Graphics g, int width, int height)
     {
-        var play = IsPlayingSignal();
-        var activity = Math.Max(EventIntensity(), play ? 0.20 + BeatPulse() * 0.55 : 0.0);
+        var burst = VhsBurstIntensity();
+        var eventKick = EventIntensity() * 0.45;
+        var activity = Math.Max(burst, eventKick);
 
-        if (activity < 0.04)
+        if (activity < 0.07)
             return;
 
-        var count = Math.Clamp((int)(4 + activity * 28), 4, 34);
+        var seed = unchecked((int)(Environment.TickCount64 / 70 + State.VisualEventCounter * 7919 + (long)(State.Position * 1000.0)));
+
+        if (burst > 0.12)
+            DrawVhsScanlines(g, height, activity, seed);
+
+        if (burst > 0.32)
+            DrawVhsTearBars(g, width, height, activity, seed);
+
+        DrawVhsGlyphNoise(g, width, height, activity, seed);
+    }
+
+    private void DrawVhsScanlines(Graphics g, int height, double activity, int seed)
+    {
+        var offset = Math.Abs(seed % 7);
+        var alpha = Math.Clamp((int)(10 + activity * 28), 8, 42);
+
+        using var rosePen = new Pen(Color.FromArgb(alpha, _playRose), 1);
+        using var cyanPen = new Pen(Color.FromArgb(alpha / 2, _cold), 1);
+
+        for (var y = offset; y < height; y += 9)
+        {
+            g.DrawLine(y % 2 == 0 ? rosePen : cyanPen, 0, y, ClientSize.Width, y);
+        }
+    }
+
+    private void DrawVhsTearBars(Graphics g, int width, int height, double activity, int seed)
+    {
+        var bars = Math.Clamp((int)(1 + activity * 3), 1, 4);
+
+        for (var i = 0; i < bars; i++)
+        {
+            seed = unchecked(seed * 1103515245 + 12345);
+            var y = Math.Abs(seed % Math.Max(1, height - 18));
+            seed = unchecked(seed * 1103515245 + 12345);
+            var barHeight = 2 + Math.Abs(seed % 12);
+            seed = unchecked(seed * 1103515245 + 12345);
+            var shift = Math.Abs(seed % 32);
+            var alpha = Math.Clamp((int)(28 + activity * 70), 24, 112);
+
+            using var rose = new SolidBrush(Color.FromArgb(alpha, _playRose));
+            using var pale = new SolidBrush(Color.FromArgb(alpha / 2, _playPale));
+            using var dark = new SolidBrush(Color.FromArgb(alpha / 3, Color.Black));
+
+            g.FillRectangle(dark, 0, y + 1, width, barHeight + 1);
+            g.FillRectangle(rose, shift, y, Math.Max(8, width - shift), barHeight);
+
+            if (barHeight > 4)
+                g.FillRectangle(pale, Math.Max(0, shift - 18), y + barHeight / 2, Math.Min(width, width - shift + 18), 1);
+        }
+    }
+
+    private void DrawVhsGlyphNoise(Graphics g, int width, int height, double activity, int seed)
+    {
         const string glyphs = "░▒▓╳╱╲╬╫╪·✦+|/\\";
-        var seed = unchecked((int)(Environment.TickCount64 / 95 + State.VisualEventCounter * 7919 + (long)(State.Position * 1000.0)));
+        var count = Math.Clamp((int)(3 + activity * 22), 3, 28);
+
+        using var rose = new SolidBrush(Color.FromArgb(Math.Clamp((int)(48 + activity * 58), 36, 116), _playRose));
+        using var cyan = new SolidBrush(Color.FromArgb(Math.Clamp((int)(32 + activity * 40), 24, 84), _cold));
 
         for (var i = 0; i < count; i++)
         {
@@ -473,10 +536,8 @@ public sealed class RelicCanvas : Control
             var y = 16 + Math.Abs(seed % Math.Max(1, height - 32));
             seed = unchecked(seed * 1103515245 + 12345);
             var c = glyphs[Math.Abs(seed % glyphs.Length)];
-            var color = play && i % 3 != 0 ? Color.FromArgb(90, _playRose) : Color.FromArgb(72, _cold);
 
-            using var brush = new SolidBrush(color);
-            g.DrawString(c.ToString(), _font, brush, x, y);
+            g.DrawString(c.ToString(), _font, i % 3 == 0 ? cyan : rose, x, y);
         }
     }
 
@@ -516,11 +577,37 @@ public sealed class RelicCanvas : Control
         if (!IsPlayingSignal())
             return 0.0;
 
-        var t = Math.Max(0.0, State.Position) * Math.Max(0.25, State.Speed);
+        var t = (Math.Max(0.0, State.Position) + LocalFrameOffset()) * Math.Max(0.25, State.Speed);
         var primary = 0.5 + 0.5 * Math.Sin(t * Math.PI * 4.0);
         var secondary = 0.5 + 0.5 * Math.Sin(t * Math.PI * 8.0 + 0.7);
         var pulse = primary * 0.72 + secondary * 0.28;
         return Math.Pow(Math.Clamp(pulse, 0.0, 1.0), 2.6);
+    }
+
+    private static double LocalFrameOffset()
+    {
+        return (Environment.TickCount64 % 250L) / 1000.0;
+    }
+
+    private double VhsBurstIntensity()
+    {
+        if (!IsPlayingSignal())
+            return EventIntensity() * 0.22;
+
+        var phase = (Environment.TickCount64 / 80) % 96;
+        var burst = phase switch
+        {
+            < 5 => 0.72,
+            >= 31 and <= 33 => 0.42,
+            >= 61 and <= 62 => 0.34,
+            >= 88 and <= 90 => 0.88,
+            _ => 0.0
+        };
+
+        if (burst <= 0.001)
+            return 0.0;
+
+        return Math.Clamp(burst * (0.55 + BeatPulse() * 0.45), 0.0, 1.0);
     }
 
     private double EventIntensity()
@@ -827,13 +914,6 @@ public sealed class RelicCanvas : Control
         return true;
     }
 
-    private Point ToLogical(Point point)
-    {
-        return new Point(
-            (int)Math.Round(point.X / UiScale),
-            (int)Math.Round(point.Y / UiScale));
-    }
-
     private static Color Blend(Color a, Color b, double t)
     {
         t = Math.Clamp(t, 0.0, 1.0);
@@ -850,7 +930,7 @@ public sealed class RelicCanvas : Control
 
     private static string NormalizeText(string value)
     {
-        return string.Join(' ', value.Split([' ', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries)).Trim();
+        return string.Join(' ', value.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)).Trim();
     }
 
     private static string FormatTime(double seconds)
