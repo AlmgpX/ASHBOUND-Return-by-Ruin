@@ -15,8 +15,11 @@ public sealed class RelicCanvas : Control
 {
     private const int PreviewCellW = 4;
     private const int PreviewCellH = 4;
-    private readonly Font _font;
-    private readonly Font _smallFont;
+    private const float MinUiScale = 0.75f;
+    private const float MaxUiScale = 1.75f;
+
+    private Font _font;
+    private Font _smallFont;
     private readonly Brush _bg = new SolidBrush(Color.FromArgb(235, 3, 5, 8));
     private readonly Color _text = Color.FromArgb(190, 220, 220);
     private readonly Color _dim = Color.FromArgb(90, 115, 125);
@@ -28,6 +31,7 @@ public sealed class RelicCanvas : Control
     private Rectangle _closeRect;
 
     public RelicState State { get; set; } = new();
+    public float UiScale { get; private set; } = 1.0f;
 
     public RelicCanvas()
     {
@@ -37,12 +41,25 @@ public sealed class RelicCanvas : Control
         SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
     }
 
+    public void SetUiScale(float scale)
+    {
+        UiScale = Math.Clamp(scale, MinUiScale, MaxUiScale);
+        Invalidate();
+    }
+
+    public void AdjustUiScale(float delta)
+    {
+        SetUiScale(UiScale + delta);
+    }
+
     public RelicWindowCommand HitTestWindowCommand(Point point)
     {
-        if (_minimizeRect.Contains(point))
+        var logical = ToLogical(point);
+
+        if (_minimizeRect.Contains(logical))
             return RelicWindowCommand.Minimize;
 
-        if (_closeRect.Contains(point))
+        if (_closeRect.Contains(logical))
             return RelicWindowCommand.CloseKeepPlaying;
 
         return RelicWindowCommand.None;
@@ -50,7 +67,15 @@ public sealed class RelicCanvas : Control
 
     public bool IsDragZone(Point point)
     {
-        return point.Y >= 10 && point.Y <= 62 && !_minimizeRect.Contains(point) && !_closeRect.Contains(point);
+        var logical = ToLogical(point);
+        return logical.Y >= 10 && logical.Y <= 62 && !_minimizeRect.Contains(logical) && !_closeRect.Contains(logical);
+    }
+
+    private Point ToLogical(Point point)
+    {
+        return new Point(
+            (int)Math.Round(point.X / UiScale),
+            (int)Math.Round(point.Y / UiScale));
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -60,52 +85,54 @@ public sealed class RelicCanvas : Control
         g.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
 
         g.FillRectangle(_bg, ClientRectangle);
+        g.ScaleTransform(UiScale, UiScale);
 
+        var logicalWidth = Math.Max(1, (int)Math.Round(ClientSize.Width / UiScale));
         var charW = 10;
         var charH = 18;
-        var widthChars = Math.Max(64, (ClientSize.Width - 28) / charW);
+        var widthChars = Math.Max(64, (logicalWidth - 28) / charW);
         var y = 10;
 
-        DrawLine(g, 12, y, TopBorder(widthChars), _cold); y += charH;
+        DrawLine(g, 12, y, TopBorder(widthChars), _cold, lively: true); y += charH;
 
         var title = "MEDIA RELIC v0.1 by Alex Merqury  |  Delirium Interactive";
-        DrawLine(g, 12, y, BodyLine(widthChars, title), _hot);
-        DrawWindowGlyphs(g, y);
-        y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, title), _hot, lively: true); y += charH;
+        DrawWindowGlyphs(g, y - charH);
 
-        DrawLine(g, 12, y, MidBorder(widthChars), _dim); y += charH;
+        DrawLine(g, 12, y, MidBorder(widthChars), _dim, lively: true); y += charH;
 
         DrawLine(g, 12, y, BodyLine(widthChars, "◈ " + State.DisplayName + "   " + State.PlaylistLabel), _text); y += charH;
         DrawLine(g, 12, y, BodyLine(widthChars, BuildTransportLine(widthChars - 4)), _text); y += charH;
-        DrawLine(g, 12, y, BodyLine(widthChars, BuildProgress(widthChars - 4)), _cold); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, BuildProgress(widthChars - 4)), _cold, lively: true); y += charH;
 
-        var flags = $"SPD {State.Speed:0.00}x   VOL {State.Volume:0}%   LOOP {(State.IsLooping ? "∞" : "·")}   REVERB {(State.IsReverbEnabled ? "✦" : "·")}   CUTS {State.SoundRanges.Count}";
+        var flags = $"SPD {State.Speed:0.00}x   VOL {State.Volume:0}%   LOOP {(State.IsLooping ? "∞" : "·")}   TOP {(State.IsTopMost ? "ON" : "·")}   REVERB {(State.IsReverbEnabled ? "✦" : "·")}   SCALE {UiScale:0.00}   CUTS {State.SoundRanges.Count}";
         DrawLine(g, 12, y, BodyLine(widthChars, flags), _text); y += charH;
 
-        DrawLine(g, 12, y, BodyLine(widthChars, "O FILE  P FOLDER  C COVER  SPACE PLAY  ←→ SEEK  N NEXT  B BACK  S SCAN  X EXPORT  ESC EXIT"), _dim); y += charH;
-        DrawLine(g, 12, y, MidBorder(widthChars), _dim); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, "O FILE  P FOLDER  C COVER  SPACE PLAY  ←/A  D/→ SEEK  PG±  +/- SCALE  F11 MAX  T TOP  ESC EXIT"), _dim, lively: true); y += charH;
+        DrawLine(g, 12, y, MidBorder(widthChars), _dim, lively: true); y += charH;
 
         DrawPreview(g, 22, y + 2);
         y += State.Preview.Height * PreviewCellH + charH;
 
-        DrawLine(g, 12, y, MidBorder(widthChars), _dim); y += charH;
+        DrawLine(g, 12, y, MidBorder(widthChars), _dim, lively: true); y += charH;
 
         var statusColor = State.Status.StartsWith("ERR", StringComparison.OrdinalIgnoreCase) ? _bad : _hot;
-        DrawLine(g, 12, y, BodyLine(widthChars, State.Status), statusColor); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, State.Status), statusColor, lively: true); y += charH;
 
-        DrawLine(g, 12, y, BottomBorder(widthChars), _cold);
+        DrawLine(g, 12, y, BottomBorder(widthChars), _cold, lively: true);
     }
 
     private void DrawWindowGlyphs(Graphics g, int y)
     {
-        var closeX = Math.Max(48, ClientSize.Width - 54);
-        var minX = Math.Max(16, ClientSize.Width - 92);
+        var logicalWidth = Math.Max(1, (int)Math.Round(ClientSize.Width / UiScale));
+        var closeX = Math.Max(48, logicalWidth - 54);
+        var minX = Math.Max(16, logicalWidth - 92);
 
         _minimizeRect = new Rectangle(minX - 6, y - 2, 32, 22);
         _closeRect = new Rectangle(closeX - 6, y - 2, 32, 22);
 
-        using var minBrush = new SolidBrush(_dim);
-        using var closeBrush = new SolidBrush(_bad);
+        using var minBrush = new SolidBrush(Pulse(_dim, 0.10f, 0));
+        using var closeBrush = new SolidBrush(Pulse(_bad, 0.16f, 800));
 
         g.DrawString("▁", _font, minBrush, minX, y);
         g.DrawString("×", _font, closeBrush, closeX, y);
@@ -142,10 +169,52 @@ public sealed class RelicCanvas : Control
         }
     }
 
-    private void DrawLine(Graphics g, int x, int y, string line, Color color)
+    private void DrawLine(Graphics g, int x, int y, string line, Color color, bool lively = false)
     {
-        using var brush = new SolidBrush(color);
-        g.DrawString(line, _font, brush, x, y);
+        var drawColor = lively ? Pulse(color, 0.12f, y * 17) : color;
+        var drawText = lively ? MorphDecorative(line, y) : line;
+
+        using var brush = new SolidBrush(drawColor);
+        g.DrawString(drawText, _font, brush, x, y);
+    }
+
+    private static Color Pulse(Color color, float amount, int phaseOffset)
+    {
+        var t = (Environment.TickCount + phaseOffset) * 0.004;
+        var k = 1.0 + Math.Sin(t) * amount;
+
+        return Color.FromArgb(
+            ClampByte(color.R * k),
+            ClampByte(color.G * k),
+            ClampByte(color.B * k));
+    }
+
+    private static byte ClampByte(double value)
+    {
+        return (byte)Math.Clamp((int)Math.Round(value), 0, 255);
+    }
+
+    private static string MorphDecorative(string line, int rowSalt)
+    {
+        if (line.Length < 16)
+            return line;
+
+        var phase = (Environment.TickCount / 430 + rowSalt) % Math.Max(1, line.Length - 4);
+        var chars = line.ToCharArray();
+        var index = 2 + phase;
+
+        var c = chars[index];
+        chars[index] = c switch
+        {
+            '═' => '─',
+            '─' => '═',
+            '·' => '✦',
+            '✦' => '·',
+            ' ' => (index % 11 == 0 ? '·' : ' '),
+            _ => c
+        };
+
+        return new string(chars);
     }
 
     private string BuildTransportLine(int contentWidth)
