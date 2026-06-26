@@ -19,6 +19,7 @@ public sealed class MainForm : Form
     private readonly RelicCanvas _canvas = new();
     private readonly System.Windows.Forms.Timer _uiTimer = new();
     private readonly System.Windows.Forms.Timer _previewTimer = new();
+    private bool _closeAfterKill;
 
     public MainForm()
     {
@@ -374,12 +375,29 @@ public sealed class MainForm : Form
 
     protected override async void OnFormClosing(FormClosingEventArgs e)
     {
-        _uiTimer.Stop();
-        _previewTimer.Stop();
+        if (!_closeAfterKill)
+        {
+            e.Cancel = true;
+            _closeAfterKill = true;
+            Enabled = false;
 
-        await _app.KillPlaybackAsync();
+            _uiTimer.Stop();
+            _previewTimer.Stop();
+            MarkUiEvent("MPV KILL");
+
+            try
+            {
+                await _app.KillPlaybackAsync();
+            }
+            finally
+            {
+                BeginInvoke(new Action(Close));
+            }
+
+            return;
+        }
+
         await _app.DisposeAsync();
-
         base.OnFormClosing(e);
     }
 }
