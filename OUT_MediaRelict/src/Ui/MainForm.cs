@@ -53,12 +53,37 @@ public sealed class MainForm : Form
         DragEnter += OnDragEnter;
         DragDrop += async (_, e) => await OnDragDropAsync(e);
         KeyDown += async (_, e) => await OnKeyDownAsync(e);
+        PreviewKeyDown += OnPreviewKeyDown;
         MouseWheel += (_, e) => _ = OnMouseWheelAsync(e);
 
         _canvas.MouseDown += OnCanvasMouseDown;
         _canvas.MouseDoubleClick += (_, _) => ToggleTopMost();
         _canvas.MouseEnter += (_, _) => _canvas.Focus();
         _canvas.MouseWheel += (_, e) => _ = OnMouseWheelAsync(e);
+        _canvas.PreviewKeyDown += OnPreviewKeyDown;
+    }
+
+    protected override bool IsInputKey(Keys keyData)
+    {
+        var keyCode = keyData & Keys.KeyCode;
+
+        if (IsPlaybackCommandKey(keyCode))
+            return true;
+
+        return base.IsInputKey(keyData);
+    }
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        var keyCode = keyData & Keys.KeyCode;
+
+        if (IsPlaybackCommandKey(keyCode))
+        {
+            _ = HandleKeyCodeAsync(keyCode);
+            return true;
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
     }
 
     protected override void WndProc(ref Message m)
@@ -89,41 +114,55 @@ public sealed class MainForm : Form
         else if (bottom) m.Result = HtBottom;
     }
 
+    private void OnPreviewKeyDown(object? sender, PreviewKeyDownEventArgs e)
+    {
+        if (IsPlaybackCommandKey(e.KeyCode))
+            e.IsInputKey = true;
+    }
+
     private async Task OnKeyDownAsync(KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Q)
+        if (await HandleKeyCodeAsync(e.KeyCode))
         {
-            Close();
-            return;
+            e.Handled = true;
+            e.SuppressKeyPress = true;
         }
+    }
 
-        switch (e.KeyCode)
+    private async Task<bool> HandleKeyCodeAsync(Keys keyCode)
+    {
+        switch (keyCode)
         {
+            case Keys.Escape:
+            case Keys.Q:
+                Close();
+                return true;
+
             case Keys.M:
                 MarkUiEvent("MINIMIZE");
                 WindowState = FormWindowState.Minimized;
-                return;
+                return true;
 
             case Keys.F11:
                 ToggleMaximized();
-                return;
+                return true;
 
             case Keys.Oemplus:
             case Keys.Add:
                 ScaleUi(+0.10f);
-                return;
+                return true;
 
             case Keys.OemMinus:
             case Keys.Subtract:
                 ScaleUi(-0.10f);
-                return;
+                return true;
 
             case Keys.D0:
             case Keys.NumPad0:
                 _canvas.SetUiScale(1.0f);
                 _app.State.Status = "UI SCALE 1.00";
                 MarkUiEvent("SCALE RESET");
-                return;
+                return true;
 
             case Keys.O:
             case Keys.F:
@@ -207,9 +246,34 @@ public sealed class MainForm : Form
             case Keys.T:
                 ToggleTopMost();
                 break;
+
+            default:
+                return false;
         }
 
         _canvas.Invalidate();
+        return true;
+    }
+
+    private static bool IsPlaybackCommandKey(Keys keyCode)
+    {
+        return keyCode is Keys.Left
+            or Keys.Right
+            or Keys.Up
+            or Keys.Down
+            or Keys.PageDown
+            or Keys.PageUp
+            or Keys.Space
+            or Keys.A
+            or Keys.D
+            or Keys.M
+            or Keys.F11
+            or Keys.Oemplus
+            or Keys.Add
+            or Keys.OemMinus
+            or Keys.Subtract
+            or Keys.D0
+            or Keys.NumPad0;
     }
 
     private async Task OnMouseWheelAsync(MouseEventArgs e)
