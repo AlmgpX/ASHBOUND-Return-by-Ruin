@@ -13,8 +13,8 @@ public enum RelicWindowCommand
 
 public sealed class RelicCanvas : Control
 {
-    private const int PreviewCellW = 6;
-    private const int PreviewCellH = 6;
+    private const int PreviewCellW = 4;
+    private const int PreviewCellH = 4;
     private readonly Font _font;
     private readonly Font _smallFont;
     private readonly Brush _bg = new SolidBrush(Color.FromArgb(235, 3, 5, 8));
@@ -33,7 +33,7 @@ public sealed class RelicCanvas : Control
     {
         DoubleBuffered = true;
         _font = new Font("Consolas", 12.0f, FontStyle.Regular, GraphicsUnit.Point);
-        _smallFont = new Font("Consolas", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
+        _smallFont = new Font("Consolas", 3.8f, FontStyle.Regular, GraphicsUnit.Point);
         SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
     }
 
@@ -129,11 +129,12 @@ public sealed class RelicCanvas : Control
                 var px = x + col * PreviewCellW;
                 var py = y + row * PreviewCellH;
 
-                using var bg = new SolidBrush(Color.FromArgb(cell.BgR, cell.BgG, cell.BgB));
-                g.FillRectangle(bg, px, py, PreviewCellW + 1, PreviewCellH + 1);
-
                 if (cell.Rune == ' ')
+                {
+                    using var bg = new SolidBrush(Color.FromArgb(cell.BgR, cell.BgG, cell.BgB));
+                    g.FillRectangle(bg, px, py, PreviewCellW + 1, PreviewCellH + 1);
                     continue;
+                }
 
                 using var fg = new SolidBrush(Color.FromArgb(cell.R, cell.G, cell.B));
                 g.DrawString(cell.Rune.ToString(), _smallFont, fg, px, py - 1, format);
