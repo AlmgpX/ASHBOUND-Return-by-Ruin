@@ -49,48 +49,72 @@ dotnet publish -c Release -r win-x64 --self-contained false
 ## Controls
 
 ```text
-O / F       open file
-P           open folder as playlist
-C           apply cover image to current track
-Drag file   open file
-Drag folder open folder as playlist
-Space       play / pause
-Left/Right  seek -5s / +5s
-A / D       seek -5s / +5s
-PgDown/PgUp seek -30s / +30s
-Up/Down     volume +5 / -5
-[ / ]       speed -0.1 / +0.1
-Backspace   speed 1.0
-N           next playlist item
-B           previous playlist item
-L           loop file
-R           reverb
-S           scan silence
-X           export non-silent chunks
-T           topmost toggle
-M           minimize window
-F11         maximize / restore window
-+ / -       UI scale up / down
-0           reset UI scale
-Esc / Q     stop playback and close app
-Mouse       drag top area
-Edges       resize borderless window
+O / F             open file
+P                 open folder as playlist
+C                 apply cover image to current track
+Drag file         open file
+Drag folder       open folder as playlist
+Space             play / pause
+Left/Right        seek -5s / +5s
+A / D             seek -5s / +5s
+PgDown/PgUp       seek -30s / +30s
+Shift + Wheel     seek -5s / +5s
+Alt + Wheel       seek -30s / +30s
+Wheel             volume +5 / -5
+Ctrl + Wheel      UI scale up / down
+Up/Down           volume +5 / -5
+[ / ]             speed -0.1 / +0.1
+Backspace         speed 1.0
+N                 next playlist item
+B                 previous playlist item
+L                 loop file
+R                 reverb
+S                 scan silence
+X                 export non-silent chunks
+T                 topmost toggle
+M                 minimize window
+F11               maximize / restore window
++ / -             UI scale up / down
+0                 reset UI scale
+Esc / Q           kill mpv and close app
+Mouse             drag top area
+Edges             resize borderless window
 ```
 
-The player now starts **not topmost** by default. Press `T` if you want it above other windows. Revolutionary: an overlay that does not immediately sit on your face.
+The player starts **not topmost** by default. Press `T` if you want it above other windows. Revolutionary: an overlay that does not immediately sit on your face.
 
-## Living UI
+## Close behavior
 
-The text UI has a lightweight idle animation:
+Closing the UI now explicitly kills `mpv.exe`:
 
 ```text
-- tiny color pulse on borders/status/header
-- occasional decorative glyph morph on frame/progress lines
-- no per-pixel particle soup
-- no extra worker thread
+Esc / Q / × -> KillPlaybackAsync -> mpv.DisposeAsync -> process kill
 ```
 
-It rides on the existing 250 ms UI timer. Cheap, visible, and less likely to turn the player into a tiny space heater.
+If a ghost `mpv.exe` survives that, Windows has moved from operating system into folklore.
+
+## Reactive HUD UI
+
+The text UI is no longer just randomly blinking like a cheap router having a spiritual crisis.
+
+Animation is driven by:
+
+```text
+RelicState.Mode          Loading / Playing / Paused / ScanningSilence / Exporting / Error
+RelicState.VisualEvent   PLAY / SEEK + / SEEK - / VOLUME / SCALE + / COVER READY / EXPORT DONE / etc.
+```
+
+The HUD now draws:
+
+```text
+- corner targeting brackets around preview
+- state-reactive scan sweeps during load / scan / export
+- a right-side node bus: SRC -> DEC -> PLAY -> FX -> CUT -> OUT
+- event bursts when actions happen
+- status-linked color pulses
+```
+
+The animation still rides on the existing UI timer and draws only a few extra GDI primitives. No particle soup, no second render loop, no tiny RTX furnace. Humanity may yet avoid one needless tragedy.
 
 ## Architecture pass
 
@@ -111,6 +135,7 @@ App/RelicCommand.cs      explicit command vocabulary for future input remapping
 Domain/RelicMode.cs      explicit app mode instead of magic bool soup
 Playlist/PlaylistScanner.cs filters folders and rejects files shorter than the configured limit
 Ui/MainForm.cs           thin shell: dialogs, key mapping, drag/drop, window resize/move
+Ui/RelicCanvas.cs        Unicode HUD renderer, mouse-scaled, state-reactive
 ```
 
 `MainForm` should not grow tentacles again. If a new feature needs mpv, ffmpeg, preview, playlist, or export logic, it belongs outside `Ui/`. Humanity has suffered enough from god-forms.
@@ -196,10 +221,6 @@ Press `P` or drag a folder into the window. MEDIA RELIC scans only the top folde
 Tiny trash files under the configured duration are skipped.
 
 Use `N` and `B` for next/previous. When a track ends, the next item starts automatically unless loop is enabled.
-
-## Closing behavior
-
-`Esc`, `Q`, and the custom `×` button stop playback and close the app.
 
 ## Applying a cover manually
 
