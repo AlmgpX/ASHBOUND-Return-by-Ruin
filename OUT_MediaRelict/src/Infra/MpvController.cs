@@ -19,6 +19,7 @@ public sealed class MpvController : IAsyncDisposable
     private StreamReader? _reader;
     private CancellationTokenSource? _readCts;
     private int _nextRequestId;
+    private int? _processId;
 
     public MpvController(string mpvPath)
     {
@@ -49,6 +50,7 @@ public sealed class MpvController : IAsyncDisposable
         start.ArgumentList.Add("--input-ipc-server=\\\\.\\pipe\\" + _pipeName);
 
         _process = Process.Start(start) ?? throw new InvalidOperationException("mpv did not start.");
+        _processId = _process.Id;
 
         await ConnectPipeAsync(cancellationToken);
 
@@ -262,12 +264,13 @@ public sealed class MpvController : IAsyncDisposable
     public async Task StopAsync()
     {
         var process = _process;
+        var pid = _processId ?? TryGetProcessId(process);
 
         if (process is { HasExited: false })
         {
             try
             {
-                using var quitCts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
+                using var quitCts = new CancellationTokenSource(TimeSpan.FromMilliseconds(350));
                 await CommandAsync(quitCts.Token, "quit");
             }
             catch
@@ -275,13 +278,7 @@ public sealed class MpvController : IAsyncDisposable
                 // mpv may quit before answering. This is acceptable. Shocking, yes.
             }
 
-            try
-            {
-                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromMilliseconds(800));
-            }
-            catch
-            {
-            }
+            await WaitForExitQuietlyAsync(process, 500);
         }
 
         try
@@ -314,15 +311,113 @@ public sealed class MpvController : IAsyncDisposable
             try
             {
                 process.Kill(entireProcessTree: true);
-                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));
             }
             catch
             {
             }
+
+            await WaitForExitQuietlyAsync(process, 800);
         }
+
+        if (pid is not null)
+            await TaskKillAsync(pid.Value);
+
+        await KillAnyMediaRelicMpvFallbackAsync();
 
         process?.Dispose();
         _process = null;
+        _processId = null;
+    }
+
+    private static int? TryGetProcessId(Process? process)
+    {
+        try
+        {
+            return process?.Id;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static async Task WaitForExitQuietlyAsync(Process process, int milliseconds)
+    {
+        try
+        {
+            await process.WaitForExitAsync().WaitAsync(TimeSpan.FromMilliseconds(milliseconds));
+        }
+        catch
+        {
+        }
+    }
+
+    private static async Task TaskKillAsync(int pid)
+    {
+        try
+        {
+            var start = new ProcessStartInfo
+            {
+                FileName = "taskkill.exe",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            start.ArgumentList.Add("/PID");
+            start.ArgumentList.Add(pid.ToString(CultureInfo.InvariantCulture));
+            start.ArgumentList.Add("/T");
+            start.ArgumentList.Add("/F");
+
+            using var taskkill = Process.Start(start);
+            if (taskkill is not null)
+                await taskkill.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));
+        }
+        catch
+        {
+        }
+    }
+
+    private async Task KillAnyMediaRelicMpvFallbackAsync()
+    {
+        foreach (var process in Process.GetProcessesByName("mpv"))
+        {
+            try
+            {
+                if (IsKnownMpvProcess(process))
+                    await TaskKillAsync(process.Id);
+            }
+            catch
+            {
+            }
+            finally
+            {
+                process.Dispose();
+            }
+        }
+    }
+
+    private bool IsKnownMpvProcess(Process process)
+    {
+        try
+        {
+            if (_processId is not null && process.Id == _processId.Value)
+                return true;
+
+            var modulePath = process.MainModule?.FileName;
+            if (string.IsNullOrWhiteSpace(modulePath))
+                return false;
+
+            return string.Equals(
+                Path.GetFullPath(modulePath),
+                Path.GetFullPath(_mpvPath),
+                StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public async ValueTask DisposeAsync()
