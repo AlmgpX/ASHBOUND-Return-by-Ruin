@@ -1,0 +1,6 @@
+{
+  "minPlaylistDurationSeconds": 15,
+  "previewMaxWidth": 256,
+  "previewMaxHeight": 256,
+  "defaultVolume": 100
+}
