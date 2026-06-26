@@ -38,6 +38,7 @@ public sealed class MainForm : Form
         _canvas.SetUiScale(_app.Config.UiScale);
         _canvas.Dock = DockStyle.Fill;
         _canvas.State = _app.State;
+        _canvas.TabStop = true;
         Controls.Add(_canvas);
 
         _uiTimer.Interval = 250;
@@ -51,9 +52,12 @@ public sealed class MainForm : Form
         DragEnter += OnDragEnter;
         DragDrop += async (_, e) => await OnDragDropAsync(e);
         KeyDown += async (_, e) => await OnKeyDownAsync(e);
+        MouseWheel += (_, e) => _ = OnMouseWheelAsync(e);
 
         _canvas.MouseDown += OnCanvasMouseDown;
         _canvas.MouseDoubleClick += (_, _) => ToggleTopMost();
+        _canvas.MouseEnter += (_, _) => _canvas.Focus();
+        _canvas.MouseWheel += (_, e) => _ = OnMouseWheelAsync(e);
     }
 
     protected override void WndProc(ref Message m)
@@ -95,6 +99,7 @@ public sealed class MainForm : Form
         switch (e.KeyCode)
         {
             case Keys.M:
+                MarkUiEvent("MINIMIZE");
                 WindowState = FormWindowState.Minimized;
                 return;
 
@@ -104,20 +109,19 @@ public sealed class MainForm : Form
 
             case Keys.Oemplus:
             case Keys.Add:
-                _canvas.AdjustUiScale(+0.10f);
-                _app.State.Status = $"UI SCALE {_canvas.UiScale:0.00}";
+                ScaleUi(+0.10f);
                 return;
 
             case Keys.OemMinus:
             case Keys.Subtract:
-                _canvas.AdjustUiScale(-0.10f);
-                _app.State.Status = $"UI SCALE {_canvas.UiScale:0.00}";
+                ScaleUi(-0.10f);
                 return;
 
             case Keys.D0:
             case Keys.NumPad0:
                 _canvas.SetUiScale(1.0f);
                 _app.State.Status = "UI SCALE 1.00";
+                MarkUiEvent("SCALE RESET");
                 return;
 
             case Keys.O:
@@ -207,8 +211,38 @@ public sealed class MainForm : Form
         _canvas.Invalidate();
     }
 
+    private async Task OnMouseWheelAsync(MouseEventArgs e)
+    {
+        var direction = e.Delta >= 0 ? 1 : -1;
+
+        if ((ModifierKeys & Keys.Control) == Keys.Control)
+        {
+            ScaleUi(direction * 0.10f);
+            return;
+        }
+
+        if ((ModifierKeys & Keys.Shift) == Keys.Shift)
+        {
+            await _app.SeekAsync(direction * 5.0);
+            _canvas.Invalidate();
+            return;
+        }
+
+        if ((ModifierKeys & Keys.Alt) == Keys.Alt)
+        {
+            await _app.SeekAsync(direction * 30.0);
+            _canvas.Invalidate();
+            return;
+        }
+
+        await _app.SetVolumeAsync(_app.State.Volume + direction * 5.0);
+        _canvas.Invalidate();
+    }
+
     private void OnCanvasMouseDown(object? sender, MouseEventArgs e)
     {
+        _canvas.Focus();
+
         if (e.Button != MouseButtons.Left)
             return;
 
@@ -216,6 +250,7 @@ public sealed class MainForm : Form
 
         if (command == RelicWindowCommand.Minimize)
         {
+            MarkUiEvent("MINIMIZE");
             WindowState = FormWindowState.Minimized;
             return;
         }
@@ -288,6 +323,7 @@ public sealed class MainForm : Form
         TopMost = !TopMost;
         _app.State.IsTopMost = TopMost;
         _app.State.Status = TopMost ? "TOPMOST: ON" : "TOPMOST: OFF";
+        MarkUiEvent(TopMost ? "TOPMOST ON" : "TOPMOST OFF");
     }
 
     private void ToggleMaximized()
@@ -297,6 +333,22 @@ public sealed class MainForm : Form
             : FormWindowState.Maximized;
 
         _app.State.Status = WindowState == FormWindowState.Maximized ? "WINDOW: MAXIMIZED" : "WINDOW: NORMAL";
+        MarkUiEvent(WindowState == FormWindowState.Maximized ? "MAXIMIZE" : "RESTORE");
+    }
+
+    private void ScaleUi(float delta)
+    {
+        _canvas.AdjustUiScale(delta);
+        _app.State.Status = $"UI SCALE {_canvas.UiScale:0.00}";
+        MarkUiEvent(delta >= 0 ? "SCALE +" : "SCALE -");
+    }
+
+    private void MarkUiEvent(string name)
+    {
+        _app.State.VisualEvent = name;
+        _app.State.VisualEventTick = Environment.TickCount64;
+        _app.State.VisualEventCounter++;
+        _canvas.Invalidate();
     }
 
     private void OnDragEnter(object? sender, DragEventArgs e)
@@ -325,6 +377,7 @@ public sealed class MainForm : Form
         _uiTimer.Stop();
         _previewTimer.Stop();
 
+        await _app.KillPlaybackAsync();
         await _app.DisposeAsync();
 
         base.OnFormClosing(e);
