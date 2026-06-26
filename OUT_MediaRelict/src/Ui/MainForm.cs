@@ -23,17 +23,19 @@ public sealed class MainForm : Form
     public MainForm()
     {
         Text = "MEDIA RELIC v0.1";
-        Width = 1280;
-        Height = 980;
-        MinimumSize = new Size(720, 460);
+        Width = 980;
+        Height = 620;
+        MinimumSize = new Size(520, 260);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.None;
-        TopMost = true;
+        TopMost = _app.Config.StartTopMost;
         Opacity = 0.94;
         KeyPreview = true;
         AllowDrop = true;
         BackColor = Color.Black;
 
+        _app.State.IsTopMost = TopMost;
+        _canvas.SetUiScale(_app.Config.UiScale);
         _canvas.Dock = DockStyle.Fill;
         _canvas.State = _app.State;
         Controls.Add(_canvas);
@@ -96,6 +98,28 @@ public sealed class MainForm : Form
                 WindowState = FormWindowState.Minimized;
                 return;
 
+            case Keys.F11:
+                ToggleMaximized();
+                return;
+
+            case Keys.Oemplus:
+            case Keys.Add:
+                _canvas.AdjustUiScale(+0.10f);
+                _app.State.Status = $"UI SCALE {_canvas.UiScale:0.00}";
+                return;
+
+            case Keys.OemMinus:
+            case Keys.Subtract:
+                _canvas.AdjustUiScale(-0.10f);
+                _app.State.Status = $"UI SCALE {_canvas.UiScale:0.00}";
+                return;
+
+            case Keys.D0:
+            case Keys.NumPad0:
+                _canvas.SetUiScale(1.0f);
+                _app.State.Status = "UI SCALE 1.00";
+                return;
+
             case Keys.O:
             case Keys.F:
                 await OpenDialogAsync();
@@ -122,11 +146,21 @@ public sealed class MainForm : Form
                 break;
 
             case Keys.Left:
+            case Keys.A:
                 await _app.SeekAsync(-5.0);
                 break;
 
             case Keys.Right:
+            case Keys.D:
                 await _app.SeekAsync(5.0);
+                break;
+
+            case Keys.PageDown:
+                await _app.SeekAsync(-30.0);
+                break;
+
+            case Keys.PageUp:
+                await _app.SeekAsync(30.0);
                 break;
 
             case Keys.Up:
@@ -254,6 +288,15 @@ public sealed class MainForm : Form
         TopMost = !TopMost;
         _app.State.IsTopMost = TopMost;
         _app.State.Status = TopMost ? "TOPMOST: ON" : "TOPMOST: OFF";
+    }
+
+    private void ToggleMaximized()
+    {
+        WindowState = WindowState == FormWindowState.Maximized
+            ? FormWindowState.Normal
+            : FormWindowState.Maximized;
+
+        _app.State.Status = WindowState == FormWindowState.Maximized ? "WINDOW: MAXIMIZED" : "WINDOW: NORMAL";
     }
 
     private void OnDragEnter(object? sender, DragEventArgs e)
