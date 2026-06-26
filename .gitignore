@@ -4,3 +4,10 @@ OUT_Save/*.json
 *.user
 *.suo
 .vs/
+
+# Local media tools
+OUT_MediaRelict/tools/
+OUT_MediaRelict/tools/*.exe
+OUT_MediaRelict/tools/*.dll
+OUT_MediaRelict/tools/*.7z
+OUT_MediaRelict/tools/*.zip
