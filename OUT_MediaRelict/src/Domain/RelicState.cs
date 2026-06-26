@@ -8,7 +8,7 @@ public sealed class RelicState
     public bool IsPaused { get; set; } = true;
     public bool IsLooping { get; set; }
     public bool IsReverbEnabled { get; set; }
-    public bool IsTopMost { get; set; } = true;
+    public bool IsTopMost { get; set; }
 
     public double Position { get; set; }
     public double Duration { get; set; }
@@ -16,7 +16,7 @@ public sealed class RelicState
     public double Volume { get; set; } = 100.0;
 
     public string Status { get; set; } = "DROP MEDIA, PRESS O, OR PRESS P FOR FOLDER";
-    public GlyphFrame Preview { get; set; } = GlyphFrame.Empty(256, 256);
+    public GlyphFrame Preview { get; set; } = GlyphFrame.Empty(96, 96);
     public List<TimeRange> SoundRanges { get; set; } = new();
 
     public List<string> Playlist { get; set; } = new();
