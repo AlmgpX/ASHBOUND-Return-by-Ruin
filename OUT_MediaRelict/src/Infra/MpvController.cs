@@ -82,6 +82,12 @@ public sealed class MpvController : IAsyncDisposable
         return CommandAsync(cancellationToken, "seek", seconds, "relative", "exact");
     }
 
+    public Task SeekAbsoluteAsync(double seconds, CancellationToken cancellationToken)
+    {
+        seconds = Math.Max(0.0, seconds);
+        return CommandAsync(cancellationToken, "seek", seconds, "absolute", "exact");
+    }
+
     public Task SetSpeedAsync(double speed, CancellationToken cancellationToken)
     {
         speed = Math.Clamp(speed, 0.25, 4.0);
