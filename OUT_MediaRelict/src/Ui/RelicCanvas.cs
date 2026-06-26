@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Globalization;
@@ -110,13 +111,6 @@ public sealed class RelicCanvas : Control
         return logical.Y >= 10 && logical.Y <= 62 && !_minimizeRect.Contains(logical) && !_closeRect.Contains(logical);
     }
 
-    private Point ToLogical(Point point)
-    {
-        return new Point(
-            (int)Math.Round(point.X / UiScale),
-            (int)Math.Round(point.Y / UiScale));
-    }
-
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
@@ -172,6 +166,22 @@ public sealed class RelicCanvas : Control
         DrawLine(g, 12, y, BottomBorder(widthChars), play ? _playRose : _cold, true);
 
         DrawUnicodeGlitchLayer(g, logicalWidth, logicalHeight);
+    }
+
+    private void DrawWindowGlyphs(Graphics g, int y)
+    {
+        var logicalWidth = Math.Max(1, (int)Math.Round(ClientSize.Width / UiScale));
+        var minX = Math.Max(16, logicalWidth - 92);
+        var closeX = Math.Max(48, logicalWidth - 54);
+
+        _minimizeRect = new Rectangle(minX - 6, y - 2, 32, 22);
+        _closeRect = new Rectangle(closeX - 6, y - 2, 32, 22);
+
+        using var minBrush = new SolidBrush(ReactiveColor(_dim, 0.10, 0));
+        using var closeBrush = new SolidBrush(ReactiveColor(_bad, 0.16, 800));
+
+        g.DrawString("▁", _font, minBrush, minX, y);
+        g.DrawString("×", _font, closeBrush, closeX, y);
     }
 
     private int DrawTransportButtons(Graphics g, int x, int y, int maxWidth)
@@ -817,6 +827,13 @@ public sealed class RelicCanvas : Control
         return true;
     }
 
+    private Point ToLogical(Point point)
+    {
+        return new Point(
+            (int)Math.Round(point.X / UiScale),
+            (int)Math.Round(point.Y / UiScale));
+    }
+
     private static Color Blend(Color a, Color b, double t)
     {
         t = Math.Clamp(t, 0.0, 1.0);
@@ -833,7 +850,7 @@ public sealed class RelicCanvas : Control
 
     private static string NormalizeText(string value)
     {
-        return string.Join(' ', value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)).Trim();
+        return string.Join(' ', value.Split([' ', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries)).Trim();
     }
 
     private static string FormatTime(double seconds)
