@@ -5,8 +5,8 @@ namespace MediaRelic.Ui;
 
 public sealed class MainForm : Form
 {
-    private const int PreviewWidth = 96;
-    private const int PreviewHeight = 36;
+    private const int PreviewWidth = 256;
+    private const int PreviewHeight = 256;
     private const double MinimumPlaylistDurationSeconds = 15.0;
 
     private static readonly string[] MediaExtensions =
@@ -47,8 +47,8 @@ public sealed class MainForm : Form
     public MainForm()
     {
         Text = "MEDIA RELIC v0.1";
-        Width = 980;
-        Height = 620;
+        Width = 1280;
+        Height = 980;
         MinimumSize = new Size(720, 460);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.None;
@@ -278,7 +278,6 @@ public sealed class MainForm : Form
 
         await LoadFolderAsync(dialog.SelectedPath);
     }
-
 
     private async Task ApplyCoverDialogAsync()
     {
