@@ -26,6 +26,10 @@ public sealed class RelicCanvas : Control
     private readonly Color _hot = Color.FromArgb(245, 202, 112);
     private readonly Color _cold = Color.FromArgb(116, 224, 220);
     private readonly Color _bad = Color.FromArgb(225, 105, 126);
+    private readonly Color _playPink = Color.FromArgb(255, 142, 184);
+    private readonly Color _playRose = Color.FromArgb(255, 92, 142);
+    private readonly Color _playPale = Color.FromArgb(255, 188, 207);
+    private readonly Color _playDark = Color.FromArgb(120, 45, 72);
 
     private Rectangle _minimizeRect;
     private Rectangle _closeRect;
@@ -92,24 +96,29 @@ public sealed class RelicCanvas : Control
         var charH = 18;
         var widthChars = Math.Max(64, (logicalWidth - 28) / charW);
         var y = 10;
+        var play = IsPlayingSignal();
 
-        DrawLine(g, 12, y, TopBorder(widthChars), _cold, reactive: true); y += charH;
+        DrawLine(g, 12, y, TopBorder(widthChars), play ? _playRose : _cold, reactive: true); y += charH;
 
-        var title = "MEDIA RELIC v0.1 by Alex Merqury  |  Delirium Interactive";
-        DrawLine(g, 12, y, BodyLine(widthChars, title), _hot, reactive: true); y += charH;
+        var title = play
+            ? "MEDIA RELIC v0.1  |  PLAY SIGNAL // CYBER ROSE OUTPUT"
+            : "MEDIA RELIC v0.1 by Alex Merqury  |  Delirium Interactive";
+
+        DrawLine(g, 12, y, BodyLine(widthChars, title), play ? _playPale : _hot, reactive: true); y += charH;
         DrawWindowGlyphs(g, y - charH);
 
-        DrawLine(g, 12, y, MidBorder(widthChars), _dim, reactive: true); y += charH;
+        DrawLine(g, 12, y, MidBorder(widthChars), play ? _playDark : _dim, reactive: true); y += charH;
 
-        DrawLine(g, 12, y, BodyLine(widthChars, "◈ " + State.DisplayName + "   " + State.PlaylistLabel), _text); y += charH;
-        DrawLine(g, 12, y, BodyLine(widthChars, BuildTransportLine(widthChars - 4)), _text); y += charH;
-        DrawLine(g, 12, y, BodyLine(widthChars, BuildProgress(widthChars - 4)), _cold, reactive: true); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, "◈ " + State.DisplayName + "   " + State.PlaylistLabel), play ? _playPale : _text); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, BuildTransportLine(widthChars - 4)), play ? _playPink : _text, reactive: play); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, BuildPlaySignalLine(widthChars - 4)), play ? _playRose : _dim, reactive: play); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, BuildProgress(widthChars - 4)), play ? _playPink : _cold, reactive: true); y += charH;
 
         var flags = $"SPD {State.Speed:0.00}x   VOL {State.Volume:0}%   LOOP {(State.IsLooping ? "∞" : "·")}   TOP {(State.IsTopMost ? "ON" : "·")}   FX {(State.IsReverbEnabled ? "✦" : "·")}   MODE {State.Mode}   EVENT {State.VisualEvent}";
-        DrawLine(g, 12, y, BodyLine(widthChars, flags), _text); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, flags), play ? _playPale : _text); y += charH;
 
-        DrawLine(g, 12, y, BodyLine(widthChars, "O FILE  P FOLDER  C COVER  SPACE PLAY  A/D SEEK  WHEEL VOL  CTRL+WHEEL SCALE  F11 MAX  T TOP"), _dim, reactive: true); y += charH;
-        DrawLine(g, 12, y, MidBorder(widthChars), _dim, reactive: true); y += charH;
+        DrawLine(g, 12, y, BodyLine(widthChars, "O FILE  P FOLDER  C COVER  SPACE PLAY  ←/→ SEEK  ↑/↓ VOL  A/D SEEK  WHEEL VOL  CTRL+WHEEL SCALE"), _dim, reactive: true); y += charH;
+        DrawLine(g, 12, y, MidBorder(widthChars), play ? _playDark : _dim, reactive: true); y += charH;
 
         var previewX = 22;
         var previewY = y + 2;
@@ -119,12 +128,12 @@ public sealed class RelicCanvas : Control
 
         y += State.Preview.Height * PreviewCellH + charH;
 
-        DrawLine(g, 12, y, MidBorder(widthChars), _dim, reactive: true); y += charH;
+        DrawLine(g, 12, y, MidBorder(widthChars), play ? _playDark : _dim, reactive: true); y += charH;
 
-        var statusColor = State.Status.StartsWith("ERR", StringComparison.OrdinalIgnoreCase) ? _bad : _hot;
+        var statusColor = State.Status.StartsWith("ERR", StringComparison.OrdinalIgnoreCase) ? _bad : play ? _playPale : _hot;
         DrawLine(g, 12, y, BodyLine(widthChars, State.Status), statusColor, reactive: true); y += charH;
 
-        DrawLine(g, 12, y, BottomBorder(widthChars), _cold, reactive: true);
+        DrawLine(g, 12, y, BottomBorder(widthChars), play ? _playRose : _cold, reactive: true);
     }
 
     private void DrawWindowGlyphs(Graphics g, int y)
@@ -176,17 +185,19 @@ public sealed class RelicCanvas : Control
 
     private void DrawHudFrame(Graphics g, int x, int y, int width, int height)
     {
+        var play = IsPlayingSignal();
         var activity = (float)Math.Max(EventIntensity(), ModeIntensity());
-        var frame = ReactiveColor(_cold, 0.28f * activity, 100);
-        var weak = Blend(_dim, frame, 0.45f);
+        var baseColor = play ? _playPink : _cold;
+        var frame = ReactiveColor(baseColor, play ? 0.32f : 0.28f * activity, 100);
+        var weak = Blend(play ? _playDark : _dim, frame, play ? 0.62f : 0.45f);
 
         using var framePen = new Pen(frame, 1);
         using var weakPen = new Pen(weak, 1);
-        using var hotPen = new Pen(ReactiveColor(_hot, 0.22f * activity, 300), 1);
+        using var hotPen = new Pen(ReactiveColor(play ? _playPale : _hot, play ? 0.28f : 0.22f * activity, 300), 1);
 
         g.DrawRectangle(weakPen, x - 8, y - 8, width + 16, height + 16);
 
-        var corner = 26;
+        var corner = play ? 34 : 26;
         g.DrawLine(framePen, x - 14, y - 14, x - 14 + corner, y - 14);
         g.DrawLine(framePen, x - 14, y - 14, x - 14, y - 14 + corner);
         g.DrawLine(framePen, x + width + 14, y - 14, x + width + 14 - corner, y - 14);
@@ -202,6 +213,11 @@ public sealed class RelicCanvas : Control
             g.DrawLine(hotPen, x - 4, y + sweep, x + width + 4, y + sweep);
             g.DrawLine(weakPen, x + sweep % Math.Max(1, width), y - 4, x + sweep % Math.Max(1, width), y + height + 4);
         }
+        else if (play)
+        {
+            var sweep = (int)((Environment.TickCount64 / 18) % Math.Max(1, height));
+            g.DrawLine(hotPen, x - 4, y + sweep, x + width + 4, y + sweep);
+        }
         else if (activity > 0.02f)
         {
             var sweep = (int)((1.0 - EventIntensity()) * Math.Max(1, height));
@@ -215,10 +231,11 @@ public sealed class RelicCanvas : Control
         var nodeX = x + 18;
         var labelX = x + 38;
         var lineX = x + 22;
+        var play = IsPlayingSignal();
 
         using var dimPen = new Pen(_dim, 1);
-        using var coldPen = new Pen(ReactiveColor(_cold, 0.16f, 200), 1);
-        using var hotPen = new Pen(ReactiveColor(_hot, 0.22f, 500), 1);
+        using var coldPen = new Pen(ReactiveColor(play ? _playPink : _cold, 0.16f, 200), 1);
+        using var hotPen = new Pen(ReactiveColor(play ? _playPale : _hot, 0.22f, 500), 1);
         using var badPen = new Pen(ReactiveColor(_bad, 0.22f, 700), 1);
 
         g.DrawLine(dimPen, lineX, y + 8, lineX, y + height - 8);
@@ -227,7 +244,7 @@ public sealed class RelicCanvas : Control
         {
             (Name: "SRC", Active: State.MediaPath is not null, Value: Truncate(State.DisplayName, 20)),
             (Name: "DEC", Active: State.Duration > 0.01, Value: FormatTime(State.Duration)),
-            (Name: "PLAY", Active: State.Mode == RelicMode.Playing, Value: State.IsPaused ? "PAUSED" : "ACTIVE"),
+            (Name: "PLAY", Active: State.Mode == RelicMode.Playing && !State.IsPaused, Value: State.IsPaused ? "PAUSED" : "ACTIVE"),
             (Name: "FX", Active: State.IsReverbEnabled || Math.Abs(State.Speed - 1.0) > 0.01, Value: $"{State.Speed:0.00}x {(State.IsReverbEnabled ? "REV" : "DRY")}"),
             (Name: "CUT", Active: State.SoundRanges.Count > 0 || State.Mode is RelicMode.ScanningSilence or RelicMode.Exporting, Value: State.SoundRanges.Count.ToString()),
             (Name: "OUT", Active: State.Mode != RelicMode.Empty && State.Mode != RelicMode.Error, Value: State.Mode.ToString().ToUpperInvariant())
@@ -237,11 +254,18 @@ public sealed class RelicCanvas : Control
         {
             var yy = y + 18 + i * 34;
             var node = nodes[i];
-            var activeColor = State.Mode == RelicMode.Error ? _bad : _cold;
-            var color = node.Active ? ReactiveColor(activeColor, 0.18f, i * 180) : _dim;
+            var activeColor = State.Mode == RelicMode.Error
+                ? _bad
+                : node.Name == "PLAY" && play
+                    ? _playPink
+                    : play && node.Active
+                        ? Blend(_cold, _playRose, 0.42f)
+                        : _cold;
+
+            var color = node.Active ? ReactiveColor(activeColor, node.Name == "PLAY" ? 0.34f : 0.18f, i * 180) : _dim;
 
             using var brush = new SolidBrush(color);
-            using var pen = new Pen(color, 1);
+            using var pen = new Pen(color, node.Name == "PLAY" && play ? 2 : 1);
 
             g.FillEllipse(brush, nodeX - 4, yy - 4, 8, 8);
             g.DrawLine(pen, lineX, yy, labelX - 5, yy);
@@ -249,11 +273,18 @@ public sealed class RelicCanvas : Control
             g.DrawString(node.Name + " :: " + node.Value, _font, brush, labelX + 3, yy - 10);
         }
 
+        if (play)
+        {
+            using var playBrush = new SolidBrush(ReactiveColor(_playPale, 0.28f, 990));
+            g.DrawString("▶ PLAY SIGNAL", _font, playBrush, x, y + height - 58);
+            g.DrawString("PALE RED / ROSE", _font, playBrush, x, y + height - 40);
+        }
+
         var eventPower = (float)EventIntensity();
         if (eventPower > 0.01f)
         {
             var yy = y + height - 26;
-            var eventColor = ReactiveColor(_hot, 0.35f * eventPower, 999);
+            var eventColor = ReactiveColor(play ? _playRose : _hot, 0.35f * eventPower, 999);
             using var eventBrush = new SolidBrush(eventColor);
             using var eventPen = new Pen(eventColor, 1);
 
@@ -303,6 +334,11 @@ public sealed class RelicCanvas : Control
             ClampByte(color.B * k));
     }
 
+    private bool IsPlayingSignal()
+    {
+        return State.Mode == RelicMode.Playing && !State.IsPaused;
+    }
+
     private double EventIntensity()
     {
         var elapsed = Math.Max(0, Environment.TickCount64 - State.VisualEventTick) / 1000.0;
@@ -311,6 +347,9 @@ public sealed class RelicCanvas : Control
 
     private double ModeIntensity()
     {
+        if (IsPlayingSignal())
+            return 0.58;
+
         return State.Mode switch
         {
             RelicMode.Loading => 0.85,
@@ -342,7 +381,7 @@ public sealed class RelicCanvas : Control
             return line;
 
         var chars = line.ToCharArray();
-        var pulseCount = State.Mode is RelicMode.Loading or RelicMode.ScanningSilence or RelicMode.Exporting ? 3 : 1;
+        var pulseCount = State.Mode is RelicMode.Loading or RelicMode.ScanningSilence or RelicMode.Exporting ? 3 : IsPlayingSignal() ? 2 : 1;
 
         for (var p = 0; p < pulseCount; p++)
         {
@@ -369,6 +408,14 @@ public sealed class RelicCanvas : Control
         return Fit(left, contentWidth);
     }
 
+    private string BuildPlaySignalLine(int contentWidth)
+    {
+        if (!IsPlayingSignal())
+            return Fit("PLAY SIGNAL: STANDBY", contentWidth);
+
+        return Fit("▶ PLAY BUTTON SIGNAL: ACTIVE  // PALE RED CYBER ROSE OUTPUT", contentWidth);
+    }
+
     private string BuildProgress(int width)
     {
         var barWidth = Math.Max(10, width - 18);
@@ -376,12 +423,12 @@ public sealed class RelicCanvas : Control
         t = Math.Clamp(t, 0.0, 1.0);
 
         var dot = (int)Math.Round(t * (barWidth - 1));
-        var chars = Enumerable.Repeat('─', barWidth).ToArray();
+        var chars = Enumerable.Repeat(IsPlayingSignal() ? '═' : '─', barWidth).ToArray();
 
         for (var i = 0; i < dot; i++)
-            chars[i] = '═';
+            chars[i] = '█';
 
-        chars[dot] = '●';
+        chars[dot] = IsPlayingSignal() ? '◆' : '●';
 
         return Fit("⟦" + new string(chars) + "⟧", width);
     }
