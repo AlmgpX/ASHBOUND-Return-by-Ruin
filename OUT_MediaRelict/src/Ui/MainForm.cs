@@ -19,7 +19,7 @@ public sealed class MainForm : Form
     private readonly RelicCanvas _canvas = new();
     private readonly System.Windows.Forms.Timer _uiTimer = new();
     private readonly System.Windows.Forms.Timer _previewTimer = new();
-    private bool _closeAfterKill;
+    private bool _closeAfterStop;
 
     public MainForm()
     {
@@ -164,6 +164,11 @@ public sealed class MainForm : Form
                 MarkUiEvent("SCALE RESET");
                 return true;
 
+            case Keys.Home:
+            case Keys.Enter:
+                await RestartCurrentAsync();
+                return true;
+
             case Keys.O:
             case Keys.F:
                 await OpenDialogAsync();
@@ -268,6 +273,15 @@ public sealed class MainForm : Form
             or Keys.D
             or Keys.M
             or Keys.F11
+            or Keys.Home
+            or Keys.Enter
+            or Keys.L
+            or Keys.N
+            or Keys.B
+            or Keys.R
+            or Keys.S
+            or Keys.X
+            or Keys.T
             or Keys.Oemplus
             or Keys.Add
             or Keys.OemMinus
@@ -304,30 +318,98 @@ public sealed class MainForm : Form
         _canvas.Invalidate();
     }
 
-    private void OnCanvasMouseDown(object? sender, MouseEventArgs e)
+    private async void OnCanvasMouseDown(object? sender, MouseEventArgs e)
     {
         _canvas.Focus();
 
         if (e.Button != MouseButtons.Left)
             return;
 
-        var command = _canvas.HitTestWindowCommand(e.Location);
+        var windowCommand = _canvas.HitTestWindowCommand(e.Location);
 
-        if (command == RelicWindowCommand.Minimize)
+        if (windowCommand == RelicWindowCommand.Minimize)
         {
             MarkUiEvent("MINIMIZE");
             WindowState = FormWindowState.Minimized;
             return;
         }
 
-        if (command == RelicWindowCommand.CloseKeepPlaying)
+        if (windowCommand == RelicWindowCommand.CloseKeepPlaying)
         {
             Close();
             return;
         }
 
+        var hudCommand = _canvas.HitTestHudCommand(e.Location);
+        if (hudCommand != RelicHudCommand.None)
+        {
+            await ExecuteHudCommandAsync(hudCommand);
+            _canvas.Invalidate();
+            return;
+        }
+
         if (_canvas.IsDragZone(e.Location))
             NativeDrag.MoveWindow(Handle);
+    }
+
+    private async Task ExecuteHudCommandAsync(RelicHudCommand command)
+    {
+        switch (command)
+        {
+            case RelicHudCommand.PlayPause:
+                await _app.TogglePauseAsync();
+                break;
+
+            case RelicHudCommand.Restart:
+                await RestartCurrentAsync();
+                break;
+
+            case RelicHudCommand.Loop:
+                await _app.ToggleLoopAsync();
+                break;
+
+            case RelicHudCommand.Previous:
+                await _app.PlayRelativeAsync(-1);
+                break;
+
+            case RelicHudCommand.Next:
+                await _app.PlayRelativeAsync(+1);
+                break;
+
+            case RelicHudCommand.SeekBack:
+                await _app.SeekAsync(-5.0);
+                break;
+
+            case RelicHudCommand.SeekForward:
+                await _app.SeekAsync(5.0);
+                break;
+
+            case RelicHudCommand.VolumeDown:
+                await _app.SetVolumeAsync(_app.State.Volume - 5.0);
+                break;
+
+            case RelicHudCommand.VolumeUp:
+                await _app.SetVolumeAsync(_app.State.Volume + 5.0);
+                break;
+        }
+    }
+
+    private async Task RestartCurrentAsync()
+    {
+        if (_app.State.MediaPath is null)
+        {
+            _app.State.Status = "NO TRACK TO RESTART";
+            MarkUiEvent("NO TRACK");
+            return;
+        }
+
+        await _app.SeekAsync(-Math.Max(0.0, _app.State.Position));
+
+        if (_app.State.IsPaused)
+            await _app.TogglePauseAsync();
+
+        _app.State.Status = "RESTART TRACK";
+        MarkUiEvent("RESTART");
     }
 
     private async Task OpenDialogAsync()
@@ -439,19 +521,19 @@ public sealed class MainForm : Form
 
     protected override async void OnFormClosing(FormClosingEventArgs e)
     {
-        if (!_closeAfterKill)
+        if (!_closeAfterStop)
         {
             e.Cancel = true;
-            _closeAfterKill = true;
+            _closeAfterStop = true;
             Enabled = false;
 
             _uiTimer.Stop();
             _previewTimer.Stop();
-            MarkUiEvent("MPV KILL");
+            MarkUiEvent("MPV STOP");
 
             try
             {
-                await _app.KillPlaybackAsync();
+                await _app.DisposeAsync();
             }
             finally
             {
@@ -461,7 +543,6 @@ public sealed class MainForm : Form
             return;
         }
 
-        await _app.DisposeAsync();
         base.OnFormClosing(e);
     }
 }
