@@ -103,6 +103,13 @@ public sealed class ArcadeRelicCanvas : Control
         return logical.Y >= 10 && logical.Y <= 62 && !_minimizeRect.Contains(logical) && !_closeRect.Contains(logical);
     }
 
+    private Point ToLogical(Point point)
+    {
+        return new Point(
+            (int)Math.Round(point.X / UiScale),
+            (int)Math.Round(point.Y / UiScale));
+    }
+
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
