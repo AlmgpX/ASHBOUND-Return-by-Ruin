@@ -17,7 +17,8 @@ public sealed class MainForm : Form
 
     private readonly RelicApp _app = new();
     private readonly RelicCanvas _canvas = new();
-    private readonly System.Windows.Forms.Timer _uiTimer = new();
+    private readonly System.Windows.Forms.Timer _renderTimer = new();
+    private readonly System.Windows.Forms.Timer _pollTimer = new();
     private readonly System.Windows.Forms.Timer _previewTimer = new();
     private bool _closeAfterStop;
 
@@ -42,9 +43,13 @@ public sealed class MainForm : Form
         _canvas.TabStop = true;
         Controls.Add(_canvas);
 
-        _uiTimer.Interval = 250;
-        _uiTimer.Tick += async (_, _) => await PollAsync();
-        _uiTimer.Start();
+        _renderTimer.Interval = 33;
+        _renderTimer.Tick += (_, _) => _canvas.Invalidate();
+        _renderTimer.Start();
+
+        _pollTimer.Interval = 250;
+        _pollTimer.Tick += async (_, _) => await PollAsync();
+        _pollTimer.Start();
 
         _previewTimer.Interval = 850;
         _previewTimer.Tick += async (_, _) => await UpdatePreviewAsync();
@@ -456,7 +461,6 @@ public sealed class MainForm : Form
     private async Task PollAsync()
     {
         await _app.PollAsync();
-        _canvas.Invalidate();
     }
 
     private async Task UpdatePreviewAsync()
@@ -527,7 +531,8 @@ public sealed class MainForm : Form
             _closeAfterStop = true;
             Enabled = false;
 
-            _uiTimer.Stop();
+            _renderTimer.Stop();
+            _pollTimer.Stop();
             _previewTimer.Stop();
             MarkUiEvent("MPV STOP");
 
