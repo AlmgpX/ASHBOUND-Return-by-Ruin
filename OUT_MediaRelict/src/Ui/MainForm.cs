@@ -16,11 +16,16 @@ public sealed class MainForm : Form
     private const int HtBottomRight = 17;
 
     private readonly RelicApp _app = new();
-    private readonly RelicCanvas _canvas = new();
+    private readonly ArcadeRelicCanvas _canvas = new();
     private readonly System.Windows.Forms.Timer _renderTimer = new();
     private readonly System.Windows.Forms.Timer _pollTimer = new();
     private readonly System.Windows.Forms.Timer _previewTimer = new();
+
     private bool _closeAfterStop;
+    private int _arcadeDx;
+    private int _arcadeDy;
+    private bool _arcadeAction;
+    private bool _arcadeBoost;
 
     public MainForm()
     {
@@ -58,6 +63,7 @@ public sealed class MainForm : Form
         DragEnter += OnDragEnter;
         DragDrop += async (_, e) => await OnDragDropAsync(e);
         KeyDown += async (_, e) => await OnKeyDownAsync(e);
+        KeyUp += OnKeyUp;
         PreviewKeyDown += OnPreviewKeyDown;
         MouseWheel += (_, e) => _ = OnMouseWheelAsync(e);
 
@@ -66,16 +72,13 @@ public sealed class MainForm : Form
         _canvas.MouseEnter += (_, _) => _canvas.Focus();
         _canvas.MouseWheel += (_, e) => _ = OnMouseWheelAsync(e);
         _canvas.PreviewKeyDown += OnPreviewKeyDown;
+        _canvas.KeyUp += OnKeyUp;
     }
 
     protected override bool IsInputKey(Keys keyData)
     {
         var keyCode = keyData & Keys.KeyCode;
-
-        if (IsPlaybackCommandKey(keyCode))
-            return true;
-
-        return base.IsInputKey(keyData);
+        return IsPlaybackCommandKey(keyCode) || base.IsInputKey(keyData);
     }
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -98,12 +101,8 @@ public sealed class MainForm : Form
         if (m.Msg != WmNcHitTest || (int)m.Result != HtClient)
             return;
 
-        var point = PointToClient(new Point(
-            unchecked((short)(long)m.LParam),
-            unchecked((short)((long)m.LParam >> 16))));
-
+        var point = PointToClient(new Point(unchecked((short)(long)m.LParam), unchecked((short)((long)m.LParam >> 16))));
         var grip = Math.Max(8, (int)Math.Round(8 * DeviceDpi / 96.0));
-
         var left = point.X <= grip;
         var right = point.X >= ClientSize.Width - grip;
         var top = point.Y <= grip;
@@ -134,129 +133,112 @@ public sealed class MainForm : Form
         }
     }
 
+    private void OnKeyUp(object? sender, KeyEventArgs e)
+    {
+        if (HandleArcadeKeyUp(e.KeyCode))
+        {
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+        }
+    }
+
     private async Task<bool> HandleKeyCodeAsync(Keys keyCode)
     {
+        if (HandleArcadeKeyDown(keyCode))
+            return true;
+
         switch (keyCode)
         {
             case Keys.Escape:
             case Keys.Q:
                 Close();
                 return true;
-
             case Keys.M:
                 MarkUiEvent("MINIMIZE");
                 WindowState = FormWindowState.Minimized;
                 return true;
-
             case Keys.F11:
                 ToggleMaximized();
                 return true;
-
             case Keys.Oemplus:
-            case Keys.Add:
                 ScaleUi(+0.10f);
                 return true;
-
             case Keys.OemMinus:
             case Keys.Subtract:
                 ScaleUi(-0.10f);
                 return true;
-
             case Keys.D0:
-            case Keys.NumPad0:
                 _canvas.SetUiScale(1.0f);
                 _app.State.Status = "UI SCALE 1.00";
                 MarkUiEvent("SCALE RESET");
                 return true;
-
             case Keys.Home:
             case Keys.Enter:
                 await RestartCurrentAsync();
                 return true;
-
             case Keys.O:
             case Keys.F:
                 await OpenDialogAsync();
                 break;
-
             case Keys.P:
                 await OpenFolderDialogAsync();
                 break;
-
             case Keys.C:
                 await ApplyCoverDialogAsync();
                 break;
-
             case Keys.N:
                 await _app.PlayRelativeAsync(+1);
                 break;
-
             case Keys.B:
                 await _app.PlayRelativeAsync(-1);
                 break;
-
             case Keys.Space:
                 await _app.TogglePauseAsync();
                 break;
-
             case Keys.Left:
             case Keys.A:
                 await _app.SeekAsync(-5.0);
                 break;
-
             case Keys.Right:
             case Keys.D:
                 await _app.SeekAsync(5.0);
                 break;
-
             case Keys.PageDown:
                 await _app.SeekAsync(-30.0);
                 break;
-
             case Keys.PageUp:
                 await _app.SeekAsync(30.0);
                 break;
-
             case Keys.Up:
                 await _app.SetVolumeAsync(_app.State.Volume + 5.0);
                 break;
-
             case Keys.Down:
                 await _app.SetVolumeAsync(_app.State.Volume - 5.0);
                 break;
-
             case Keys.OemOpenBrackets:
                 await _app.SetSpeedAsync(_app.State.Speed - 0.1);
                 break;
-
             case Keys.OemCloseBrackets:
                 await _app.SetSpeedAsync(_app.State.Speed + 0.1);
                 break;
-
             case Keys.Back:
                 await _app.SetSpeedAsync(1.0);
                 break;
-
             case Keys.L:
                 await _app.ToggleLoopAsync();
                 break;
-
             case Keys.R:
                 await _app.ToggleReverbAsync();
                 break;
-
             case Keys.S:
                 await _app.ScanSilenceAsync();
                 break;
-
             case Keys.X:
                 await _app.ExportCutsAsync();
                 break;
-
             case Keys.T:
                 ToggleTopMost();
                 break;
-
             default:
                 return false;
         }
@@ -265,60 +247,104 @@ public sealed class MainForm : Form
         return true;
     }
 
+    private bool HandleArcadeKeyDown(Keys keyCode)
+    {
+        switch (keyCode)
+        {
+            case Keys.G:
+                _canvas.ToggleArcadeMode();
+                _app.State.Status = "ARCADE MODE TOGGLED";
+                MarkUiEvent("GAME MODE");
+                return true;
+            case Keys.NumPad8:
+                SetArcadeMove(0, -1); return true;
+            case Keys.NumPad2:
+                SetArcadeMove(0, 1); return true;
+            case Keys.NumPad4:
+                SetArcadeMove(-1, 0); return true;
+            case Keys.NumPad6:
+                SetArcadeMove(1, 0); return true;
+            case Keys.NumPad7:
+                SetArcadeMove(-1, -1); return true;
+            case Keys.NumPad9:
+                SetArcadeMove(1, -1); return true;
+            case Keys.NumPad1:
+                SetArcadeMove(-1, 1); return true;
+            case Keys.NumPad3:
+                SetArcadeMove(1, 1); return true;
+            case Keys.NumPad5:
+            case Keys.NumPad0:
+                _arcadeAction = true;
+                ApplyArcadeInput();
+                return true;
+            case Keys.Add:
+                _arcadeBoost = true;
+                ApplyArcadeInput();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private bool HandleArcadeKeyUp(Keys keyCode)
+    {
+        switch (keyCode)
+        {
+            case Keys.NumPad1:
+            case Keys.NumPad2:
+            case Keys.NumPad3:
+            case Keys.NumPad4:
+            case Keys.NumPad6:
+            case Keys.NumPad7:
+            case Keys.NumPad8:
+            case Keys.NumPad9:
+                _arcadeDx = 0;
+                _arcadeDy = 0;
+                ApplyArcadeInput();
+                return true;
+            case Keys.NumPad5:
+            case Keys.NumPad0:
+                _arcadeAction = false;
+                ApplyArcadeInput();
+                return true;
+            case Keys.Add:
+                _arcadeBoost = false;
+                ApplyArcadeInput();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void SetArcadeMove(int dx, int dy)
+    {
+        _arcadeDx = dx;
+        _arcadeDy = dy;
+        ApplyArcadeInput();
+    }
+
+    private void ApplyArcadeInput()
+    {
+        _canvas.SetArcadeInput(_arcadeDx, _arcadeDy, _arcadeAction, _arcadeBoost);
+        _canvas.Invalidate();
+    }
+
     private static bool IsPlaybackCommandKey(Keys keyCode)
     {
-        return keyCode is Keys.Left
-            or Keys.Right
-            or Keys.Up
-            or Keys.Down
-            or Keys.PageDown
-            or Keys.PageUp
-            or Keys.Space
-            or Keys.A
-            or Keys.D
-            or Keys.M
-            or Keys.F11
-            or Keys.Home
-            or Keys.Enter
-            or Keys.L
-            or Keys.N
-            or Keys.B
-            or Keys.R
-            or Keys.S
-            or Keys.X
-            or Keys.T
-            or Keys.Oemplus
-            or Keys.Add
-            or Keys.OemMinus
-            or Keys.Subtract
-            or Keys.D0
-            or Keys.NumPad0;
+        return keyCode is Keys.Left or Keys.Right or Keys.Up or Keys.Down or Keys.PageDown or Keys.PageUp
+            or Keys.Space or Keys.A or Keys.D or Keys.M or Keys.F11 or Keys.Home or Keys.Enter
+            or Keys.L or Keys.N or Keys.B or Keys.R or Keys.S or Keys.X or Keys.T
+            or Keys.Oemplus or Keys.OemMinus or Keys.Subtract or Keys.D0 or Keys.G
+            or Keys.NumPad0 or Keys.NumPad1 or Keys.NumPad2 or Keys.NumPad3 or Keys.NumPad4
+            or Keys.NumPad5 or Keys.NumPad6 or Keys.NumPad7 or Keys.NumPad8 or Keys.NumPad9 or Keys.Add;
     }
 
     private async Task OnMouseWheelAsync(MouseEventArgs e)
     {
         var direction = e.Delta >= 0 ? 1 : -1;
-
-        if ((ModifierKeys & Keys.Control) == Keys.Control)
-        {
-            ScaleUi(direction * 0.10f);
-            return;
-        }
-
-        if ((ModifierKeys & Keys.Shift) == Keys.Shift)
-        {
-            await _app.SeekAsync(direction * 5.0);
-            _canvas.Invalidate();
-            return;
-        }
-
-        if ((ModifierKeys & Keys.Alt) == Keys.Alt)
-        {
-            await _app.SeekAsync(direction * 30.0);
-            _canvas.Invalidate();
-            return;
-        }
-
+        if ((ModifierKeys & Keys.Control) == Keys.Control) { ScaleUi(direction * 0.10f); return; }
+        if ((ModifierKeys & Keys.Shift) == Keys.Shift) { await _app.SeekAsync(direction * 5.0); _canvas.Invalidate(); return; }
+        if ((ModifierKeys & Keys.Alt) == Keys.Alt) { await _app.SeekAsync(direction * 30.0); _canvas.Invalidate(); return; }
         await _app.SetVolumeAsync(_app.State.Volume + direction * 5.0);
         _canvas.Invalidate();
     }
@@ -326,142 +352,59 @@ public sealed class MainForm : Form
     private async void OnCanvasMouseDown(object? sender, MouseEventArgs e)
     {
         _canvas.Focus();
-
-        if (e.Button != MouseButtons.Left)
-            return;
-
+        if (e.Button != MouseButtons.Left) return;
         var windowCommand = _canvas.HitTestWindowCommand(e.Location);
-
-        if (windowCommand == RelicWindowCommand.Minimize)
-        {
-            MarkUiEvent("MINIMIZE");
-            WindowState = FormWindowState.Minimized;
-            return;
-        }
-
-        if (windowCommand == RelicWindowCommand.CloseKeepPlaying)
-        {
-            Close();
-            return;
-        }
-
+        if (windowCommand == RelicWindowCommand.Minimize) { MarkUiEvent("MINIMIZE"); WindowState = FormWindowState.Minimized; return; }
+        if (windowCommand == RelicWindowCommand.CloseKeepPlaying) { Close(); return; }
         var hudCommand = _canvas.HitTestHudCommand(e.Location);
-        if (hudCommand != RelicHudCommand.None)
-        {
-            await ExecuteHudCommandAsync(hudCommand);
-            _canvas.Invalidate();
-            return;
-        }
-
-        if (_canvas.IsDragZone(e.Location))
-            NativeDrag.MoveWindow(Handle);
+        if (hudCommand != RelicHudCommand.None) { await ExecuteHudCommandAsync(hudCommand); _canvas.Invalidate(); return; }
+        if (_canvas.IsDragZone(e.Location)) NativeDrag.MoveWindow(Handle);
     }
 
     private async Task ExecuteHudCommandAsync(RelicHudCommand command)
     {
         switch (command)
         {
-            case RelicHudCommand.PlayPause:
-                await _app.TogglePauseAsync();
-                break;
-
-            case RelicHudCommand.Restart:
-                await RestartCurrentAsync();
-                break;
-
-            case RelicHudCommand.Loop:
-                await _app.ToggleLoopAsync();
-                break;
-
-            case RelicHudCommand.Previous:
-                await _app.PlayRelativeAsync(-1);
-                break;
-
-            case RelicHudCommand.Next:
-                await _app.PlayRelativeAsync(+1);
-                break;
-
-            case RelicHudCommand.SeekBack:
-                await _app.SeekAsync(-5.0);
-                break;
-
-            case RelicHudCommand.SeekForward:
-                await _app.SeekAsync(5.0);
-                break;
-
-            case RelicHudCommand.VolumeDown:
-                await _app.SetVolumeAsync(_app.State.Volume - 5.0);
-                break;
-
-            case RelicHudCommand.VolumeUp:
-                await _app.SetVolumeAsync(_app.State.Volume + 5.0);
-                break;
+            case RelicHudCommand.PlayPause: await _app.TogglePauseAsync(); break;
+            case RelicHudCommand.Restart: await RestartCurrentAsync(); break;
+            case RelicHudCommand.Loop: await _app.ToggleLoopAsync(); break;
+            case RelicHudCommand.Previous: await _app.PlayRelativeAsync(-1); break;
+            case RelicHudCommand.Next: await _app.PlayRelativeAsync(+1); break;
+            case RelicHudCommand.SeekBack: await _app.SeekAsync(-5.0); break;
+            case RelicHudCommand.SeekForward: await _app.SeekAsync(5.0); break;
+            case RelicHudCommand.VolumeDown: await _app.SetVolumeAsync(_app.State.Volume - 5.0); break;
+            case RelicHudCommand.VolumeUp: await _app.SetVolumeAsync(_app.State.Volume + 5.0); break;
         }
     }
 
     private async Task RestartCurrentAsync()
     {
-        if (_app.State.MediaPath is null)
-        {
-            _app.State.Status = "NO TRACK TO RESTART";
-            MarkUiEvent("NO TRACK");
-            return;
-        }
-
+        if (_app.State.MediaPath is null) { _app.State.Status = "NO TRACK TO RESTART"; MarkUiEvent("NO TRACK"); return; }
         await _app.SeekAsync(-Math.Max(0.0, _app.State.Position));
-
-        if (_app.State.IsPaused)
-            await _app.TogglePauseAsync();
-
+        if (_app.State.IsPaused) await _app.TogglePauseAsync();
         _app.State.Status = "RESTART TRACK";
         MarkUiEvent("RESTART");
     }
 
     private async Task OpenDialogAsync()
     {
-        using var dialog = new OpenFileDialog
-        {
-            Title = "Open media",
-            Filter = "Media|*.wav;*.mp3;*.ogg;*.flac;*.m4a;*.aac;*.mp4;*.mkv;*.webm;*.avi;*.mov;*.wmv|All files|*.*"
-        };
-
-        if (dialog.ShowDialog(this) != DialogResult.OK)
-            return;
-
-        await _app.OpenFileAsync(dialog.FileName);
+        using var dialog = new OpenFileDialog { Title = "Open media", Filter = "Media|*.wav;*.mp3;*.ogg;*.flac;*.m4a;*.aac;*.mp4;*.mkv;*.webm;*.avi;*.mov;*.wmv|All files|*.*" };
+        if (dialog.ShowDialog(this) == DialogResult.OK) await _app.OpenFileAsync(dialog.FileName);
     }
 
     private async Task OpenFolderDialogAsync()
     {
-        using var dialog = new FolderBrowserDialog
-        {
-            Description = "Open folder as MEDIA RELIC playlist"
-        };
-
-        if (dialog.ShowDialog(this) != DialogResult.OK)
-            return;
-
-        await _app.OpenFolderAsync(dialog.SelectedPath);
+        using var dialog = new FolderBrowserDialog { Description = "Open folder as MEDIA RELIC playlist" };
+        if (dialog.ShowDialog(this) == DialogResult.OK) await _app.OpenFolderAsync(dialog.SelectedPath);
     }
 
     private async Task ApplyCoverDialogAsync()
     {
-        using var dialog = new OpenFileDialog
-        {
-            Title = "Apply cover image to current track",
-            Filter = "Images|*.jpg;*.jpeg;*.png;*.webp;*.bmp|All files|*.*"
-        };
-
-        if (dialog.ShowDialog(this) != DialogResult.OK)
-            return;
-
-        await _app.ApplyCoverAsync(dialog.FileName);
+        using var dialog = new OpenFileDialog { Title = "Apply cover image to current track", Filter = "Images|*.jpg;*.jpeg;*.png;*.webp;*.bmp|All files|*.*" };
+        if (dialog.ShowDialog(this) == DialogResult.OK) await _app.ApplyCoverAsync(dialog.FileName);
     }
 
-    private async Task PollAsync()
-    {
-        await _app.PollAsync();
-    }
+    private async Task PollAsync() => await _app.PollAsync();
 
     private async Task UpdatePreviewAsync()
     {
@@ -479,10 +422,7 @@ public sealed class MainForm : Form
 
     private void ToggleMaximized()
     {
-        WindowState = WindowState == FormWindowState.Maximized
-            ? FormWindowState.Normal
-            : FormWindowState.Maximized;
-
+        WindowState = WindowState == FormWindowState.Maximized ? FormWindowState.Normal : FormWindowState.Maximized;
         _app.State.Status = WindowState == FormWindowState.Maximized ? "WINDOW: MAXIMIZED" : "WINDOW: NORMAL";
         MarkUiEvent(WindowState == FormWindowState.Maximized ? "MAXIMIZE" : "RESTORE");
     }
@@ -504,22 +444,14 @@ public sealed class MainForm : Form
 
     private void OnDragEnter(object? sender, DragEventArgs e)
     {
-        if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
-            e.Effect = DragDropEffects.Copy;
+        if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true) e.Effect = DragDropEffects.Copy;
     }
 
     private async Task OnDragDropAsync(DragEventArgs e)
     {
-        if (e.Data?.GetData(DataFormats.FileDrop) is not string[] files || files.Length == 0)
-            return;
-
+        if (e.Data?.GetData(DataFormats.FileDrop) is not string[] files || files.Length == 0) return;
         var first = files[0];
-
-        if (Directory.Exists(first))
-            await _app.OpenFolderAsync(first);
-        else
-            await _app.OpenFileAsync(first);
-
+        if (Directory.Exists(first)) await _app.OpenFolderAsync(first); else await _app.OpenFileAsync(first);
         _canvas.Invalidate();
     }
 
@@ -530,24 +462,14 @@ public sealed class MainForm : Form
             e.Cancel = true;
             _closeAfterStop = true;
             Enabled = false;
-
             _renderTimer.Stop();
             _pollTimer.Stop();
             _previewTimer.Stop();
             MarkUiEvent("MPV STOP");
-
-            try
-            {
-                await _app.DisposeAsync();
-            }
-            finally
-            {
-                BeginInvoke(new Action(Close));
-            }
-
+            try { await _app.DisposeAsync(); }
+            finally { BeginInvoke(new Action(Close)); }
             return;
         }
-
         base.OnFormClosing(e);
     }
 }
