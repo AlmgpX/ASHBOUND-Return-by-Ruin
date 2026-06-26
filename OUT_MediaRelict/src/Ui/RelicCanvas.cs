@@ -11,6 +11,20 @@ public enum RelicWindowCommand
     CloseKeepPlaying
 }
 
+public enum RelicHudCommand
+{
+    None,
+    Previous,
+    SeekBack,
+    PlayPause,
+    Restart,
+    Loop,
+    SeekForward,
+    Next,
+    VolumeDown,
+    VolumeUp
+}
+
 public sealed class RelicCanvas : Control
 {
     private const int PreviewCellW = 4;
@@ -33,6 +47,7 @@ public sealed class RelicCanvas : Control
 
     private Rectangle _minimizeRect;
     private Rectangle _closeRect;
+    private readonly List<(RelicHudCommand Command, Rectangle Rect)> _hudButtons = new();
 
     public RelicState State { get; set; } = new();
     public float UiScale { get; private set; } = 1.0f;
@@ -67,6 +82,19 @@ public sealed class RelicCanvas : Control
             return RelicWindowCommand.CloseKeepPlaying;
 
         return RelicWindowCommand.None;
+    }
+
+    public RelicHudCommand HitTestHudCommand(Point point)
+    {
+        var logical = ToLogical(point);
+
+        foreach (var button in _hudButtons)
+        {
+            if (button.Rect.Contains(logical))
+                return button.Command;
+        }
+
+        return RelicHudCommand.None;
     }
 
     public bool IsDragZone(Point point)
@@ -114,10 +142,12 @@ public sealed class RelicCanvas : Control
         DrawLine(g, 12, y, BodyLine(widthChars, BuildPlaySignalLine(widthChars - 4)), play ? _playRose : _dim, reactive: play); y += charH;
         DrawLine(g, 12, y, BodyLine(widthChars, BuildProgress(widthChars - 4)), play ? _playPink : _cold, reactive: true); y += charH;
 
-        var flags = $"SPD {State.Speed:0.00}x   VOL {State.Volume:0}%   LOOP {(State.IsLooping ? "∞" : "·")}   TOP {(State.IsTopMost ? "ON" : "·")}   FX {(State.IsReverbEnabled ? "✦" : "·")}   MODE {State.Mode}   EVENT {State.VisualEvent}";
+        var flags = $"SPD {State.Speed:0.00}x   VOL {State.Volume:0}%   LOOP {(State.IsLooping ? "∞ ON" : "· OFF")}   TOP {(State.IsTopMost ? "ON" : "·")}   FX {(State.IsReverbEnabled ? "✦" : "·")}   MODE {State.Mode}   EVENT {State.VisualEvent}";
         DrawLine(g, 12, y, BodyLine(widthChars, flags), play ? _playPale : _text); y += charH;
 
-        DrawLine(g, 12, y, BodyLine(widthChars, "O FILE  P FOLDER  C COVER  SPACE PLAY  ←/→ SEEK  ↑/↓ VOL  A/D SEEK  WHEEL VOL  CTRL+WHEEL SCALE"), _dim, reactive: true); y += charH;
+        y += DrawTransportButtons(g, 24, y + 2, logicalWidth - 48) + 8;
+
+        DrawLine(g, 12, y, BodyLine(widthChars, "CLICK BUTTONS  SPACE PLAY  L LOOP  HOME/ENTER RESTART  ←/→ SEEK  ↑/↓ VOL  CTRL+WHEEL SCALE"), _dim, reactive: true); y += charH;
         DrawLine(g, 12, y, MidBorder(widthChars), play ? _playDark : _dim, reactive: true); y += charH;
 
         var previewX = 22;
@@ -150,6 +180,113 @@ public sealed class RelicCanvas : Control
 
         g.DrawString("▁", _font, minBrush, minX, y);
         g.DrawString("×", _font, closeBrush, closeX, y);
+    }
+
+    private int DrawTransportButtons(Graphics g, int x, int y, int maxWidth)
+    {
+        _hudButtons.Clear();
+
+        var playLabel = State.IsPaused ? "▶ PLAY" : "Ⅱ PAUSE";
+        var loopLabel = State.IsLooping ? "LOOP ∞" : "LOOP ·";
+
+        var buttons = new[]
+        {
+            (Command: RelicHudCommand.Previous, Label: "⏮ PREV"),
+            (Command: RelicHudCommand.SeekBack, Label: "-5"),
+            (Command: RelicHudCommand.PlayPause, Label: playLabel),
+            (Command: RelicHudCommand.Restart, Label: "↺ RESTART"),
+            (Command: RelicHudCommand.Loop, Label: loopLabel),
+            (Command: RelicHudCommand.SeekForward, Label: "+5"),
+            (Command: RelicHudCommand.Next, Label: "NEXT ⏭"),
+            (Command: RelicHudCommand.VolumeDown, Label: "VOL -"),
+            (Command: RelicHudCommand.VolumeUp, Label: "VOL +")
+        };
+
+        var cursorX = x;
+        var cursorY = y;
+        var buttonH = 24;
+        var gap = 6;
+        var rows = 1;
+
+        foreach (var button in buttons)
+        {
+            var buttonW = Math.Clamp(button.Label.Length * 10 + 18, 44, 118);
+
+            if (cursorX + buttonW > x + maxWidth && cursorX > x)
+            {
+                cursorX = x;
+                cursorY += buttonH + gap;
+                rows++;
+            }
+
+            var rect = new Rectangle(cursorX, cursorY, buttonW, buttonH);
+            _hudButtons.Add((button.Command, rect));
+            DrawHudButton(g, rect, button.Command, button.Label);
+
+            cursorX += buttonW + gap;
+        }
+
+        return rows * buttonH + (rows - 1) * gap;
+    }
+
+    private void DrawHudButton(Graphics g, Rectangle rect, RelicHudCommand command, string label)
+    {
+        var active = IsHudCommandActive(command);
+        var recent = IsHudCommandRecent(command);
+        var play = IsPlayingSignal();
+        var baseColor = active || recent
+            ? command == RelicHudCommand.PlayPause || command == RelicHudCommand.Loop || play
+                ? _playPink
+                : _hot
+            : _dim;
+
+        var fillAlpha = active ? 74 : recent ? 92 : 24;
+        var border = active || recent ? ReactiveColor(baseColor, 0.28f, rect.X + rect.Y) : baseColor;
+        var text = active || recent ? (play ? _playPale : _hot) : _text;
+
+        using var fillBrush = new SolidBrush(Color.FromArgb(fillAlpha, baseColor));
+        using var borderPen = new Pen(border, active || recent ? 2 : 1);
+        using var textBrush = new SolidBrush(text);
+
+        g.FillRectangle(fillBrush, rect);
+        g.DrawRectangle(borderPen, rect);
+
+        if (recent)
+        {
+            using var recentPen = new Pen(ReactiveColor(_playPale, 0.30f, rect.X), 1);
+            g.DrawLine(recentPen, rect.Left + 3, rect.Bottom - 3, rect.Right - 3, rect.Bottom - 3);
+        }
+
+        g.DrawString(label, _font, textBrush, rect.X + 7, rect.Y + 3);
+    }
+
+    private bool IsHudCommandActive(RelicHudCommand command)
+    {
+        return command switch
+        {
+            RelicHudCommand.PlayPause => IsPlayingSignal(),
+            RelicHudCommand.Loop => State.IsLooping,
+            _ => false
+        };
+    }
+
+    private bool IsHudCommandRecent(RelicHudCommand command)
+    {
+        if (EventIntensity() <= 0.05)
+            return false;
+
+        return command switch
+        {
+            RelicHudCommand.PlayPause => State.VisualEvent is "PLAY" or "PAUSE",
+            RelicHudCommand.Restart => State.VisualEvent == "RESTART",
+            RelicHudCommand.Loop => State.VisualEvent.StartsWith("LOOP", StringComparison.OrdinalIgnoreCase),
+            RelicHudCommand.Previous => State.VisualEvent == "BACK",
+            RelicHudCommand.Next => State.VisualEvent is "NEXT" or "AUTO NEXT",
+            RelicHudCommand.SeekBack => State.VisualEvent == "SEEK -",
+            RelicHudCommand.SeekForward => State.VisualEvent == "SEEK +",
+            RelicHudCommand.VolumeDown or RelicHudCommand.VolumeUp => State.VisualEvent == "VOLUME",
+            _ => false
+        };
     }
 
     private void DrawPreview(Graphics g, int x, int y)
