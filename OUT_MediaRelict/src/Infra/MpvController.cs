@@ -261,6 +261,29 @@ public sealed class MpvController : IAsyncDisposable
 
     public async Task StopAsync()
     {
+        var process = _process;
+
+        if (process is { HasExited: false })
+        {
+            try
+            {
+                using var quitCts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
+                await CommandAsync(quitCts.Token, "quit");
+            }
+            catch
+            {
+                // mpv may quit before answering. This is acceptable. Shocking, yes.
+            }
+
+            try
+            {
+                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromMilliseconds(800));
+            }
+            catch
+            {
+            }
+        }
+
         try
         {
             _readCts?.Cancel();
@@ -272,6 +295,11 @@ public sealed class MpvController : IAsyncDisposable
         _readCts?.Dispose();
         _readCts = null;
 
+        foreach (var pending in _pending.Values)
+            pending.TrySetCanceled();
+
+        _pending.Clear();
+
         _reader?.Dispose();
         _reader = null;
 
@@ -281,19 +309,19 @@ public sealed class MpvController : IAsyncDisposable
         _pipe?.Dispose();
         _pipe = null;
 
-        if (_process is { HasExited: false })
+        if (process is { HasExited: false })
         {
             try
             {
-                _process.Kill(entireProcessTree: true);
-                await _process.WaitForExitAsync();
+                process.Kill(entireProcessTree: true);
+                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(2));
             }
             catch
             {
             }
         }
 
-        _process?.Dispose();
+        process?.Dispose();
         _process = null;
     }
 
