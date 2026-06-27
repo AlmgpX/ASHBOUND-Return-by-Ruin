@@ -14,6 +14,7 @@ public sealed class MainForm : Form
     private const int HtBottom = 15;
     private const int HtBottomLeft = 16;
     private const int HtBottomRight = 17;
+    private const int ResizeGripPixels = 16;
 
     private readonly RelicApp _app = new();
     private readonly ArcadeRelicCanvas _canvas = new();
@@ -66,8 +67,11 @@ public sealed class MainForm : Form
         KeyUp += OnKeyUp;
         PreviewKeyDown += OnPreviewKeyDown;
         MouseWheel += (_, e) => _ = OnMouseWheelAsync(e);
+        MouseMove += OnResizeMouseMove;
 
         _canvas.MouseDown += OnCanvasMouseDown;
+        _canvas.MouseMove += OnResizeMouseMove;
+        _canvas.MouseLeave += (_, _) => Cursor = Cursors.Default;
         _canvas.MouseDoubleClick += (_, _) => ToggleTopMost();
         _canvas.MouseEnter += (_, _) => _canvas.Focus();
         _canvas.MouseWheel += (_, e) => _ = OnMouseWheelAsync(e);
@@ -102,20 +106,45 @@ public sealed class MainForm : Form
             return;
 
         var point = PointToClient(new Point(unchecked((short)(long)m.LParam), unchecked((short)((long)m.LParam >> 16))));
-        var grip = Math.Max(8, (int)Math.Round(8 * DeviceDpi / 96.0));
+        var resizeHit = GetResizeHitTest(point);
+
+        if (resizeHit != HtClient)
+            m.Result = resizeHit;
+    }
+
+    private int GetResizeHitTest(Point point)
+    {
+        var grip = Math.Max(ResizeGripPixels, (int)Math.Round(ResizeGripPixels * DeviceDpi / 96.0));
         var left = point.X <= grip;
         var right = point.X >= ClientSize.Width - grip;
         var top = point.Y <= grip;
         var bottom = point.Y >= ClientSize.Height - grip;
 
-        if (left && top) m.Result = HtTopLeft;
-        else if (right && top) m.Result = HtTopRight;
-        else if (left && bottom) m.Result = HtBottomLeft;
-        else if (right && bottom) m.Result = HtBottomRight;
-        else if (left) m.Result = HtLeft;
-        else if (right) m.Result = HtRight;
-        else if (top) m.Result = HtTop;
-        else if (bottom) m.Result = HtBottom;
+        if (left && top) return HtTopLeft;
+        if (right && top) return HtTopRight;
+        if (left && bottom) return HtBottomLeft;
+        if (right && bottom) return HtBottomRight;
+        if (left) return HtLeft;
+        if (right) return HtRight;
+        if (top) return HtTop;
+        if (bottom) return HtBottom;
+        return HtClient;
+    }
+
+    private void OnResizeMouseMove(object? sender, MouseEventArgs e)
+    {
+        var point = sender == _canvas
+            ? PointToClient(_canvas.PointToScreen(e.Location))
+            : e.Location;
+
+        Cursor = GetResizeHitTest(point) switch
+        {
+            HtLeft or HtRight => Cursors.SizeWE,
+            HtTop or HtBottom => Cursors.SizeNS,
+            HtTopLeft or HtBottomRight => Cursors.SizeNWSE,
+            HtTopRight or HtBottomLeft => Cursors.SizeNESW,
+            _ => Cursors.Default
+        };
     }
 
     private void OnPreviewKeyDown(object? sender, PreviewKeyDownEventArgs e)
@@ -353,6 +382,15 @@ public sealed class MainForm : Form
     {
         _canvas.Focus();
         if (e.Button != MouseButtons.Left) return;
+
+        var clientPoint = PointToClient(_canvas.PointToScreen(e.Location));
+        var resizeHit = GetResizeHitTest(clientPoint);
+        if (resizeHit != HtClient)
+        {
+            NativeDrag.ResizeWindow(Handle, resizeHit);
+            return;
+        }
+
         var windowCommand = _canvas.HitTestWindowCommand(e.Location);
         if (windowCommand == RelicWindowCommand.Minimize) { MarkUiEvent("MINIMIZE"); WindowState = FormWindowState.Minimized; return; }
         if (windowCommand == RelicWindowCommand.CloseKeepPlaying) { Close(); return; }
