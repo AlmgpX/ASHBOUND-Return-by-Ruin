@@ -2,17 +2,18 @@
 
 Standalone raylib-based OUT CORE micro engine experiment.
 
-This project intentionally uses native `raylib.dll` directly through a tiny P/Invoke layer instead of depending on a specific `Raylib-cs.dll` wrapper version. Wrapper APIs change. C ABI is boring. Boring wins.
+This first slice uses `Raylib-cs.dll` plus native `raylib.dll` from the local `tools/` folder. OUTM core stays separate from raylib; raylib is only the host bridge.
 
-## Required local file
+## Required local files
 
-Put native raylib here before running on Windows:
+Put these files here before running on Windows:
 
 ```text
+OUT_RayMicro/tools/Raylib-cs.dll
 OUT_RayMicro/tools/raylib.dll
 ```
 
-The project copies everything under `tools/` into build and publish output.
+The project copies everything under `tools/` into build and publish output, and `raylib.dll` is copied beside the executable because native DLL loading is apparently a small ritual.
 
 ## Run
 
@@ -29,6 +30,9 @@ M0/M1/M3 seed:
 raylib window
 true 3D camera
 simple Quake-room demo geometry
+Quake-style movement seed
+Quake 1-style armor absorption
+Unicode vitals HUD
 FPS movement with static collision
 projectile revolver stub
 bounce/impact events
@@ -36,14 +40,17 @@ trigger stub
 debug/event overlay
 ```
 
-This is not the final editor. This is the seed runtime. If it grows managers like mold, delete the mold.
+This is not the final editor. This is the seed runtime.
 
 ## Controls
 
 ```text
 WASD          move
 Mouse         look
+Space         jump
 Left Mouse    fire projectile
 F1            toggle editor/debug overlay
+F2            debug damage 25
+F3            debug armor pickup cycle: green -> yellow -> red
 Esc           quit
 ```
