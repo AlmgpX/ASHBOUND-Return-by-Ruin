@@ -83,7 +83,7 @@ public static class OutmApp
         int w = Raylib.GetScreenWidth();
         int h = Raylib.GetScreenHeight();
         Raylib.DrawRectangle(w - 245, h - 82, 230, 62, new Color(0, 0, 0, 160));
-        Raylib.DrawRectangleLines(w - 245, h - 82, Color.Orange);
+        Raylib.DrawRectangleLines(w - 245, h - 82, 230, 62, Color.Orange);
         Raylib.DrawText("REVOLVER // PROJECTILE", w - 232, h - 72, 14, Color.Orange);
         Raylib.DrawText("LMB: physical shot", w - 232, h - 50, 12, Color.LightGray);
     }
