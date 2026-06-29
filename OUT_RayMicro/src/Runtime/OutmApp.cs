@@ -54,6 +54,7 @@ public static class OutmApp
             Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
             weapons.Update(input, muzzle, camera.Forward, map, world);
             audio.ProcessEvents(world);
+            audio.Update();
 
             Raylib.BeginDrawing();
             Raylib.ClearBackground(new Color(6, 8, 12, 255));
