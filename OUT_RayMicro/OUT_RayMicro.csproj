@@ -6,10 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>OUT_RayMicro</AssemblyName>
     <RootNamespace>OUT_RayMicro</RootNamespace>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="Raylib-cs" HintPath="tools\Raylib-cs.dll" Private="true" />
     <None Include="tools\**\*.*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
