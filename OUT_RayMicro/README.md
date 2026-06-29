@@ -36,7 +36,7 @@ Unicode vitals HUD
 FPS movement with static collision
 projectile revolver stub
 bounce/impact events
-trigger stub
+trigger door stub
 debug/event overlay
 ```
 
@@ -53,4 +53,32 @@ F1            toggle editor/debug overlay
 F2            debug damage 25
 F3            debug armor pickup cycle: green -> yellow -> red
 Esc           quit
+```
+
+## Documentation
+
+```text
+Docs/OUT_CORE_RAYLIB_MICRO_ENGINE.md
+Docs/OUT_RAYMICRO_STATUS_AND_ROADMAP.md
+Docs/OUT_RAYMICRO_PHYSICS_DECISION_JOLT_VS_PHYSX.md
+```
+
+Current physics decision:
+
+```text
+Use custom micro-physics now.
+Pick Jolt later if the project needs full rigid bodies / scalable broadphase / mesh collision.
+Do not use PhysX as the first dependency for this tiny raylib engine.
+```
+
+Next engineering target:
+
+```text
+input command layer
+physics interface
+capsule sweep / raycast / trigger queries
+imported mesh room
+weapon definitions
+pickups
+enemy placeholder
 ```
