@@ -29,8 +29,10 @@ M0/M1/M3 seed:
 ```text
 raylib window
 true 3D camera
+single sampled input frame
 simple Quake-room demo geometry
 Quake-style movement seed
+CTRL/C crouch seed
 Quake 1-style armor absorption
 Unicode vitals HUD
 FPS movement with static collision
@@ -48,6 +50,9 @@ This is not the final editor. This is the seed runtime.
 WASD          move
 Mouse         look
 Space         jump
+Left Ctrl     crouch
+C             crouch
+Left Shift    sprint modifier
 Left Mouse    fire projectile
 F1            toggle editor/debug overlay
 F2            debug damage 25
@@ -61,6 +66,7 @@ Esc           quit
 Docs/OUT_CORE_RAYLIB_MICRO_ENGINE.md
 Docs/OUT_RAYMICRO_STATUS_AND_ROADMAP.md
 Docs/OUT_RAYMICRO_PHYSICS_DECISION_JOLT_VS_PHYSX.md
+Docs/OUT_RAYMICRO_INPUT_SAVE_NETCODE_CONTRACT.md
 ```
 
 Current physics decision:
@@ -71,10 +77,20 @@ Pick Jolt later if the project needs full rigid bodies / scalable broadphase / m
 Do not use PhysX as the first dependency for this tiny raylib engine.
 ```
 
+Current input decision:
+
+```text
+Sample raylib input once into OutmInputFrame.
+Pass OutmInputFrame into systems.
+Later convert it into fixed-tick user commands for save/replay/multiplayer.
+No gameplay system should read raw hardware input directly.
+```
+
 Next engineering target:
 
 ```text
-input command layer
+command queue
+fixed tick accumulator
 physics interface
 capsule sweep / raycast / trigger queries
 imported mesh room
