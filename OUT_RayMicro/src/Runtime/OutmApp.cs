@@ -3,6 +3,7 @@ using Raylib_cs;
 using OUT_RayMicro.Core;
 using OUT_RayMicro.Editor;
 using OUT_RayMicro.Gameplay;
+using OUT_RayMicro.Input;
 using OUT_RayMicro.World;
 
 namespace OUT_RayMicro.Runtime;
@@ -21,6 +22,7 @@ public static class OutmApp
         var camera = new OutmCameraMotor(map.PlayerStart);
         var weapons = new OutmWeaponSystem();
         var editor = new OutmEditorShell();
+        var inputSampler = new OutmInputSampler();
 
         world.PushLog("OUT RayMicro boot");
         world.PushLog("raylib host online");
@@ -32,9 +34,10 @@ public static class OutmApp
         {
             float dt = Math.Clamp(Raylib.GetFrameTime(), 0.0f, 0.05f);
             world.BeginFrame(dt);
+            OutmInputFrame input = inputSampler.Sample(dt);
 
-            editor.Update(world);
-            camera.Update(dt, map);
+            editor.Update(world, input);
+            camera.Update(input, map);
 
             bool inTrigger = map.IntersectsTrigger(camera.Position);
             if (inTrigger && !wasInTrigger)
@@ -46,7 +49,7 @@ public static class OutmApp
             wasInTrigger = inTrigger;
 
             Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
-            weapons.Update(dt, muzzle, camera.Forward, map, world);
+            weapons.Update(input, muzzle, camera.Forward, map, world);
 
             Raylib.BeginDrawing();
             Raylib.ClearBackground(new Color(6, 8, 12, 255));
@@ -80,7 +83,7 @@ public static class OutmApp
         int w = Raylib.GetScreenWidth();
         int h = Raylib.GetScreenHeight();
         Raylib.DrawRectangle(w - 245, h - 82, 230, 62, new Color(0, 0, 0, 160));
-        Raylib.DrawRectangleLines(w - 245, h - 82, 230, 62, Color.Orange);
+        Raylib.DrawRectangleLines(w - 245, h - 82, Color.Orange);
         Raylib.DrawText("REVOLVER // PROJECTILE", w - 232, h - 72, 14, Color.Orange);
         Raylib.DrawText("LMB: physical shot", w - 232, h - 50, 12, Color.LightGray);
     }
