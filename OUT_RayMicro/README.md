@@ -2,7 +2,7 @@
 
 Standalone raylib-based OUT CORE micro engine experiment.
 
-This first slice uses `Raylib-cs.dll` plus native `raylib.dll` from the local `tools/` folder. OUTM core stays separate from raylib; raylib is only the host bridge.
+This first slice uses `Raylib-cs.dll` plus native `raylib.dll` from the local `tools` folder. OUTM core stays separate from raylib; raylib is only the host bridge.
 
 ## Required local files
 
@@ -27,7 +27,31 @@ OUT_RayMicro/data/fonts/
 
 Recommended font for the current retro HUD: GNU Unifont TrueType.
 
-The project copies everything under `tools/` and `data/` into build output, and `raylib.dll` is copied beside the executable because native DLL loading is apparently a small ritual.
+The project copies everything under `tools` and `data` into build output, and `raylib.dll` is copied beside the executable because native DLL loading is apparently a small ritual.
+
+## Runtime requirement
+
+The project now targets:
+
+```text
+net9.0
+```
+
+Install .NET 9 SDK before building.
+
+## Optional Jolt package step
+
+From `OUT_RayMicro`:
+
+```powershell
+dotnet add package JoltPhysicsSharp --version 2.21.0
+```
+
+Physics code must stay behind the OUT interface:
+
+```text
+src/Physics/OutmCollisionWorld.cs
+```
 
 ## Audio folders
 
@@ -40,6 +64,7 @@ OUT_RayMicro/data/audio/Misc/BulletRicImpact.*
 OUT_RayMicro/data/audio/Misc/DoorOpen.wav
 OUT_RayMicro/data/audio/Footstep/*.wav
 OUT_RayMicro/data/audio/Music/*.mp3
+OUT_RayMicro/data/audio/Music/*.ogg
 ```
 
 Audio is event-driven for the current slice:
@@ -50,6 +75,8 @@ ProjectileBounce -> ricochet sound
 ProjectileHit    -> impact sound
 DoorToggled      -> door sound
 ```
+
+First music file from `data/audio/Music` is streamed automatically and ticked every frame.
 
 ## Run
 
@@ -67,6 +94,8 @@ raylib window
 true 3D camera
 single sampled input frame
 event-driven audio bridge
+streamed music playback
+OUT collision interface contract
 simple Quake-room demo geometry
 Quake-style movement seed
 CTRL/C crouch seed without FOV mutation
@@ -105,14 +134,15 @@ Docs/OUT_RAYMICRO_STATUS_AND_ROADMAP.md
 Docs/OUT_RAYMICRO_PHYSICS_DECISION_JOLT_VS_PHYSX.md
 Docs/OUT_RAYMICRO_INPUT_SAVE_NETCODE_CONTRACT.md
 Docs/OUT_RAYMICRO_ASSET_PIPELINE.md
+Docs/OUT_RAYMICRO_JOLT_INTEGRATION.md
 ```
 
 Current physics decision:
 
 ```text
-Use custom micro-physics now.
-Pick Jolt later if the project needs full rigid bodies / scalable broadphase / mesh collision.
-Do not use PhysX as the first dependency for this tiny raylib engine.
+Custom OUT collision interface first.
+Jolt package/backend second.
+Do not let gameplay code call the external physics package directly.
 ```
 
 Current input decision:
@@ -137,7 +167,7 @@ Next engineering target:
 ```text
 command queue
 fixed tick accumulator
-physics interface
+collision backend adapter
 capsule sweep / raycast / trigger queries
 imported GLB room
 weapon definitions
