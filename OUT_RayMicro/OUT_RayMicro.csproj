@@ -10,6 +10,13 @@
 
   <ItemGroup>
     <Reference Include="Raylib-cs" HintPath="tools\Raylib-cs.dll" Private="true" />
+
+    <Content Include="tools\raylib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <TargetPath>raylib.dll</TargetPath>
+    </Content>
+
     <None Include="tools\**\*.*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
