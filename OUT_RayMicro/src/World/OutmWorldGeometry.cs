@@ -106,7 +106,7 @@ public sealed class OutmDemoMap
         return false;
     }
 
-    public Vector3 MoveWithCollision(Vector3 position, Vector3 delta, float radius)
+    public Vector3 MoveWithCollision(Vector3 position, Vector3 delta, float radius, float floorHeight)
     {
         var next = position;
         var tryX = next + new Vector3(delta.X, 0, 0);
@@ -115,7 +115,7 @@ public sealed class OutmDemoMap
         var tryZ = next + new Vector3(0, 0, delta.Z);
         if (!Collides(tryZ, radius)) next = tryZ;
 
-        next.Y = MathF.Max(1.2f, next.Y + delta.Y);
+        next.Y = MathF.Max(floorHeight, next.Y + delta.Y);
         return next;
     }
 }
