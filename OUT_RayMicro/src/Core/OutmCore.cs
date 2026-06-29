@@ -26,7 +26,58 @@ public enum OutmEventType : ushort
     ProjectileBounce,
     TriggerEntered,
     DoorToggled,
+    DamageApplied,
+    ArmorPicked,
     Debug
+}
+
+public enum OutmArmorTier : byte
+{
+    None,
+    Green,
+    Yellow,
+    Red
+}
+
+public static class OutmArmorRules
+{
+    public static int Capacity(OutmArmorTier tier)
+    {
+        return tier switch
+        {
+            OutmArmorTier.Green => 100,
+            OutmArmorTier.Yellow => 150,
+            OutmArmorTier.Red => 200,
+            _ => 0
+        };
+    }
+
+    public static float AbsorbFraction(OutmArmorTier tier)
+    {
+        return tier switch
+        {
+            OutmArmorTier.Green => 0.30f,
+            OutmArmorTier.Yellow => 0.60f,
+            OutmArmorTier.Red => 0.80f,
+            _ => 0.0f
+        };
+    }
+
+    public static string Code(OutmArmorTier tier)
+    {
+        return tier switch
+        {
+            OutmArmorTier.Green => "GA",
+            OutmArmorTier.Yellow => "YA",
+            OutmArmorTier.Red => "RA",
+            _ => "--"
+        };
+    }
+
+    public static int EffectiveProtectionScore(OutmArmorTier tier, int armor)
+    {
+        return (int)MathF.Round(armor * AbsorbFraction(tier) * 1000.0f);
+    }
 }
 
 public struct OutmEvent
@@ -57,15 +108,17 @@ public struct OutmPlayerVitals
     public int MaxHealth;
     public int MaxArmor;
     public int MaxMana;
+    public OutmArmorTier ArmorTier;
 
     public static OutmPlayerVitals Default => new()
     {
         Health = 100,
-        Armor = 70,
+        Armor = 100,
         Mana = 80,
         MaxHealth = 100,
-        MaxArmor = 100,
-        MaxMana = 100
+        MaxArmor = OutmArmorRules.Capacity(OutmArmorTier.Green),
+        MaxMana = 100,
+        ArmorTier = OutmArmorTier.Green
     };
 }
 
