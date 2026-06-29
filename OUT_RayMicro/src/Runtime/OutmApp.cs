@@ -32,6 +32,7 @@ public static class OutmApp
         world.PushLog(OutmFontSystem.IsLoaded ? "unicode HUD font online" : "unicode HUD font missing");
 
         bool wasInTrigger = false;
+        float stepTimer = 0.0f;
 
         while (!Raylib.WindowShouldClose())
         {
@@ -41,6 +42,7 @@ public static class OutmApp
 
             editor.Update(world, input);
             camera.Update(input, map);
+            UpdateFootsteps(world, camera, input, dt, ref stepTimer);
 
             bool inTrigger = map.IntersectsTrigger(camera.Position);
             if (inTrigger && !wasInTrigger)
@@ -53,7 +55,7 @@ public static class OutmApp
 
             Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
             weapons.Update(input, muzzle, camera.Forward, map, world);
-            audio.ProcessEvents(world);
+            audio.ProcessEvents(world, camera.Position, camera.Right);
             audio.Update();
 
             Raylib.BeginDrawing();
@@ -76,6 +78,29 @@ public static class OutmApp
         OutmFontSystem.Unload();
         Raylib.EnableCursor();
         Raylib.CloseWindow();
+    }
+
+    private static void UpdateFootsteps(OutmWorld world, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
+    {
+        float speed = camera.HorizontalSpeed;
+        if (!camera.Grounded || speed < 1.2f)
+        {
+            stepTimer = 0.0f;
+            return;
+        }
+
+        stepTimer -= dt;
+        if (stepTimer > 0.0f)
+            return;
+
+        world.Emit(new OutmEvent(OutmEventType.Footstep, EntityId.None, EntityId.None, camera.Position, speed, "footstep stone"));
+
+        if (camera.IsCrouching)
+            stepTimer = 0.56f;
+        else if (input.IsDown(OutmButtons.Sprint))
+            stepTimer = 0.28f;
+        else
+            stepTimer = 0.38f;
     }
 
     private static void DrawViewRay(OutmCameraMotor camera)
