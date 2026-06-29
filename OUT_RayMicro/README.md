@@ -19,9 +19,37 @@ For Unicode HUD symbols, put a font here:
 OUT_RayMicro/data/fonts/hud_unicode.ttf
 ```
 
+If the font has another `.ttf` or `.otf` name, the runtime now tries to auto-discover it inside:
+
+```text
+OUT_RayMicro/data/fonts/
+```
+
 Recommended font for the current retro HUD: GNU Unifont TrueType.
 
 The project copies everything under `tools/` and `data/` into build output, and `raylib.dll` is copied beside the executable because native DLL loading is apparently a small ritual.
+
+## Audio folders
+
+Current discovered audio layout:
+
+```text
+OUT_RayMicro/data/audio/Weapon/OUT_BulletShot_*.wav
+OUT_RayMicro/data/audio/Weapon/OUT_Impact*.wav
+OUT_RayMicro/data/audio/Misc/BulletRicImpact.*
+OUT_RayMicro/data/audio/Misc/DoorOpen.wav
+OUT_RayMicro/data/audio/Footstep/*.wav
+OUT_RayMicro/data/audio/Music/*.mp3
+```
+
+Audio is event-driven for the current slice:
+
+```text
+Fired            -> shot sound
+ProjectileBounce -> ricochet sound
+ProjectileHit    -> impact sound
+DoorToggled      -> door sound
+```
 
 ## Run
 
@@ -38,6 +66,7 @@ M0/M1/M3 seed:
 raylib window
 true 3D camera
 single sampled input frame
+event-driven audio bridge
 simple Quake-room demo geometry
 Quake-style movement seed
 CTRL/C crouch seed without FOV mutation
