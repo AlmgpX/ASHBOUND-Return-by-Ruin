@@ -1,6 +1,7 @@
 using System.Numerics;
 using Raylib_cs;
 using OUT_RayMicro.Core;
+using OUT_RayMicro.Input;
 using OUT_RayMicro.World;
 
 namespace OUT_RayMicro.Gameplay;
@@ -19,11 +20,12 @@ public sealed class OutmWeaponSystem
     private readonly OutmProjectile[] projectiles = new OutmProjectile[128];
     private float fireCooldown;
 
-    public void Update(float dt, Vector3 muzzle, Vector3 forward, OutmDemoMap map, OutmWorld world)
+    public void Update(in OutmInputFrame input, Vector3 muzzle, Vector3 forward, OutmDemoMap map, OutmWorld world)
     {
+        float dt = Math.Clamp(input.DeltaTime, 0.0f, 0.05f);
         fireCooldown = MathF.Max(0, fireCooldown - dt);
 
-        if (Raylib.IsMouseButtonDown(MouseButton.Left) && fireCooldown <= 0)
+        if (input.IsDown(OutmButtons.FirePrimary) && fireCooldown <= 0)
         {
             Fire(muzzle, forward, world);
             fireCooldown = 0.22f;
