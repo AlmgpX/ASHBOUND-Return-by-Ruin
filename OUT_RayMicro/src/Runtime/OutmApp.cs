@@ -24,6 +24,8 @@ public static class OutmApp
         var weapons = new OutmWeaponSystem();
         var editor = new OutmEditorShell();
         var inputSampler = new OutmInputSampler();
+        var audio = new OutmAudioSystem();
+        audio.Load(world);
 
         world.PushLog("OUT RayMicro boot");
         world.PushLog("raylib host online");
@@ -51,6 +53,7 @@ public static class OutmApp
 
             Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
             weapons.Update(input, muzzle, camera.Forward, map, world);
+            audio.ProcessEvents(world);
 
             Raylib.BeginDrawing();
             Raylib.ClearBackground(new Color(6, 8, 12, 255));
@@ -68,6 +71,7 @@ public static class OutmApp
             Raylib.EndDrawing();
         }
 
+        audio.Unload();
         OutmFontSystem.Unload();
         Raylib.EnableCursor();
         Raylib.CloseWindow();
