@@ -20,4 +20,8 @@
     <None Include="tools\**\*.*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="data\**\*.*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JoltPhysicsSharp" Version="2.21.0" />
+  </ItemGroup>
 </Project>
