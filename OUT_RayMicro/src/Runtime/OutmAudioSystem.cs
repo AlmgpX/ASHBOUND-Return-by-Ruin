@@ -111,7 +111,7 @@ public sealed class OutmAudioSystem
         Sound sound = bank.Slots[index].Sound;
 
         float volume = baseVolume;
-        float pan = 0.5f;
+        float pan = 0.0f;
 
         if (!forceNonSpatial)
         {
@@ -123,8 +123,7 @@ public sealed class OutmAudioSystem
             {
                 Vector3 direction = toSource / distance;
                 Vector3 right = listenerRight.LengthSquared() > 0.0001f ? Vector3.Normalize(listenerRight) : Vector3.UnitX;
-                float side = Math.Clamp(Vector3.Dot(direction, right), -1.0f, 1.0f);
-                pan = 0.5f + side * 0.5f;
+                pan = Math.Clamp(Vector3.Dot(direction, right), -1.0f, 1.0f);
             }
         }
 
@@ -134,7 +133,7 @@ public sealed class OutmAudioSystem
         float pitch = RandomRange(minPitch, maxPitch);
         Raylib.SetSoundVolume(sound, Math.Clamp(volume, 0.0f, 1.0f));
         Raylib.SetSoundPitch(sound, Math.Clamp(pitch, 0.25f, 4.0f));
-        Raylib.SetSoundPan(sound, Math.Clamp(pan, 0.0f, 1.0f));
+        Raylib.SetSoundPan(sound, Math.Clamp(pan, -1.0f, 1.0f));
         Raylib.PlaySound(sound);
     }
 
