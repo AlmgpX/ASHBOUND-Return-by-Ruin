@@ -39,12 +39,12 @@ net9.0
 
 Install .NET 9 SDK before building.
 
-## Optional Jolt package step
+## Jolt package
 
-From `OUT_RayMicro`:
+The project file now contains:
 
-```powershell
-dotnet add package JoltPhysicsSharp --version 2.21.0
+```xml
+<PackageReference Include="JoltPhysicsSharp" Version="2.21.0" />
 ```
 
 Physics code must stay behind the OUT interface:
@@ -70,10 +70,20 @@ OUT_RayMicro/data/audio/Music/*.ogg
 Audio is event-driven for the current slice:
 
 ```text
-Fired            -> shot sound
-ProjectileBounce -> ricochet sound
-ProjectileHit    -> impact sound
-DoorToggled      -> door sound
+Fired            -> spatial shot sound + pitch variation
+ProjectileBounce -> spatial ricochet sound + pitch variation
+ProjectileHit    -> spatial impact sound + pitch variation
+DoorToggled      -> spatial door sound
+Footstep         -> spatial stone footstep sound + pitch variation
+```
+
+Raylib does not provide a full 3D audio scene graph here. OUT RayMicro currently does a small manual spatialization layer:
+
+```text
+distance attenuation
+left/right pan from listener right vector
+random pitch variation
+sound-bank round robin
 ```
 
 First music file from `data/audio/Music` is streamed automatically and ticked every frame.
@@ -93,9 +103,10 @@ M0/M1/M3 seed:
 raylib window
 true 3D camera
 single sampled input frame
-event-driven audio bridge
+event-driven spatial audio bridge
 streamed music playback
 OUT collision interface contract
+JoltPhysicsSharp package reference
 simple Quake-room demo geometry
 Quake-style movement seed
 CTRL/C crouch seed without FOV mutation
