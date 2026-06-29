@@ -49,6 +49,26 @@ public struct OutmEvent
     }
 }
 
+public struct OutmPlayerVitals
+{
+    public int Health;
+    public int Armor;
+    public int Mana;
+    public int MaxHealth;
+    public int MaxArmor;
+    public int MaxMana;
+
+    public static OutmPlayerVitals Default => new()
+    {
+        Health = 100,
+        Armor = 70,
+        Mana = 80,
+        MaxHealth = 100,
+        MaxArmor = 100,
+        MaxMana = 100
+    };
+}
+
 public sealed class OutmEventQueue
 {
     private readonly OutmEvent[] events;
@@ -96,6 +116,7 @@ public sealed class OutmWorld
     private int logCursor;
 
     public readonly OutmEventQueue Events = new(512);
+    public OutmPlayerVitals PlayerVitals = OutmPlayerVitals.Default;
     public float Time;
     public int Tick;
 
