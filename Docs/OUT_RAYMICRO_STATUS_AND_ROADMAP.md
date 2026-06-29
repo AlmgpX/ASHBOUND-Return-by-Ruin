@@ -63,6 +63,34 @@ no MonoBehaviour-style object brains
 
 The core is still too small, but it is pointing in the right direction: state lives in the world, systems mutate it, events explain what happened.
 
+### Done: input frame seed
+
+```text
+src/Input/OutmInputFrame.cs
+```
+
+Implemented:
+
+```text
+OutmButtons bitset
+OutmInputFrame
+OutmInputSampler
+sample once per frame
+Pressed / Down / Released edge tracking
+Move axis
+LookDelta
+```
+
+This follows the OUTL_FPS_Controller pattern: build an input frame, then apply that frame to systems. Raylib input should not be read from random gameplay systems. That path leads to replay/netcode rot, and then everyone pretends it was unavoidable.
+
+Current users of `OutmInputFrame`:
+
+```text
+OutmEditorShell
+OutmCameraMotor
+OutmWeaponSystem
+```
+
 ### Done: raylib host and renderer seed
 
 ```text
@@ -75,6 +103,7 @@ Implemented:
 raylib window
 3D camera mode
 frame loop
+input sampling once per frame
 debug/editor overlay call
 simple room draw
 projectile draw
@@ -93,7 +122,7 @@ Implemented:
 
 ```text
 WASD movement
-mouse look
+mouse look via input frame
 corrected A/D strafe direction
 velocity-based motion
 ground acceleration
@@ -103,12 +132,17 @@ gravity
 jump
 coyote time
 jump input buffer
+CTRL/C crouch hold
+smooth eye-height crouch
+crouch speed multiplier
 basic bunnyhop/air-control feel seed
 ```
 
 Still missing:
 
 ```text
+real standing/crouching hull height
+uncrouch clearance check via capsule overlap
 step solver
 slope solver
 clip planes
@@ -116,7 +150,7 @@ proper capsule sweep
 ramp slide
 surf/ramp behavior
 water/lava/slime volumes
-movement command struct
+movement command struct / fixed tick command stream
 ```
 
 ### Done: demo world and collision seed
@@ -146,7 +180,7 @@ src/Gameplay/OutmWeaponSystem.cs
 Implemented:
 
 ```text
-left mouse projectile fire
+input-frame-driven projectile fire
 fixed projectile pool
 projectile motion
 collision check
@@ -214,11 +248,11 @@ HP hearts
 armor blocks with GA/YA/RA tier code
 mana diamonds
 movement speed display
-GROUND/AIR display
+GROUND/AIR/CROUCH display
 event log overlay
-F1 overlay toggle
-F2 debug damage
-F3 debug armor pickup cycle
+F1 overlay toggle through input frame
+F2 debug damage through input frame
+F3 debug armor pickup through input frame
 ```
 
 Current HUD style:
@@ -241,6 +275,9 @@ If any glyph renders as squares on a target machine, swap to safer symbols in on
 WASD          move
 Mouse         look
 Space         jump
+Left Ctrl     crouch
+C             crouch
+Left Shift    sprint modifier
 Left Mouse    fire projectile
 F1            toggle overlay
 F2            debug damage 25
@@ -286,21 +323,41 @@ feature-specific manager bloom
 
 ## Immediate next steps
 
-### Step 1: command/input layer
+### Step 1: command layer
 
-Create explicit input and command structs:
+Input frame exists. Next create explicit gameplay command structs:
 
 ```text
-OutmInputFrame
 OutmCommand
 OutmCommandQueue
+OutmCommandType
 ```
 
-Replace direct `Raylib.IsMouseButtonDown` calls inside gameplay systems. Raylib input should be sampled once by runtime, then turned into engine commands.
+Hardware input should become command intent:
+
+```text
+InputFrame -> UserCommand -> CommandQueue -> Systems
+```
 
 Reason: this is required for replays, networking later, AI reuse, and clean OUT CORE grammar. Also because letting every system sniff hardware input is how code becomes a damp basement.
 
-### Step 2: real collision foundation
+### Step 2: fixed tick loop
+
+Current runtime still simulates with clamped frame dt. Replace with:
+
+```text
+render frame:
+  sample input
+  accumulate time
+  while accumulator >= fixedDt:
+    build fixed input command
+    simulate fixed tick
+  render latest/interpolated state
+```
+
+This is mandatory for Quake/Half-Life-style save/replay/netcode discipline.
+
+### Step 3: real collision foundation
 
 Replace point/radius collision with a real static collision module:
 
@@ -311,6 +368,7 @@ sphere cast
 AABB broadphase
 triangle mesh static collision
 trigger overlap query
+uncrouch clearance check
 ```
 
 Short-term file target:
@@ -324,7 +382,7 @@ src/Physics/OutmCharacterMotor.cs
 
 This should remain custom until it becomes painful enough to justify Jolt integration.
 
-### Step 3: imported mesh room
+### Step 4: imported mesh room
 
 Add model loading and map format seed:
 
@@ -339,7 +397,7 @@ light/fog settings
 
 First goal: load one OBJ/glTF room instead of hardcoded boxes.
 
-### Step 4: weapon data
+### Step 5: weapon data
 
 Create:
 
@@ -352,7 +410,7 @@ OutmWeaponRuntime
 
 Move revolver behavior out of hardcoded values.
 
-### Step 5: pickups
+### Step 6: pickups
 
 Add pickups as data-driven entities:
 
@@ -365,7 +423,7 @@ ammo pickup
 
 They should emit `ItemPicked` / `ArmorPicked` / `HealthChanged` events. No direct player mutation from pickup objects.
 
-### Step 6: first enemy placeholder
+### Step 7: first enemy placeholder
 
 Start with a simple billboard or cube enemy:
 
@@ -381,7 +439,7 @@ emit killed
 
 Do not build AI architecture yet. First make damage/weapon/entity grammar work.
 
-### Step 7: light/fog style
+### Step 8: light/fog style
 
 Add simple visual style flags:
 
@@ -417,7 +475,7 @@ The next milestone is not open world. The next milestone is one convincing Quake
 
 ```text
 imported 3D room mesh
-working FPS movement with steps/slopes
+working FPS movement with steps/slopes/crouch hull
 one revolver weapon def
 one armor pickup
 one health pickup
@@ -434,7 +492,7 @@ When this works, then build the editor around it.
 ## Do not do yet
 
 ```text
-do not add networking
+do not add networking gameplay before fixed tick + command stream
 do not add dynamic lore
 do not add full rigidbody physics
 do not add complex editor gizmos
