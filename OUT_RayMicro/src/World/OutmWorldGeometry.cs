@@ -30,6 +30,8 @@ public sealed class OutmDemoMap
     public Vector3 TriggerSize = new(2.2f, 2f, 0.8f);
     public bool DoorOpen;
 
+    private static readonly Color TriggerColor = new(80, 220, 220, 255);
+
     public static OutmDemoMap CreateQuakeRoom()
     {
         var map = new OutmDemoMap();
@@ -66,7 +68,7 @@ public sealed class OutmDemoMap
             Raylib.DrawCubeWiresV(new Vector3(0, 2, -8.85f), new Vector3(2.1f, 4, 0.35f), Color.Orange);
         }
 
-        Raylib.DrawCubeWiresV(TriggerCenter, TriggerSize, Color.Cyan);
+        Raylib.DrawCubeWiresV(TriggerCenter, TriggerSize, TriggerColor);
     }
 
     public bool IntersectsTrigger(Vector3 position)
