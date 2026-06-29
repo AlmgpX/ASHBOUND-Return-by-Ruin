@@ -1,5 +1,6 @@
 using System.Numerics;
 using Raylib_cs;
+using OUT_RayMicro.Input;
 using OUT_RayMicro.World;
 
 namespace OUT_RayMicro.Runtime;
@@ -22,20 +23,28 @@ public sealed class OutmCameraMotor
     public float SprintMultiplier = 1.18f;
     public float MouseSensitivity = 0.0023f;
     public float Radius = 0.35f;
-    public float EyeHeight = 1.2f;
+    public float StandingEyeHeight = 1.2f;
+    public float CrouchEyeHeight = 0.72f;
+    public float CrouchSpeedMultiplier = 0.333f;
+    public float CrouchLerpSpeed = 18.0f;
     public float CoyoteTime = 0.105f;
     public float JumpBufferTime = 0.115f;
 
+    private float currentEyeHeight;
     private float coyoteTimer;
     private float jumpBufferTimer;
     private bool grounded = true;
+    private bool crouching;
 
     public bool Grounded => grounded;
+    public bool IsCrouching => crouching;
     public float HorizontalSpeed => new Vector2(Velocity.X, Velocity.Z).Length();
 
     public OutmCameraMotor(Vector3 start)
     {
         Position = start;
+        currentEyeHeight = StandingEyeHeight;
+        Position.Y = currentEyeHeight;
         Yaw = MathF.PI;
         Pitch = 0.0f;
     }
@@ -63,29 +72,33 @@ public sealed class OutmCameraMotor
         get
         {
             var f = FlatForward;
-            // Raylib/System.Numerics handedness makes the old vector feel inverted. This is the actual player-right strafe.
             return new Vector3(-f.Z, 0, f.X);
         }
     }
 
-    public void Update(float dt, OutmDemoMap map)
+    public void Update(in OutmInputFrame input, OutmDemoMap map)
     {
-        dt = Math.Clamp(dt, 0.0f, 0.05f);
-        UpdateLook();
+        float dt = Math.Clamp(input.DeltaTime, 0.0f, 0.05f);
+        UpdateLook(input.LookDelta);
+        UpdateCrouch(input, dt);
 
-        if (Raylib.IsKeyPressed(KeyboardKey.Space))
+        if (input.IsPressed(OutmButtons.Jump))
             jumpBufferTimer = JumpBufferTime;
         else
             jumpBufferTimer = MathF.Max(0.0f, jumpBufferTimer - dt);
 
-        grounded = Position.Y <= EyeHeight + 0.001f && Velocity.Y <= 0.05f;
+        grounded = Position.Y <= currentEyeHeight + 0.001f && Velocity.Y <= 0.05f;
         if (grounded)
             coyoteTimer = CoyoteTime;
         else
             coyoteTimer = MathF.Max(0.0f, coyoteTimer - dt);
 
-        Vector3 wishDir = ReadWishDirection();
-        float maxSpeed = (grounded ? GroundMaxSpeed : AirMaxSpeed) * (Raylib.IsKeyDown(KeyboardKey.LeftShift) ? SprintMultiplier : 1.0f);
+        Vector3 wishDir = BuildWishDirection(input.Move);
+        float speedMultiplier = input.IsDown(OutmButtons.Sprint) ? SprintMultiplier : 1.0f;
+        if (crouching)
+            speedMultiplier *= CrouchSpeedMultiplier;
+
+        float maxSpeed = (grounded ? GroundMaxSpeed : AirMaxSpeed) * speedMultiplier;
 
         if (grounded)
         {
@@ -116,30 +129,44 @@ public sealed class OutmCameraMotor
         if (MathF.Abs(Position.Z - before.Z) < 0.00001f && MathF.Abs(delta.Z) > 0.00001f)
             Velocity.Z = 0.0f;
 
-        if (Position.Y <= EyeHeight + 0.001f)
+        if (Position.Y <= currentEyeHeight + 0.001f)
         {
-            Position.Y = EyeHeight;
+            Position.Y = currentEyeHeight;
             if (Velocity.Y < 0.0f)
                 Velocity.Y = 0.0f;
         }
     }
 
-    private void UpdateLook()
+    private void UpdateLook(Vector2 lookDelta)
     {
-        Vector2 mouse = Raylib.GetMouseDelta();
-        Yaw -= mouse.X * MouseSensitivity;
-        Pitch -= mouse.Y * MouseSensitivity;
+        Yaw -= lookDelta.X * MouseSensitivity;
+        Pitch -= lookDelta.Y * MouseSensitivity;
         Pitch = Math.Clamp(Pitch, -1.45f, 1.45f);
     }
 
-    private Vector3 ReadWishDirection()
+    private void UpdateCrouch(in OutmInputFrame input, float dt)
     {
-        Vector3 wish = Vector3.Zero;
-        if (Raylib.IsKeyDown(KeyboardKey.W)) wish += FlatForward;
-        if (Raylib.IsKeyDown(KeyboardKey.S)) wish -= FlatForward;
-        if (Raylib.IsKeyDown(KeyboardKey.D)) wish += Right;
-        if (Raylib.IsKeyDown(KeyboardKey.A)) wish -= Right;
+        bool wantsCrouch = input.IsDown(OutmButtons.Crouch);
+        bool canStand = CanStandUp();
+        crouching = wantsCrouch || !canStand;
 
+        float target = crouching ? CrouchEyeHeight : StandingEyeHeight;
+        float t = Math.Clamp(dt * CrouchLerpSpeed, 0.0f, 1.0f);
+        currentEyeHeight = Lerp(currentEyeHeight, target, t);
+
+        if (grounded && Position.Y < currentEyeHeight)
+            Position.Y = currentEyeHeight;
+    }
+
+    private bool CanStandUp()
+    {
+        // Placeholder until OutmPhysicsWorld gets capsule overlap. Keep the call site now so the contract survives.
+        return true;
+    }
+
+    private Vector3 BuildWishDirection(Vector2 move)
+    {
+        Vector3 wish = FlatForward * move.Y + Right * move.X;
         return wish.LengthSquared() > 0.0001f ? Vector3.Normalize(wish) : Vector3.Zero;
     }
 
@@ -184,8 +211,10 @@ public sealed class OutmCameraMotor
             Position = Position,
             Target = Position + Forward,
             Up = Vector3.UnitY,
-            FovY = 72.0f,
+            FovY = crouching ? 68.0f : 72.0f,
             Projection = CameraProjection.Perspective
         };
     }
+
+    private static float Lerp(float a, float b, float t) => a + (b - a) * t;
 }
