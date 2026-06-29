@@ -5,7 +5,7 @@ namespace OUT_RayMicro.Physics;
 public enum OutmCollisionBackendKind : byte
 {
     Custom,
-    External
+    Jolt
 }
 
 public readonly struct OutmRayHit
@@ -48,7 +48,8 @@ public interface IOutmCollisionWorld
 {
     OutmCollisionBackendKind BackendKind { get; }
     void Step(float dt);
+    bool CollidesSphere(Vector3 center, float radius);
     OutmRayHit Raycast(Vector3 origin, Vector3 direction, float maxDistance);
     bool OverlapBox(Vector3 center, Vector3 size);
-    OutmCharacterMove MoveCharacter(Vector3 position, Vector3 velocity, float radius, float standingHeight, float dt);
+    OutmCharacterMove MoveCharacter(Vector3 position, Vector3 velocity, float radius, float floorHeight, float dt);
 }
