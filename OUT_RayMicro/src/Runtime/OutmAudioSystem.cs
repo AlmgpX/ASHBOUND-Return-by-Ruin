@@ -1,3 +1,4 @@
+using System.Numerics;
 using Raylib_cs;
 using OUT_RayMicro.Core;
 
@@ -18,6 +19,7 @@ public enum OutmSoundId : int
 public sealed class OutmAudioSystem
 {
     private readonly SoundBank[] banks;
+    private readonly Random random = new(1337);
     private bool ready;
     private Music currentMusic;
     private bool hasMusic;
@@ -63,7 +65,7 @@ public sealed class OutmAudioSystem
         Raylib.UpdateMusicStream(currentMusic);
     }
 
-    public void ProcessEvents(OutmWorld world)
+    public void ProcessEvents(OutmWorld world, Vector3 listenerPosition, Vector3 listenerRight)
     {
         if (!ready)
             return;
@@ -73,22 +75,30 @@ public sealed class OutmAudioSystem
             switch (evt.Type)
             {
                 case OutmEventType.Fired:
-                    Play(OutmSoundId.Shot);
+                    PlaySpatial(OutmSoundId.Shot, evt.Point, listenerPosition, listenerRight, 1.0f, 2.0f, 32.0f, 0.94f, 1.08f);
                     break;
                 case OutmEventType.ProjectileBounce:
-                    Play(OutmSoundId.Ricochet);
+                    PlaySpatial(OutmSoundId.Ricochet, evt.Point, listenerPosition, listenerRight, 0.88f, 1.0f, 24.0f, 0.90f, 1.18f);
                     break;
                 case OutmEventType.ProjectileHit:
-                    Play(OutmSoundId.Impact);
+                    PlaySpatial(OutmSoundId.Impact, evt.Point, listenerPosition, listenerRight, 0.82f, 1.0f, 22.0f, 0.86f, 1.12f);
                     break;
                 case OutmEventType.DoorToggled:
-                    Play(OutmSoundId.Door);
+                    PlaySpatial(OutmSoundId.Door, evt.Point, listenerPosition, listenerRight, 0.80f, 2.0f, 20.0f, 0.96f, 1.04f);
+                    break;
+                case OutmEventType.Footstep:
+                    PlaySpatial(OutmSoundId.StepStone, evt.Point, listenerPosition, listenerRight, 0.46f, 0.5f, 10.0f, 0.86f, 1.12f);
                     break;
             }
         }
     }
 
     public void Play(OutmSoundId id)
+    {
+        PlaySpatial(id, Vector3.Zero, Vector3.Zero, Vector3.UnitX, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, forceNonSpatial: true);
+    }
+
+    public void PlaySpatial(OutmSoundId id, Vector3 source, Vector3 listener, Vector3 listenerRight, float baseVolume, float nearDistance, float farDistance, float minPitch, float maxPitch, bool forceNonSpatial = false)
     {
         if (!ready)
             return;
@@ -98,7 +108,34 @@ public sealed class OutmAudioSystem
             return;
 
         int index = bank.Cursor++ % bank.Slots.Length;
-        Raylib.PlaySound(bank.Slots[index].Sound);
+        Sound sound = bank.Slots[index].Sound;
+
+        float volume = baseVolume;
+        float pan = 0.5f;
+
+        if (!forceNonSpatial)
+        {
+            Vector3 toSource = source - listener;
+            float distance = toSource.Length();
+            volume *= ComputeAttenuation(distance, nearDistance, farDistance);
+
+            if (distance > 0.0001f)
+            {
+                Vector3 direction = toSource / distance;
+                Vector3 right = listenerRight.LengthSquared() > 0.0001f ? Vector3.Normalize(listenerRight) : Vector3.UnitX;
+                float side = Math.Clamp(Vector3.Dot(direction, right), -1.0f, 1.0f);
+                pan = 0.5f + side * 0.5f;
+            }
+        }
+
+        if (volume <= 0.001f)
+            return;
+
+        float pitch = RandomRange(minPitch, maxPitch);
+        Raylib.SetSoundVolume(sound, Math.Clamp(volume, 0.0f, 1.0f));
+        Raylib.SetSoundPitch(sound, Math.Clamp(pitch, 0.25f, 4.0f));
+        Raylib.SetSoundPan(sound, Math.Clamp(pan, 0.0f, 1.0f));
+        Raylib.PlaySound(sound);
     }
 
     public void Unload()
@@ -172,6 +209,26 @@ public sealed class OutmAudioSystem
         Raylib.PlayMusicStream(currentMusic);
         hasMusic = true;
         world.PushLog($"music stream: {Path.GetFileName(path)}");
+    }
+
+    private float RandomRange(float min, float max)
+    {
+        if (max <= min)
+            return min;
+
+        return min + (float)random.NextDouble() * (max - min);
+    }
+
+    private static float ComputeAttenuation(float distance, float nearDistance, float farDistance)
+    {
+        if (distance <= nearDistance)
+            return 1.0f;
+        if (distance >= farDistance)
+            return 0.0f;
+
+        float t = (distance - nearDistance) / MathF.Max(0.001f, farDistance - nearDistance);
+        float linear = 1.0f - t;
+        return linear * linear;
     }
 
     private static IEnumerable<string> FindFiles(string relativeFolder, string pattern)
