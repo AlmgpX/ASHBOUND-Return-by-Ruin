@@ -26,6 +26,7 @@ public enum OutmEventType : ushort
     ProjectileBounce,
     TriggerEntered,
     DoorToggled,
+    Footstep,
     DamageApplied,
     ArmorPicked,
     Debug
