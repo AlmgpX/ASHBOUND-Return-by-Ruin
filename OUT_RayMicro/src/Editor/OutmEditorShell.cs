@@ -9,6 +9,9 @@ public sealed class OutmEditorShell
 {
     public bool Visible = true;
 
+    private static readonly Color OverlayCyan = new(80, 220, 220, 255);
+    private static readonly Color OverlayText = new(205, 212, 220, 255);
+
     public void Update(OutmWorld world)
     {
         if (Raylib.IsKeyPressed(KeyboardKey.F1))
@@ -28,9 +31,9 @@ public sealed class OutmEditorShell
             return;
 
         Raylib.DrawRectangle(10, 10, 440, 230, new Color(0, 0, 0, 170));
-        Raylib.DrawRectangleLines(10, 10, 440, 230, Color.Cyan);
-        Raylib.DrawText("OUT RAYMICRO // M0-M1 SEED", 22, 20, 18, Color.Cyan);
-        Raylib.DrawText("WASD move  MOUSE look  LMB fire  F1 overlay", 22, 46, 14, Color.LightGray);
+        Raylib.DrawRectangleLines(10, 10, 440, 230, OverlayCyan);
+        Raylib.DrawText("OUT RAYMICRO // M0-M1 SEED", 22, 20, 18, OverlayCyan);
+        Raylib.DrawText("WASD move  MOUSE look  LMB fire  F1 overlay", 22, 46, 14, OverlayText);
         Raylib.DrawText($"POS {camera.Position.X:0.00}, {camera.Position.Y:0.00}, {camera.Position.Z:0.00}", 22, 70, 14, Color.Yellow);
         Raylib.DrawText($"DOOR {(map.DoorOpen ? "OPEN" : "CLOSED")}", 22, 90, 14, map.DoorOpen ? Color.Green : Color.Orange);
 
@@ -38,7 +41,7 @@ public sealed class OutmEditorShell
         {
             string line = world.GetLogLineFromNewest(i);
             if (!string.IsNullOrWhiteSpace(line))
-                Raylib.DrawText(line, 22, 120 + i * 14, 12, Color.LightGray);
+                Raylib.DrawText(line, 22, 120 + i * 14, 12, OverlayText);
         }
     }
 }
