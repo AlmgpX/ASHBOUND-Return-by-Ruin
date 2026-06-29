@@ -7,21 +7,24 @@ public static class OutmFontSystem
 {
     public const string HudFontRelativePath = "fonts/hud_unicode.ttf";
     public static bool IsLoaded { get; private set; }
+    public static string LoadedFontPath { get; private set; } = "";
 
     private static Font hudFont;
     private static readonly int[] hudCodepoints = BuildHudCodepoints();
 
     public static void Load()
     {
-        string path = OutmAssetPaths.ResolveData(HudFontRelativePath);
-        if (!File.Exists(path))
+        string? path = FindHudFontPath();
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
         {
             IsLoaded = false;
+            LoadedFontPath = "";
             return;
         }
 
         hudFont = Raylib.LoadFontEx(path, 32, hudCodepoints, hudCodepoints.Length);
         IsLoaded = hudFont.Texture.Id != 0;
+        LoadedFontPath = IsLoaded ? path : "";
     }
 
     public static void Unload()
@@ -32,6 +35,7 @@ public static class OutmFontSystem
         Raylib.UnloadFont(hudFont);
         hudFont = default;
         IsLoaded = false;
+        LoadedFontPath = "";
     }
 
     public static void DrawText(string text, int x, int y, int fontSize, Color color)
@@ -40,6 +44,42 @@ public static class OutmFontSystem
             Raylib.DrawTextEx(hudFont, text, new Vector2(x, y), fontSize, 1.0f, color);
         else
             Raylib.DrawText(text, x, y, fontSize, color);
+    }
+
+    private static string? FindHudFontPath()
+    {
+        string canonical = OutmAssetPaths.ResolveData(HudFontRelativePath);
+        if (File.Exists(canonical))
+            return canonical;
+
+        string fontDir = OutmAssetPaths.ResolveData("fonts");
+        if (!Directory.Exists(fontDir))
+            return null;
+
+        string[] preferredNames =
+        {
+            "hud_unicode.ttf",
+            "unifont.ttf",
+            "Unifont.ttf",
+            "unifont.otf",
+            "NotoSans-Regular.ttf",
+            "NotoSansSymbols-Regular.ttf",
+            "NotoSansSymbols2-Regular.ttf"
+        };
+
+        for (int i = 0; i < preferredNames.Length; i++)
+        {
+            string preferred = Path.Combine(fontDir, preferredNames[i]);
+            if (File.Exists(preferred))
+                return preferred;
+        }
+
+        string[] fonts = Directory.GetFiles(fontDir, "*.ttf", SearchOption.TopDirectoryOnly)
+            .Concat(Directory.GetFiles(fontDir, "*.otf", SearchOption.TopDirectoryOnly))
+            .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return fonts.Length > 0 ? fonts[0] : null;
     }
 
     private static int[] BuildHudCodepoints()
