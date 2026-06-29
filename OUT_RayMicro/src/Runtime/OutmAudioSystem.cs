@@ -19,6 +19,8 @@ public sealed class OutmAudioSystem
 {
     private readonly SoundBank[] banks;
     private bool ready;
+    private Music currentMusic;
+    private bool hasMusic;
 
     public OutmAudioSystem()
     {
@@ -48,8 +50,17 @@ public sealed class OutmAudioSystem
         LoadBank(OutmSoundId.StepWood, FindFiles("audio/Footstep", "Step_Wood_*.wav"));
         LoadBank(OutmSoundId.StepCarpet, FindFiles("audio/Footstep", "Step_Carpet_*.wav"));
         LoadBank(OutmSoundId.StepWater, FindFiles("audio/Footstep", "Step_Water_*.wav"));
+        LoadFirstMusic(world);
 
         world.PushLog($"audio online: {LoadedSoundCount} sounds");
+    }
+
+    public void Update()
+    {
+        if (!ready || !hasMusic)
+            return;
+
+        Raylib.UpdateMusicStream(currentMusic);
     }
 
     public void ProcessEvents(OutmWorld world)
@@ -92,6 +103,13 @@ public sealed class OutmAudioSystem
 
     public void Unload()
     {
+        if (hasMusic)
+        {
+            Raylib.StopMusicStream(currentMusic);
+            Raylib.UnloadMusicStream(currentMusic);
+            hasMusic = false;
+        }
+
         for (int b = 0; b < banks.Length; b++)
         {
             SoundSlot[] slots = banks[b].Slots;
@@ -133,6 +151,27 @@ public sealed class OutmAudioSystem
 
         banks[(int)id].Slots = slots.ToArray();
         banks[(int)id].Cursor = 0;
+    }
+
+    private void LoadFirstMusic(OutmWorld world)
+    {
+        string folder = OutmAssetPaths.ResolveData("audio/Music");
+        if (!Directory.Exists(folder))
+            return;
+
+        string? path = Directory.GetFiles(folder, "*.mp3", SearchOption.TopDirectoryOnly)
+            .Concat(Directory.GetFiles(folder, "*.ogg", SearchOption.TopDirectoryOnly))
+            .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+
+        if (string.IsNullOrWhiteSpace(path))
+            return;
+
+        currentMusic = Raylib.LoadMusicStream(path);
+        Raylib.SetMusicVolume(currentMusic, 0.45f);
+        Raylib.PlayMusicStream(currentMusic);
+        hasMusic = true;
+        world.PushLog($"music stream: {Path.GetFileName(path)}");
     }
 
     private static IEnumerable<string> FindFiles(string relativeFolder, string pattern)
