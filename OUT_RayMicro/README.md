@@ -13,7 +13,15 @@ OUT_RayMicro/tools/Raylib-cs.dll
 OUT_RayMicro/tools/raylib.dll
 ```
 
-The project copies everything under `tools/` into build and publish output, and `raylib.dll` is copied beside the executable because native DLL loading is apparently a small ritual.
+For Unicode HUD symbols, put a font here:
+
+```text
+OUT_RayMicro/data/fonts/hud_unicode.ttf
+```
+
+Recommended font for the current retro HUD: GNU Unifont TrueType.
+
+The project copies everything under `tools/` and `data/` into build output, and `raylib.dll` is copied beside the executable because native DLL loading is apparently a small ritual.
 
 ## Run
 
@@ -32,9 +40,9 @@ true 3D camera
 single sampled input frame
 simple Quake-room demo geometry
 Quake-style movement seed
-CTRL/C crouch seed
+CTRL/C crouch seed without FOV mutation
 Quake 1-style armor absorption
-Unicode vitals HUD
+Unicode font loader for vitals HUD
 FPS movement with static collision
 projectile revolver stub
 bounce/impact events
@@ -67,6 +75,7 @@ Docs/OUT_CORE_RAYLIB_MICRO_ENGINE.md
 Docs/OUT_RAYMICRO_STATUS_AND_ROADMAP.md
 Docs/OUT_RAYMICRO_PHYSICS_DECISION_JOLT_VS_PHYSX.md
 Docs/OUT_RAYMICRO_INPUT_SAVE_NETCODE_CONTRACT.md
+Docs/OUT_RAYMICRO_ASSET_PIPELINE.md
 ```
 
 Current physics decision:
@@ -86,6 +95,14 @@ Later convert it into fixed-tick user commands for save/replay/multiplayer.
 No gameplay system should read raw hardware input directly.
 ```
 
+Current asset decision:
+
+```text
+.blend files are source assets.
+Runtime should load exported .glb/.gltf plus .outmap.json metadata.
+Use Blender command-line export later to convert .blend -> .glb + OUT metadata.
+```
+
 Next engineering target:
 
 ```text
@@ -93,7 +110,7 @@ command queue
 fixed tick accumulator
 physics interface
 capsule sweep / raycast / trigger queries
-imported mesh room
+imported GLB room
 weapon definitions
 pickups
 enemy placeholder

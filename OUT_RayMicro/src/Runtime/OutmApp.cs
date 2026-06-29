@@ -16,6 +16,7 @@ public static class OutmApp
         Raylib.InitWindow(1280, 720, "OUT RayMicro // Quake-room seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
+        OutmFontSystem.Load();
 
         var world = new OutmWorld();
         var map = OutmDemoMap.CreateQuakeRoom();
@@ -26,7 +27,7 @@ public static class OutmApp
 
         world.PushLog("OUT RayMicro boot");
         world.PushLog("raylib host online");
-        world.PushLog("one room, one gun, one door; civilization trembles");
+        world.PushLog(OutmFontSystem.IsLoaded ? "unicode HUD font online" : "unicode HUD font missing");
 
         bool wasInTrigger = false;
 
@@ -67,6 +68,7 @@ public static class OutmApp
             Raylib.EndDrawing();
         }
 
+        OutmFontSystem.Unload();
         Raylib.EnableCursor();
         Raylib.CloseWindow();
     }
@@ -84,7 +86,7 @@ public static class OutmApp
         int h = Raylib.GetScreenHeight();
         Raylib.DrawRectangle(w - 245, h - 82, 230, 62, new Color(0, 0, 0, 160));
         Raylib.DrawRectangleLines(w - 245, h - 82, 230, 62, Color.Orange);
-        Raylib.DrawText("REVOLVER // PROJECTILE", w - 232, h - 72, 14, Color.Orange);
-        Raylib.DrawText("LMB: physical shot", w - 232, h - 50, 12, Color.LightGray);
+        OutmFontSystem.DrawText("REVOLVER // PROJECTILE", w - 232, h - 72, 14, Color.Orange);
+        OutmFontSystem.DrawText("LMB: physical shot", w - 232, h - 50, 12, Color.LightGray);
     }
 }
