@@ -94,11 +94,11 @@ public sealed class OutmCameraMotor
             coyoteTimer = MathF.Max(0.0f, coyoteTimer - dt);
 
         Vector3 wishDir = BuildWishDirection(input.Move);
-        float speedMultiplier = input.IsDown(OutmButtons.Sprint) ? SprintMultiplier : 1.0f;
-        if (crouching)
-            speedMultiplier *= CrouchSpeedMultiplier;
-
+        float speedMultiplier = crouching ? CrouchSpeedMultiplier : (input.IsDown(OutmButtons.Sprint) ? SprintMultiplier : 1.0f);
         float maxSpeed = (grounded ? GroundMaxSpeed : AirMaxSpeed) * speedMultiplier;
+
+        if (crouching)
+            ClampHorizontalSpeed(maxSpeed);
 
         if (grounded)
         {
@@ -122,7 +122,7 @@ public sealed class OutmCameraMotor
 
         Vector3 delta = Velocity * dt;
         Vector3 before = Position;
-        Position = map.MoveWithCollision(Position, delta, Radius);
+        Position = map.MoveWithCollision(Position, delta, Radius, currentEyeHeight);
 
         if (MathF.Abs(Position.X - before.X) < 0.00001f && MathF.Abs(delta.X) > 0.00001f)
             Velocity.X = 0.0f;
@@ -154,7 +154,7 @@ public sealed class OutmCameraMotor
         float t = Math.Clamp(dt * CrouchLerpSpeed, 0.0f, 1.0f);
         currentEyeHeight = Lerp(currentEyeHeight, target, t);
 
-        if (grounded && Position.Y < currentEyeHeight)
+        if (grounded)
             Position.Y = currentEyeHeight;
     }
 
@@ -185,6 +185,18 @@ public sealed class OutmCameraMotor
         Velocity.Z *= scale;
     }
 
+    private void ClampHorizontalSpeed(float maxSpeed)
+    {
+        Vector2 lateral = new(Velocity.X, Velocity.Z);
+        float speed = lateral.Length();
+        if (speed <= maxSpeed || speed < 0.0001f)
+            return;
+
+        float scale = maxSpeed / speed;
+        Velocity.X *= scale;
+        Velocity.Z *= scale;
+    }
+
     private void Accelerate(Vector3 wishDir, float wishSpeed, float accel, float dt)
     {
         if (wishDir.LengthSquared() < 0.0001f)
@@ -211,7 +223,7 @@ public sealed class OutmCameraMotor
             Position = Position,
             Target = Position + Forward,
             Up = Vector3.UnitY,
-            FovY = crouching ? 68.0f : 72.0f,
+            FovY = 72.0f,
             Projection = CameraProjection.Perspective
         };
     }
