@@ -45,8 +45,7 @@ public static class OutmMapEntityCompiler
                 Class = OutmEntityClassId.TriggerMultiple,
                 Outputs = new[]
                 {
-                    new OutmMapIoDef { Event = "OnUse", Target = item.Target, Input = "Toggle" },
-                    new OutmMapIoDef { Event = "OnEnter", Target = item.Target, Input = "Toggle", Once = false }
+                    new OutmMapIoDef { Event = "OnUse", Target = item.Target, Input = "Toggle" }
                 }
             });
         }
