@@ -5,7 +5,6 @@ namespace OUT_RayMicro.Physics;
 
 public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
 {
-    private readonly OutmDemoMap map;
     private readonly OutmPhysicsScene scene;
     private readonly OutmPhysicsRuntime runtime;
     private readonly Dictionary<string, OutmBodyHandle> doorBodies = new(StringComparer.OrdinalIgnoreCase);
@@ -13,7 +12,6 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
 
     public OutmJoltCollisionWorld(OutmMapDef def, OutmDemoMap map)
     {
-        this.map = map;
         scene = OutmPhysicsSceneBuilder.Build(def, map);
         runtime = BuildRuntime(scene);
         runtime.FlushDirtyProxies();
@@ -31,9 +29,14 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
     public bool TryGetDoorBody(string id, out OutmBodyHandle body) => doorBodies.TryGetValue(id, out body);
     public bool TryGetSensorBody(string id, out OutmBodyHandle body) => sensorBodies.TryGetValue(id, out body);
 
+    public void SetDoorOpen(string id, bool open)
+    {
+        if (doorBodies.TryGetValue(id, out OutmBodyHandle body))
+            runtime.SetBodyActive(body, !open);
+    }
+
     public void Step(float dt)
     {
-        SyncDoorBodies();
         runtime.FlushDirtyProxies();
         runtime.BuildPairs();
     }
@@ -95,8 +98,8 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
             return false;
         }
 
-        OutmPhysicsTrigger trigger = scene.Triggers[body.SourceIndex];
-        sensor = new OutmSensorProbe(true, trigger.Id, trigger.Kind, trigger.Target, trigger.TriggerId);
+        OutmPhysicsTrigger src = scene.Triggers[body.SourceIndex];
+        sensor = new OutmSensorProbe(true, src.Id, src.Kind, src.Target, src.TriggerId);
         return true;
     }
 
@@ -146,15 +149,6 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
         }
 
         return result;
-    }
-
-    private void SyncDoorBodies()
-    {
-        for (int i = 0; i < map.Doors.Count; i++)
-        {
-            OutmDoorRuntime door = map.Doors[i];
-            if (doorBodies.TryGetValue(door.Id, out OutmBodyHandle body)) runtime.SetBodyActive(body, !door.Open);
-        }
     }
 
     private static bool PointInsideBox(Vector3 point, Vector3 min, Vector3 max)
