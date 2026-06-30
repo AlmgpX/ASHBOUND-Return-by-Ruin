@@ -1,0 +1,35 @@
+{
+  "id": "map.test_room",
+  "displayName": "Test Room OUTMAP",
+  "playerStart": [0.0, 1.2, 7.0],
+  "boxes": [
+    { "id": "floor", "center": [0.0, -0.1, 0.0], "size": [18.0, 0.2, 18.0], "color": [42, 43, 45, 255], "solid": true },
+    { "id": "ceiling", "center": [0.0, 4.2, 0.0], "size": [18.0, 0.2, 18.0], "color": [27, 30, 37, 255], "solid": false },
+
+    { "id": "wall.left", "center": [-9.0, 2.0, 0.0], "size": [0.4, 4.0, 18.0], "color": [74, 84, 96, 255], "solid": true },
+    { "id": "wall.right", "center": [9.0, 2.0, 0.0], "size": [0.4, 4.0, 18.0], "color": [74, 84, 96, 255], "solid": true },
+    { "id": "wall.back", "center": [0.0, 2.0, 9.0], "size": [18.0, 4.0, 0.4], "color": [74, 84, 96, 255], "solid": true },
+    { "id": "wall.front.left", "center": [-4.5, 2.0, -9.0], "size": [9.0, 4.0, 0.4], "color": [74, 84, 96, 255], "solid": true },
+    { "id": "wall.front.right", "center": [4.5, 2.0, -9.0], "size": [9.0, 4.0, 0.4], "color": [74, 84, 96, 255], "solid": true },
+
+    { "id": "block.center", "center": [0.0, 0.6, -2.5], "size": [3.0, 1.2, 2.0], "color": [92, 98, 110, 255], "solid": true },
+    { "id": "crate.left", "center": [-5.0, 0.5, 2.0], "size": [1.6, 1.0, 1.6], "color": [120, 85, 62, 255], "solid": true },
+    { "id": "crate.right", "center": [5.0, 0.5, 2.0], "size": [1.6, 1.0, 1.6], "color": [120, 85, 62, 255], "solid": true }
+  ],
+  "doors": [
+    { "id": "door.main", "center": [0.0, 2.0, -8.85], "size": [2.1, 4.0, 0.35], "color": [120, 62, 48, 255], "startsOpen": false }
+  ],
+  "triggers": [
+    { "id": "trigger.door.main", "kind": "door_toggle", "target": "door.main", "center": [0.0, 1.0, -7.2], "size": [2.2, 2.0, 0.8] }
+  ],
+  "meshes": [
+    {
+      "id": "visual.room.future",
+      "path": "meshes/rooms/test_room.glb",
+      "position": [0.0, 0.0, 0.0],
+      "rotation": [0.0, 0.0, 0.0],
+      "scale": [1.0, 1.0, 1.0],
+      "collision": "none"
+    }
+  ]
+}
