@@ -161,7 +161,7 @@ public static class OutmApp
                 UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
             }
 
-            HandleDebugSaveLoad(world, map, camera, input, ref quickSave);
+            HandleDebugSaveLoad(world, map, weapons, camera, input, ref quickSave);
             triggers.UpdateUseTriggers(world, map, camera.Position, camera.Forward, input);
 
             if (!world.PlayerVitals.IsDead)
@@ -172,13 +172,13 @@ public static class OutmApp
         }
     }
 
-    private static void HandleDebugSaveLoad(OutmWorld world, OutmDemoMap map, OutmCameraMotor camera, in OutmInputFrame input, ref OutmSaveSnapshot? quickSave)
+    private static void HandleDebugSaveLoad(OutmWorld world, OutmDemoMap map, OutmWeaponSystem weapons, OutmCameraMotor camera, in OutmInputFrame input, ref OutmSaveSnapshot? quickSave)
     {
         if (input.IsPressed(OutmButtons.DebugSave))
         {
-            quickSave = OutmSaveSystem.Capture(world, map, camera.Position, camera.Velocity, camera.Yaw, camera.Pitch);
+            quickSave = OutmSaveSystem.Capture(world, map, weapons, camera.Position, camera.Velocity, camera.Yaw, camera.Pitch);
             OutmSaveSystem.SaveToDisk(quickSave);
-            world.PushLog("quick save written");
+            world.PushLog($"quick save written: projectiles {quickSave.Projectiles.Length}");
         }
 
         if (!input.IsPressed(OutmButtons.DebugLoad))
@@ -199,12 +199,12 @@ public static class OutmApp
             return;
         }
 
-        OutmSaveSystem.ApplyWorldState(world, map, quickSave);
+        OutmSaveSystem.ApplyWorldState(world, map, weapons, quickSave);
         camera.Position = quickSave.Player.Position.ToVector3();
         camera.Velocity = quickSave.Player.Velocity.ToVector3();
         camera.Yaw = quickSave.Player.Yaw;
         camera.Pitch = quickSave.Player.Pitch;
-        world.PushLog("quick save loaded");
+        world.PushLog($"quick save loaded: projectiles {quickSave.Projectiles.Length}");
     }
 
     private static void UpdateFootsteps(OutmWorld world, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
