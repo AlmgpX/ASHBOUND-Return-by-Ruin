@@ -1,7 +1,7 @@
 using System.Numerics;
 using Raylib_cs;
 using OUT_RayMicro.Input;
-using OUT_RayMicro.World;
+using OUT_RayMicro.Physics;
 
 namespace OUT_RayMicro.Runtime;
 
@@ -12,23 +12,23 @@ public sealed class OutmCameraMotor
     public float Yaw;
     public float Pitch;
 
-    public float GroundMaxSpeed = 8.2f;
-    public float AirMaxSpeed = 7.2f;
-    public float GroundAcceleration = 58.0f;
-    public float AirAcceleration = 16.0f;
-    public float GroundFriction = 8.5f;
-    public float StopSpeed = 2.0f;
-    public float JumpSpeed = 6.2f;
-    public float Gravity = 18.0f;
-    public float SprintMultiplier = 1.18f;
+    public float GroundMaxSpeed = 6.2f;
+    public float AirMaxSpeed = 5.8f;
+    public float GroundAcceleration = 42.0f;
+    public float AirAcceleration = 4.5f;
+    public float GroundFriction = 11.0f;
+    public float StopSpeed = 2.2f;
+    public float JumpSpeed = 5.25f;
+    public float Gravity = 19.0f;
+    public float SprintMultiplier = 1.10f;
     public float MouseSensitivity = 0.0023f;
     public float Radius = 0.35f;
     public float StandingEyeHeight = 1.2f;
     public float CrouchEyeHeight = 0.72f;
-    public float CrouchSpeedMultiplier = 0.333f;
+    public float CrouchSpeedMultiplier = 0.38f;
     public float CrouchLerpSpeed = 18.0f;
-    public float CoyoteTime = 0.105f;
-    public float JumpBufferTime = 0.115f;
+    public float CoyoteTime = 0.055f;
+    public float JumpBufferTime = 0.080f;
 
     private float currentEyeHeight;
     private float coyoteTimer;
@@ -76,18 +76,17 @@ public sealed class OutmCameraMotor
         }
     }
 
-    public void Update(in OutmInputFrame input, OutmDemoMap map)
+    public void Update(in OutmInputFrame input, IOutmCollisionWorld collision)
     {
         float dt = Math.Clamp(input.DeltaTime, 0.0f, 0.05f);
         UpdateLook(input.LookDelta);
-        UpdateCrouch(input, dt);
+        UpdateCrouch(input, collision, dt);
 
         if (input.IsPressed(OutmButtons.Jump))
             jumpBufferTimer = JumpBufferTime;
         else
             jumpBufferTimer = MathF.Max(0.0f, jumpBufferTimer - dt);
 
-        grounded = Position.Y <= currentEyeHeight + 0.001f && Velocity.Y <= 0.05f;
         if (grounded)
             coyoteTimer = CoyoteTime;
         else
@@ -110,7 +109,7 @@ public sealed class OutmCameraMotor
             Accelerate(wishDir, maxSpeed, AirAcceleration, dt);
         }
 
-        if (jumpBufferTimer > 0.0f && coyoteTimer > 0.0f)
+        if (!crouching && jumpBufferTimer > 0.0f && coyoteTimer > 0.0f)
         {
             Velocity.Y = JumpSpeed;
             grounded = false;
@@ -120,21 +119,10 @@ public sealed class OutmCameraMotor
 
         Velocity.Y -= Gravity * dt;
 
-        Vector3 delta = Velocity * dt;
-        Vector3 before = Position;
-        Position = map.MoveWithCollision(Position, delta, Radius, currentEyeHeight);
-
-        if (MathF.Abs(Position.X - before.X) < 0.00001f && MathF.Abs(delta.X) > 0.00001f)
-            Velocity.X = 0.0f;
-        if (MathF.Abs(Position.Z - before.Z) < 0.00001f && MathF.Abs(delta.Z) > 0.00001f)
-            Velocity.Z = 0.0f;
-
-        if (Position.Y <= currentEyeHeight + 0.001f)
-        {
-            Position.Y = currentEyeHeight;
-            if (Velocity.Y < 0.0f)
-                Velocity.Y = 0.0f;
-        }
+        OutmCharacterMove move = collision.MoveCharacter(Position, Velocity, Radius, currentEyeHeight, dt);
+        Position = move.Position;
+        Velocity = move.Velocity;
+        grounded = move.Grounded;
     }
 
     private void UpdateLook(Vector2 lookDelta)
@@ -144,10 +132,10 @@ public sealed class OutmCameraMotor
         Pitch = Math.Clamp(Pitch, -1.45f, 1.45f);
     }
 
-    private void UpdateCrouch(in OutmInputFrame input, float dt)
+    private void UpdateCrouch(in OutmInputFrame input, IOutmCollisionWorld collision, float dt)
     {
         bool wantsCrouch = input.IsDown(OutmButtons.Crouch);
-        bool canStand = CanStandUp();
+        bool canStand = CanStandUp(collision);
         crouching = wantsCrouch || !canStand;
 
         float target = crouching ? CrouchEyeHeight : StandingEyeHeight;
@@ -158,10 +146,11 @@ public sealed class OutmCameraMotor
             Position.Y = currentEyeHeight;
     }
 
-    private bool CanStandUp()
+    private bool CanStandUp(IOutmCollisionWorld collision)
     {
-        // Placeholder until OutmPhysicsWorld gets capsule overlap. Keep the call site now so the contract survives.
-        return true;
+        Vector3 probeCenter = new(Position.X, StandingEyeHeight + 0.35f, Position.Z);
+        Vector3 probeSize = new(Radius * 1.7f, StandingEyeHeight * 1.35f, Radius * 1.7f);
+        return !collision.OverlapBox(probeCenter, probeSize);
     }
 
     private Vector3 BuildWishDirection(Vector2 move)
