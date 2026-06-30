@@ -1,0 +1,38 @@
+{
+  "id": "materials.test_room",
+  "materials": [
+    {
+      "id": "mat.stone_debug",
+      "blenderName": "stone_debug",
+      "surface": "surface.stone",
+      "baseColor": [0.45, 0.48, 0.52, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.85,
+      "baseColorTexture": "",
+      "normalTexture": "",
+      "emissiveTexture": ""
+    },
+    {
+      "id": "mat.wood_debug",
+      "blenderName": "wood_debug",
+      "surface": "surface.wood",
+      "baseColor": [0.55, 0.34, 0.18, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.7,
+      "baseColorTexture": "",
+      "normalTexture": "",
+      "emissiveTexture": ""
+    },
+    {
+      "id": "mat.metal_debug",
+      "blenderName": "metal_debug",
+      "surface": "surface.metal",
+      "baseColor": [0.35, 0.38, 0.42, 1.0],
+      "metallic": 1.0,
+      "roughness": 0.45,
+      "baseColorTexture": "",
+      "normalTexture": "",
+      "emissiveTexture": ""
+    }
+  ]
+}
