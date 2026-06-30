@@ -4,6 +4,7 @@ using OUT_RayMicro.Core;
 using OUT_RayMicro.Editor;
 using OUT_RayMicro.Gameplay;
 using OUT_RayMicro.Input;
+using OUT_RayMicro.Physics;
 using OUT_RayMicro.World;
 
 namespace OUT_RayMicro.Runtime;
@@ -20,6 +21,7 @@ public static class OutmApp
 
         var world = new OutmWorld();
         var map = OutmDemoMap.CreateQuakeRoom();
+        IOutmCollisionWorld collision = new OutmDemoCollisionWorld(map);
         var camera = new OutmCameraMotor(map.PlayerStart);
         var weapons = new OutmWeaponSystem();
         var editor = new OutmEditorShell();
@@ -28,7 +30,7 @@ public static class OutmApp
         audio.Load(world);
 
         world.PushLog("OUT RayMicro boot");
-        world.PushLog("raylib host online");
+        world.PushLog($"collision backend: {collision.BackendKind}");
         world.PushLog(OutmFontSystem.IsLoaded ? "unicode HUD font online" : "unicode HUD font missing");
 
         bool wasInTrigger = false;
@@ -39,13 +41,17 @@ public static class OutmApp
             float dt = Math.Clamp(Raylib.GetFrameTime(), 0.0f, 0.05f);
             world.BeginFrame(dt);
             OutmInputFrame input = inputSampler.Sample(dt);
+            collision.Step(dt);
 
             editor.Update(world, input);
-            camera.Update(input, map);
-            UpdateFootsteps(world, camera, input, dt, ref stepTimer);
+            if (!world.PlayerVitals.IsDead)
+            {
+                camera.Update(input, collision);
+                UpdateFootsteps(world, camera, input, dt, ref stepTimer);
+            }
 
             bool inTrigger = map.IntersectsTrigger(camera.Position);
-            if (inTrigger && !wasInTrigger)
+            if (!world.PlayerVitals.IsDead && inTrigger && !wasInTrigger)
             {
                 map.DoorOpen = !map.DoorOpen;
                 world.Emit(new OutmEvent(OutmEventType.TriggerEntered, EntityId.None, EntityId.None, camera.Position, map.DoorOpen ? 1 : 0, "door trigger"));
@@ -54,7 +60,8 @@ public static class OutmApp
             wasInTrigger = inTrigger;
 
             Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
-            weapons.Update(input, muzzle, camera.Forward, map, world);
+            if (!world.PlayerVitals.IsDead)
+                weapons.Update(input, muzzle, camera.Forward, map, world);
             audio.ProcessEvents(world, camera.Position, camera.Right);
             audio.Update();
 
@@ -68,7 +75,7 @@ public static class OutmApp
             DrawViewRay(camera);
             Raylib.EndMode3D();
 
-            DrawWeaponHud();
+            DrawWeaponHud(world);
             editor.Draw(world, camera, map);
 
             Raylib.EndDrawing();
@@ -110,13 +117,14 @@ public static class OutmApp
         Raylib.DrawLine3D(start, end, new Color(255, 220, 80, 220));
     }
 
-    private static void DrawWeaponHud()
+    private static void DrawWeaponHud(OutmWorld world)
     {
         int w = Raylib.GetScreenWidth();
         int h = Raylib.GetScreenHeight();
         Raylib.DrawRectangle(w - 245, h - 82, 230, 62, new Color(0, 0, 0, 160));
-        Raylib.DrawRectangleLines(w - 245, h - 82, 230, 62, Color.Orange);
-        OutmFontSystem.DrawText("REVOLVER // PROJECTILE", w - 232, h - 72, 14, Color.Orange);
-        OutmFontSystem.DrawText("LMB: physical shot", w - 232, h - 50, 12, Color.LightGray);
+        bool dead = world.PlayerVitals.IsDead;
+        Raylib.DrawRectangleLines(w - 245, h - 82, 230, 62, dead ? Color.Red : Color.Orange);
+        OutmFontSystem.DrawText(dead ? "PLAYER // DEAD" : "REVOLVER // PROJECTILE", w - 232, h - 72, 14, dead ? Color.Red : Color.Orange);
+        OutmFontSystem.DrawText(dead ? "input locked" : "LMB: physical shot", w - 232, h - 50, 12, Color.LightGray);
     }
 }
