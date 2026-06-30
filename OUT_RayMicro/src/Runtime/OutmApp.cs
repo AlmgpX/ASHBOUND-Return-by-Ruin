@@ -41,26 +41,41 @@ public static class OutmApp
 
         bool wasInTrigger = false;
         float stepTimer = 0.0f;
+        OutmButtons bufferedPressed = OutmButtons.None;
+        OutmButtons bufferedReleased = OutmButtons.None;
+        Vector2 bufferedLook = Vector2.Zero;
 
         while (!Raylib.WindowShouldClose())
         {
             float frameDt = Math.Clamp(Raylib.GetFrameTime(), 0.0f, 0.10f);
             OutmInputFrame sampledInput = inputSampler.Sample(frameDt);
             editor.Update(world, sampledInput);
+
+            // Fixed tick can skip a render frame when the accumulator has not reached 1/60 yet.
+            // Edge input must survive that gap, otherwise short Space taps vanish like dignity in a rush build.
+            bufferedPressed |= sampledInput.Pressed;
+            bufferedReleased |= sampledInput.Released;
+            bufferedLook += sampledInput.LookDelta;
+
             fixedStep.AddFrameTime(frameDt);
 
             int ticksThisFrame = 0;
             while (ticksThisFrame < OutmFixedStep.MaxTicksPerRenderFrame && fixedStep.TryConsumeTick(out int simTick))
             {
-                OutmButtons pressed = ticksThisFrame == 0 ? sampledInput.Pressed : OutmButtons.None;
-                OutmButtons released = ticksThisFrame == 0 ? sampledInput.Released : OutmButtons.None;
+                OutmButtons pressed = bufferedPressed;
+                OutmButtons released = bufferedReleased;
+                Vector2 look = bufferedLook;
+
+                bufferedPressed = OutmButtons.None;
+                bufferedReleased = OutmButtons.None;
+                bufferedLook = Vector2.Zero;
 
                 var userCommand = new OutmUserCommand(
                     sampledInput.Sequence,
                     simTick,
                     fixedStep.FixedDelta,
                     sampledInput.Move,
-                    sampledInput.LookDelta,
+                    look,
                     sampledInput.Down,
                     pressed,
                     released);
