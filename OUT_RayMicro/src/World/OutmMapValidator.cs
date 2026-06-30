@@ -92,6 +92,18 @@ public static class OutmMapValidator
             }
         }
 
+        for (int i = 0; i < def.Pickups.Length; i++)
+        {
+            OutmPickupDef pickup = def.Pickups[i];
+            string label = string.IsNullOrWhiteSpace(pickup.Id) ? $"pickups[{i}]" : pickup.Id;
+            RegisterId(label, pickup.Id, ids, Error);
+            ValidateVector(pickup.Position, 3, $"{label}.position", Error);
+            if (pickup.Radius <= 0.0f)
+                Error($"{label}.radius must be positive");
+            if (pickup.Amount <= 0)
+                Error($"{label}.amount must be positive");
+        }
+
         for (int i = 0; i < def.Meshes.Length; i++)
         {
             OutmMeshRefDef mesh = def.Meshes[i];
