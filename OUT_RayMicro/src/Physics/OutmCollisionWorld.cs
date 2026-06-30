@@ -28,6 +28,26 @@ public readonly struct OutmRayHit
     public static readonly OutmRayHit None = new(false, Vector3.Zero, Vector3.UnitY, 0.0f, -1);
 }
 
+public readonly struct OutmSensorProbe
+{
+    public readonly bool Found;
+    public readonly string Id;
+    public readonly string Kind;
+    public readonly string Target;
+    public readonly int SensorId;
+
+    public OutmSensorProbe(bool found, string id, string kind, string target, int sensorId)
+    {
+        Found = found;
+        Id = id;
+        Kind = kind;
+        Target = target;
+        SensorId = sensorId;
+    }
+
+    public static readonly OutmSensorProbe None = new(false, "", "", "", -1);
+}
+
 public readonly struct OutmCharacterMove
 {
     public readonly Vector3 Position;
@@ -51,5 +71,6 @@ public interface IOutmCollisionWorld
     bool CollidesSphere(Vector3 center, float radius);
     OutmRayHit Raycast(Vector3 origin, Vector3 direction, float maxDistance);
     bool OverlapBox(Vector3 center, Vector3 size);
+    bool QuerySensor(Vector3 position, out OutmSensorProbe sensor);
     OutmCharacterMove MoveCharacter(Vector3 position, Vector3 velocity, float radius, float floorHeight, float dt);
 }
