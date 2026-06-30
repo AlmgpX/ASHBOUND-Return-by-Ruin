@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d490fc697614997bbf53279a0e1d2c5, type: 3}
+  m_Name: OUTL_Action_Sheep_ReproduceAbstract
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_BehaviorActionDef
+  ActionId: sheep.reproduce_abstract
+  Type: 24
+  OutputAction: 0
+  Tags:
+  - Sheep
+  - Herbivore
+  - ReproduceAbstract
+  BaseWeight: 0.005
+  DriveWeights:
+  - Drive: 15
+    Weight: 3
+  - Drive: 16
+    Weight: 1.1
+  - Drive: 0
+    Weight: -2.5
+  StimulusWeights: []
+  EgregoreWeights:
+  - Phase: 13
+    Weight: 0.8
+  - Phase: 14
+    Weight: -0.7
+  - Phase: 15
+    Weight: -1.2
+  LocalDangerWeight: 0
+  LocalSafetyWeight: 0
+  RandomJitter: 0.025
+  Cooldown: 300
+  MinDuration: 0.4
+  MaxDuration: 0
+  RequiredDrive: 15
+  RequiredDriveMinimum: 0.85
+  RequiresAdult: 0
+  RequiresSafeArea: 1
+  CannotRunInCombat: 1
+  SupportsAbstractMode: 1
+  OnStartEffects: []
+  OnCompleteEffects: []
+  OnStartLivingEffects:
+  - Type: 6
+    Drive: 15
+    FloatValue: -1
+    IntValue: 1
+    Radius: 8
+    RequiredTag: 
+    StimulusType: 27
+    Key: sheep.offspring.abstract
+    Tags:
+    - Sheep
+    - Offspring
+    - Abstract
+    Strength: 0.65
+    Confidence: 1
+    Priority: 0.25
+    DecayTime: 3
+    Prefab: {fileID: 0}
+    Item: {fileID: 0}
+    EventType: 1000
+    BehaviorMode: 1
+    MoveDistance: 0
+  OutputStimulus: 27
+  OutputKey: sheep.reproduction
+  OutputStimulusRadius: 6
+  OutputStimulusPriority: 0.25
+  OutputStimulusStrength: 1
+  OutputStimulusConfidence: 1
+  OutputStimulusDecayTime: 2

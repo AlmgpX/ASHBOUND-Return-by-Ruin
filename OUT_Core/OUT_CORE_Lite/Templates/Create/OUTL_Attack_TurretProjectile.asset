@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08882f30af9f48498b0c5ce347a5096, type: 3}
+  m_Name: OUTL_Attack_TurretProjectile
+  m_EditorClassIdentifier: 
+  AttackId: turret.basic.projectile
+  Mode: 1
+  Damage: 12
+  HitDamageKey: hit
+  Range: 650
+  Radius: 0.14
+  Cooldown: 0.35
+  MeleeArcDegrees: 120
+  MeleeMinRadius: 0.45
+  MeleeHeight: 1.35
+  MeleeForwardBias: 0.55
+  MeleeCanHitTriggers: 0
+  ProjectileSpeed: 15
+  ProjectileLifetime: 5
+  ProjectileUsesGravity: 1
+  ProjectileGravity: 9.8
+  ProjectileIgnoreTriggers: 1
+  ProjectileDetonateOnEntityHit: 1
+  ProjectileDetonateOnWorldHit: 0
+  ProjectileDetonateOnLifetimeEnd: 1
+  ProjectileBounceOnWorldHit: 1
+  ProjectileMaxBounces: 32
+  ProjectileBounceDamping: 0.65
+  ProjectileFrictionDamping: 0.92
+  UseExplosion: 1
+  ExplosionRadius: 5
+  ExplosionDamage: 2
+  ExplosionFalloff: 2
+  ExplosionHitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ExplosionRequireLineOfSight: 1
+  ExplosionObstacleMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ExplosionDamageKey: explosion
+  AimMode: 3
+  UseTargetVelocityPrediction: 1
+  PredictionStrength: 0.9
+  MaxPredictionTime: 1
+  HorizontalSpreadDegrees: 2
+  VerticalSpreadDegrees: 1
+  MinSpreadDistance: 0
+  HitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ProjectilePrefab: {fileID: 7848332063540348193, guid: aac5535099ca92e47a60363a8a052b71,
+    type: 3}
+  MuzzleVFX: {fileID: 0}
+  ImpactVFX: {fileID: 0}
+  FireSound: {fileID: 0}
+  ImpactSound: {fileID: 0}
+  ExtraHitEffects: []

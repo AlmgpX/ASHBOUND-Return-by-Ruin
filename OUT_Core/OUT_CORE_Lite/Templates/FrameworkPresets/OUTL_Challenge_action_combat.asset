@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3c2c39c967a44cab3f976d0d94a8a4b, type: 3}
+  m_Name: OUTL_Challenge_action_combat
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_ChallengeDef
+  ChallengeId: action_combat.challenge.core
+  DisplayName: Action Combat Kernel Objective
+  Tags:
+  - Kernel
+  - action_combat
+  ListenEvent: 5
+  ListenKey: 
+  RequiredSourceTags: []
+  RequiredTargetTags:
+  - Role.Opposition
+  TargetCount: 8
+  CompleteOnlyOnce: 1
+  ResetOnSessionStart: 1
+  Conditions: []
+  Rewards:
+  - {fileID: 11400000, guid: ca4d7b91f2250e64abf0445f901818a8, type: 2}
+  OnProgressEffects: []
+  OnCompleteEffects: []

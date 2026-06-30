@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4a53b4c3b3d4d6295379f5c455cce24, type: 3}
+  m_Name: OUTL_AI_Generic_Ranged
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_AIProfile
+  ProfileId: ai.generic.ranged
+  UseFactionHostility: 1
+  EnemyTags:
+  - Role.Targetable
+  FriendTags:
+  - Actor
+  ViewDistance: 44
+  AttackDistance: 26
+  MoveSpeed: 3.1
+  ThinkIntervalNear: 0.14
+  ThinkIntervalMid: 0.45
+  ThinkIntervalFar: 1.5
+  IdleSchedule: {fileID: 11400000, guid: 8a93f0589c117a64aad2afb5121bf415, type: 2}
+  CombatSchedule: {fileID: 11400000, guid: cfb31663d9215ce4bb2940e93b137266, type: 2}
+  SearchSchedule: {fileID: 11400000, guid: 0131bc5d6fd6e0a4eb4f39200e174ef0, type: 2}
+  FleeSchedule: {fileID: 11400000, guid: 334ae5a2bf9103048baf1e954267ccfb, type: 2}
+  LowHealthThreshold: 20
+  Rules: []

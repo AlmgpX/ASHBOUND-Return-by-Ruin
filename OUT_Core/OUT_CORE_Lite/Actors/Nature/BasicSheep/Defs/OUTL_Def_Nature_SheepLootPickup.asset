@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f7a4b5f8eea4a1da640449abdda988b, type: 3}
+  m_Name: OUTL_Def_Nature_SheepLootPickup
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_EntityDef
+  ClassName: pickup.nature.sheep_resource
+  DisplayName: Sheep Resource Pickup
+  Tags:
+  - Pickup
+  - Item
+  - Resource
+  - Sheep
+  BaseStats: []
+  Actions: []
+  Modules: []
+  Prefab: {fileID: 5867689595232631361, guid: 7fa75b5d163fcde489cae98c0912632d, type: 3}

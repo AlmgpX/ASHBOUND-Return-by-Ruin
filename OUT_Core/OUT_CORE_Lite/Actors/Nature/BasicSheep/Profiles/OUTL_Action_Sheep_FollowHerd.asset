@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d490fc697614997bbf53279a0e1d2c5, type: 3}
+  m_Name: OUTL_Action_Sheep_FollowHerd
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_BehaviorActionDef
+  ActionId: sheep.follow_herd
+  Type: 7
+  OutputAction: 9
+  Tags:
+  - Sheep
+  - Herbivore
+  - FollowHerd
+  BaseWeight: 0.06
+  DriveWeights:
+  - Drive: 8
+    Weight: 2.3
+  - Drive: 0
+    Weight: 0.8
+  StimulusWeights:
+  - Stimulus: 27
+    Weight: 1.2
+  - Stimulus: 7
+    Weight: 1.4
+  EgregoreWeights: []
+  LocalDangerWeight: 0
+  LocalSafetyWeight: 0
+  RandomJitter: 0.025
+  Cooldown: 0
+  MinDuration: 1.5
+  MaxDuration: 0
+  RequiredDrive: 22
+  RequiredDriveMinimum: 0
+  RequiresAdult: 0
+  RequiresSafeArea: 0
+  CannotRunInCombat: 1
+  SupportsAbstractMode: 1
+  OnStartEffects: []
+  OnCompleteEffects: []
+  OnStartLivingEffects: []
+  OutputStimulus: 0
+  OutputKey: 
+  OutputStimulusRadius: 6
+  OutputStimulusPriority: 0.25
+  OutputStimulusStrength: 1
+  OutputStimulusConfidence: 1
+  OutputStimulusDecayTime: 2

@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ee473444e004a6289cf350465b5b673, type: 3}
+  m_Name: OUTL_Hurtbox_QuadrupedSmall_Sheep
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_HurtboxProfileDef
+  ProfileId: hurtbox.quadruped.small.sheep
+  Hurtboxes:
+  - Id: Body
+    Shape: 0
+    Zone: 2
+    Tags: 2
+    DamageMultiplier: 1
+    EnabledByDefault: 1
+    IsTrigger: 0
+    Layer: -1
+    LocalCenter: {x: 0, y: 0.48, z: 0}
+    LocalEuler: {x: 0, y: 0, z: 0}
+    BoxSize: {x: 0.48, y: 0.55, z: 1.05}
+    Radius: 0.25
+    Height: 1
+  - Id: Head
+    Shape: 1
+    Zone: 1
+    Tags: 9
+    DamageMultiplier: 1.8
+    EnabledByDefault: 1
+    IsTrigger: 0
+    Layer: -1
+    LocalCenter: {x: 0, y: 0.78, z: 0.58}
+    LocalEuler: {x: 0, y: 0, z: 0}
+    BoxSize: {x: 0.5, y: 1, z: 0.5}
+    Radius: 0.18
+    Height: 1
+  - Id: Legs
+    Shape: 0
+    Zone: 4
+    Tags: 4
+    DamageMultiplier: 0.65
+    EnabledByDefault: 1
+    IsTrigger: 0
+    Layer: -1
+    LocalCenter: {x: 0, y: 0.23, z: 0}
+    LocalEuler: {x: 0, y: 0, z: 0}
+    BoxSize: {x: 0.42, y: 0.32, z: 0.88}
+    Radius: 0.25
+    Height: 1
+  AllowProjectileHits: 1
+  AllowMeleeHits: 1
+  FriendlyFireUsesCombatRules: 1

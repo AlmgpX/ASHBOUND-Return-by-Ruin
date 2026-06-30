@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08882f30af9f48498b0c5ce347a5096, type: 3}
+  m_Name: OUTL_Attack_LobbedVolatileShard
+  m_EditorClassIdentifier: 
+  AttackId: archetype.projectile.lobbed_volatile_shard
+  Mode: 1
+  Damage: 12
+  Range: 28
+  Radius: 0.2
+  Cooldown: 0.95
+  ProjectileSpeed: 18
+  ProjectileLifetime: 3.5
+  ProjectileUsesGravity: 1
+  ProjectileGravity: 7.5
+  ProjectileIgnoreTriggers: 1
+  ProjectileDetonateOnEntityHit: 1
+  ProjectileDetonateOnWorldHit: 1
+  ProjectileDetonateOnLifetimeEnd: 1
+  ProjectileBounceOnWorldHit: 1
+  ProjectileMaxBounces: 1
+  ProjectileBounceDamping: 0.42
+  ProjectileFrictionDamping: 0.75
+  UseExplosion: 1
+  ExplosionRadius: 2.6
+  ExplosionDamage: 48
+  ExplosionFalloff: 2
+  ExplosionHitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ExplosionRequireLineOfSight: 0
+  ExplosionObstacleMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ExplosionDamageKey: projectile.volatile_shard
+  AimMode: 2
+  UseTargetVelocityPrediction: 1
+  PredictionStrength: 0.55
+  MaxPredictionTime: 0.9
+  HorizontalSpreadDegrees: 1.4
+  VerticalSpreadDegrees: 1
+  MinSpreadDistance: 2
+  HitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ProjectilePrefab: {fileID: 866320356441119494, guid: 6d15eb64acf1a2c46a0a5be039fb32ba, type: 3}
+  MuzzleVFX: {fileID: 0}
+  ImpactVFX: {fileID: 0}
+  FireSound: {fileID: 0}
+  ImpactSound: {fileID: 0}
+  ExtraHitEffects: []

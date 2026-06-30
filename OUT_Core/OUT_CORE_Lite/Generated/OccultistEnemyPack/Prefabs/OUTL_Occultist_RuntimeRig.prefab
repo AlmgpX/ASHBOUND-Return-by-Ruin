@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5697214502384580382
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4356818559336460641}
+  - component: {fileID: 4565548511505721372}
+  - component: {fileID: 1862617733616893334}
+  m_Layer: 0
+  m_Name: OUTL_Occultist_RuntimeRig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4356818559336460641
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5697214502384580382}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4565548511505721372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5697214502384580382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce5ee7ad2fde4ec43923ecedc7e079c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DefDatabase: {fileID: 0}
+  EntityDefs:
+  - {fileID: 11400000, guid: 9221bd8711815dd4b92f94e479a20db4, type: 2}
+  - {fileID: 11400000, guid: a5ce2302d8b127a429014a944d6527d9, type: 2}
+  - {fileID: 11400000, guid: 7aacad2887857aa439c95892167a9c1a, type: 2}
+  - {fileID: 11400000, guid: 769e95af75a34a04b84eb0a28363ebab, type: 2}
+  - {fileID: 11400000, guid: 05468539737a3264ab2cd1f930dbdb19, type: 2}
+  AllowBareEntityFallback: 0
+  RequireRestoreSpawnIfMissingFlag: 1
+--- !u!114 &1862617733616893334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5697214502384580382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06a6f8ead2ac42eaac2f5dbdf3ab0714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Entries:
+  - Prefab: {fileID: 2583085477709306745, guid: da477d6c05367bb43aaac8199a68b3ea,
+      type: 3}
+    Count: 128
+  - Prefab: {fileID: 3553668946240732683, guid: 99c630ee72090b54295f4a1b668bcea1,
+      type: 3}
+    Count: 16
+  - Prefab: {fileID: 4876781043950059122, guid: f302304f91c8411428d08d8dc1d88e3f,
+      type: 3}
+    Count: 12
+  - Prefab: {fileID: 9044769228874520307, guid: 2d4db449af54d384d98d859e45027180,
+      type: 3}
+    Count: 6
+  - Prefab: {fileID: 4328910973894843867, guid: c411c2a156beec341a7a61e49060774b,
+      type: 3}
+    Count: 6
+  - Prefab: {fileID: 5008790846725207326, guid: 3458b44e546038241b09e8fd1bd300b4,
+      type: 3}
+    Count: 6
+  - Prefab: {fileID: 260415458342134807, guid: e01ae88e2e18ee6468ca9e5e80e22e83, type: 3}
+    Count: 6
+  PrewarmOnStart: 1

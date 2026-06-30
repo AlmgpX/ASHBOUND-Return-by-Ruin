@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a754c691eb9a41ba988df1ed31a749d5, type: 3}
+  m_Name: OUTL_ActionSet_Sheep_Herbivore
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_BehaviorActionSetDef
+  ActionSetId: actionset.sheep.herbivore
+  Actions:
+  - {fileID: 11400000, guid: 69da9d718838974449aa25e6d66bbcc2, type: 2}
+  - {fileID: 11400000, guid: ddf600ba624e5064fa145bb0d2fea568, type: 2}
+  - {fileID: 11400000, guid: 3f52c827b0087684880e8d356fc53574, type: 2}
+  - {fileID: 11400000, guid: e8de802c028e23049a1d9b5937be8761, type: 2}
+  - {fileID: 11400000, guid: 269d386083264b54e94f0e2deddc5ce2, type: 2}
+  - {fileID: 11400000, guid: ba4d93e82e9e1494e82d6c8fd9784fdd, type: 2}
+  - {fileID: 11400000, guid: 3f3513306aefa2349b021bd27accd121, type: 2}
+  - {fileID: 11400000, guid: 45a0b898682c2a744ae8ae66928d0699, type: 2}
+  - {fileID: 11400000, guid: b983b628f3fa8994bb344efb253f1a81, type: 2}
+  - {fileID: 11400000, guid: 0eb82069a9d952944a27458bb377902d, type: 2}
+  FallbackAction: {fileID: 11400000, guid: ddf600ba624e5064fa145bb0d2fea568, type: 2}
+  SwitchHysteresis: 0.15
+  SpeciesTags:
+  - Sheep
+  - Herbivore
+  - PassiveAnimal

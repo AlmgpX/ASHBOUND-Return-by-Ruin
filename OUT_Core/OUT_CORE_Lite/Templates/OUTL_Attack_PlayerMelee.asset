@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08882f30af9f48498b0c5ce347a5096, type: 3}
+  m_Name: OUTL_Attack_PlayerMelee
+  m_EditorClassIdentifier: 
+  AttackId: OUTL_Attack_PlayerMelee
+  Mode: 2
+  Damage: 20
+  Range: 1.8
+  Radius: 1
+  Cooldown: 0.6
+  ProjectileSpeed: 28
+  ProjectileLifetime: 8
+  ProjectileUsesGravity: 0
+  ProjectileGravity: 9.81
+  AimMode: 0
+  UseTargetVelocityPrediction: 1
+  PredictionStrength: 1
+  MaxPredictionTime: 1.5
+  HorizontalSpreadDegrees: 0
+  VerticalSpreadDegrees: 0
+  MinSpreadDistance: 0
+  HitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ProjectilePrefab: {fileID: 0}
+  MuzzleVFX: {fileID: 0}
+  ImpactVFX: {fileID: 0}
+  FireSound: {fileID: 0}
+  ImpactSound: {fileID: 0}
+  ExtraHitEffects: []

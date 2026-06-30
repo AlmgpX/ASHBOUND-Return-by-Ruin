@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fac467983b664b34924642039e931e16, type: 3}
+  m_Name: OUTL_WeaponUse_Generic_Melee
+  m_EditorClassIdentifier: 
+  Role: 1
+  Slot: 2
+  AttackProfileOverride: {fileID: 11400000, guid: 2ac5cb81aef65ad43bb79e34137c0e47,
+    type: 2}
+  PreferredRange: 1.2
+  MinSafeRange: 0
+  MaxRange: 2.2
+  RequiresLineOfSight: 1
+  BlocksOnFriendlyFire: 1
+  AllowSuppression: 0
+  BurstDuration: 0.35
+  BurstCooldown: 0.75
+  SuppressionChance: 0.35

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0cc8e10efba4a92a2833d9a5976596c, type: 3}
+  m_Name: OUTL_Item_Generic_PrimaryWeapon
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_EquipmentItemDef
+  ClassName: item.weapon.primary_generic
+  DisplayName: Generic Primary Weapon
+  Tags:
+  - Item
+  - Weapon
+  - Primary
+  BaseStats: []
+  Actions: []
+  Modules: []
+  Prefab: {fileID: 0}
+  MaxStack: 1
+  Equippable: 1
+  OnUse: {fileID: 0}
+  OnEquip: {fileID: 0}
+  OnUnequip: {fileID: 0}
+  Slot: 0
+  AttackProfile: {fileID: 11400000, guid: 89c2a594704d1ae4ea01aa147cfb7538, type: 2}
+  OnEquipEffects: []
+  OnUnequipEffects: []

@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b4044a1e7c54b9e98b07853d9680241, type: 3}
+  m_Name: OUTL_Quest_CoreSkeleton
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_QuestDef
+  QuestId: skeleton.core_loop
+  DisplayName: Core Loop
+  DebugName: Core Skeleton Loop
+  ArchetypalHook: 8
+  CompletedStage: 100
+  FailedStage: -1
+  RequiredEgregore: 
+  Tags:
+  - skeleton
+  - core
+  Objectives:
+  - ObjectiveId: kill_actor
+    Type: 9
+    ListenKey: 
+    RequiredCount: 1
+    Conditions: []
+  - ObjectiveId: collect_item
+    Type: 10
+    ListenKey: 
+    RequiredCount: 1
+    Conditions: []
+  - ObjectiveId: open_container
+    Type: 13
+    ListenKey: 
+    RequiredCount: 1
+    Conditions: []
+  Stages:
+  - Stage: 1
+    Description: Core loop active
+    ArchetypalHook: 0
+    CompletesQuest: 0
+    FailsQuest: 0
+    ListenEvent: 0
+    ListenKey: 
+    Conditions: []
+    OnEnterEffects: []
+    OnEventEffects: []
+  - Stage: 100
+    Description: Core loop complete
+    ArchetypalHook: 8
+    CompletesQuest: 1
+    FailsQuest: 0
+    ListenEvent: 0
+    ListenKey: 
+    Conditions: []
+    OnEnterEffects: []
+    OnEventEffects: []
+  - Stage: -1
+    Description: Core loop failed
+    ArchetypalHook: 4
+    CompletesQuest: 0
+    FailsQuest: 1
+    ListenEvent: 0
+    ListenKey: 
+    Conditions: []
+    OnEnterEffects: []
+    OnEventEffects: []

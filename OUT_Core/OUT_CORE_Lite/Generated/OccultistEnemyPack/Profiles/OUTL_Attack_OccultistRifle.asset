@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08882f30af9f48498b0c5ce347a5096, type: 3}
+  m_Name: OUTL_Attack_OccultistRifle
+  m_EditorClassIdentifier: 
+  AttackId: occultist.rifle
+  Mode: 1
+  Damage: 9
+  HitDamageKey: occultist.rifle
+  Range: 72
+  Radius: 0.25
+  Cooldown: 0.38
+  MeleeArcDegrees: 120
+  MeleeMinRadius: 0.45
+  MeleeHeight: 1.35
+  MeleeForwardBias: 0.55
+  MeleeCanHitTriggers: 0
+  ProjectileSpeed: 100
+  ProjectileLifetime: 1.22
+  ProjectileUsesGravity: 0
+  ProjectileGravity: 9.81
+  ProjectilesPerShot: 1
+  ProjectileIgnoreTriggers: 1
+  ProjectileDetonateOnEntityHit: 0
+  ProjectileDetonateOnWorldHit: 0
+  ProjectileDetonateOnLifetimeEnd: 0
+  ProjectileBounceOnWorldHit: 0
+  ProjectileMaxBounces: 0
+  ProjectileBounceDamping: 0.65
+  ProjectileFrictionDamping: 0.92
+  UseExplosion: 0
+  ExplosionRadius: 0
+  ExplosionDamage: 0
+  ExplosionFalloff: 2
+  ExplosionHitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ExplosionRequireLineOfSight: 1
+  ExplosionObstacleMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ExplosionDamageKey: explosion
+  AimMode: 1
+  UseTargetVelocityPrediction: 1
+  PredictionStrength: 0.72
+  MaxPredictionTime: 1.1
+  HorizontalSpreadDegrees: 1.25
+  VerticalSpreadDegrees: 0.7
+  MinSpreadDistance: 2
+  HitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ProjectilePrefab: {fileID: 2583085477709306745, guid: da477d6c05367bb43aaac8199a68b3ea,
+    type: 3}
+  MuzzleVFX: {fileID: 0}
+  ImpactVFX: {fileID: 0}
+  FireSound: {fileID: 0}
+  ImpactSound: {fileID: 0}
+  ExtraHitEffects: []

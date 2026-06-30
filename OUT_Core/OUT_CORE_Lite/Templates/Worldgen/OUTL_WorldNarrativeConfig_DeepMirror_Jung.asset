@@ -1,0 +1,657 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77009fbb7624bdb47be4df2e638273cb, type: 3}
+  m_Name: OUTL_WorldNarrativeConfig_DeepMirror_Jung
+  m_EditorClassIdentifier: 
+  Language: ru
+  WorldName:
+    Key: world.deep_mirror
+    Variants:
+    - Language: ru
+      Text: "\u0413\u043B\u0443\u0431\u0438\u043D\u043D\u043E\u0435 \u0417\u0435\u0440\u043A\u0430\u043B\u043E"
+    - Language: en
+      Text: Deep Mirror
+  EraName:
+    Key: era.inner_weather
+    Variants:
+    - Language: ru
+      Text: "\u042D\u043F\u043E\u0445\u0430 \u0412\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u0435\u0439
+        \u041F\u043E\u0433\u043E\u0434\u044B"
+    - Language: en
+      Text: Age of Inner Weather
+  Width: 96
+  Height: 64
+  Years: 320
+  Seed: 1490261972
+  HeightScale: 18
+  MoistureScale: 14
+  HeatScale: 24
+  Octaves: 5
+  Persistence: 0.52
+  Lacunarity: 2.05
+  Temperament: 3
+  EventDensity: 1.2
+  ConflictPressure: 1.15
+  GrowthPressure: 1
+  MythicPressure: 1.45
+  ArchetypeStrength: 1.15
+  UseJungArchetypes: 1
+  Archetypes:
+  - Id: self
+    Type: 1
+    DisplayName:
+      Key: archetype.self
+      Variants:
+      - Language: ru
+        Text: "\u0421\u0430\u043C\u043E\u0441\u0442\u044C"
+      - Language: en
+        Text: Self
+    Weight: 1.2
+    AllowedZones: 0905
+    MinHeight: 0
+    MaxHeight: 1
+    MinMoisture: 0.25
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 0.8
+    MinDrainage: 0
+    MaxDrainage: 1
+    ResourceChanceMultiplier: 1
+    PlantChanceMultiplier: 1
+    EventChanceMultiplier: 1.35
+    ProsperityBias: 0
+    DangerBias: 0
+    SanctityBias: 3
+    VisibilityBias: 0.18
+    DesignNoteRu: "\u0426\u0435\u043D\u0442\u0440, \u0441\u043E\u0431\u0438\u0440\u0430\u044E\u0449\u0438\u0439
+      \u043A\u0430\u0440\u0442\u0443 \u0432\u043E\u043A\u0440\u0443\u0433 \u0441\u043C\u044B\u0441\u043B\u0430;
+      \u043C\u0435\u0441\u0442\u0430 \u0446\u0435\u043B\u043E\u0441\u0442\u043D\u043E\u0441\u0442\u0438,
+      \u043E\u0441\u0438 \u043C\u0438\u0440\u0430 \u0438 \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u043E\u0439
+      \u0441\u0431\u043E\u0440\u043A\u0438 \u043B\u0438\u0447\u043D\u043E\u0441\u0442\u0438."
+    Lines: []
+  - Id: shadow
+    Type: 2
+    DisplayName:
+      Key: archetype.shadow
+      Variants:
+      - Language: ru
+        Text: "\u0422\u0435\u043D\u044C"
+      - Language: en
+        Text: Shadow
+    Weight: 1.4
+    AllowedZones: 080a06
+    MinHeight: 0
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 1
+    MinDrainage: 0
+    MaxDrainage: 1
+    ResourceChanceMultiplier: 1.05
+    PlantChanceMultiplier: 0.85
+    EventChanceMultiplier: 1.4
+    ProsperityBias: -1
+    DangerBias: 3
+    SanctityBias: 0
+    VisibilityBias: -0.15
+    DesignNoteRu: "\u0412\u044B\u0442\u0435\u0441\u043D\u0435\u043D\u043D\u043E\u0435,
+      \u043E\u043F\u0430\u0441\u043D\u043E\u0435, \u043D\u0435\u0443\u0447\u0442\u0451\u043D\u043D\u043E\u0435;
+      \u0437\u043E\u043D\u044B, \u0433\u0434\u0435 \u043C\u0438\u0440 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442
+      \u0446\u0435\u043D\u0443 \u0441\u043E\u0431\u0441\u0442\u0432\u0435\u043D\u043D\u043E\u0439
+      \u043B\u0436\u0438."
+    Lines: []
+  - Id: persona
+    Type: 3
+    DisplayName:
+      Key: archetype.persona
+      Variants:
+      - Language: ru
+        Text: "\u041F\u0435\u0440\u0441\u043E\u043D\u0430"
+      - Language: en
+        Text: Persona
+    Weight: 0.9
+    AllowedZones: 01020e
+    MinHeight: 0
+    MaxHeight: 0.7
+    MinMoisture: 0
+    MaxMoisture: 0.8
+    MinHeat: 0.2
+    MaxHeat: 0.85
+    MinDrainage: 0
+    MaxDrainage: 1
+    ResourceChanceMultiplier: 1
+    PlantChanceMultiplier: 1
+    EventChanceMultiplier: 0.9
+    ProsperityBias: 2
+    DangerBias: 0
+    SanctityBias: 0
+    VisibilityBias: 0.12
+    DesignNoteRu: "\u0424\u0430\u0441\u0430\u0434, \u0434\u043E\u0440\u043E\u0433\u0430,
+      \u043F\u043E\u0441\u0435\u043B\u0435\u043D\u0438\u0435, \u0434\u043E\u0433\u043E\u0432\u043E\u0440;
+      \u043C\u0438\u0440 \u043A\u0430\u043A \u0441\u043E\u0446\u0438\u0430\u043B\u044C\u043D\u0430\u044F
+      \u043C\u0430\u0441\u043A\u0430."
+    Lines: []
+  - Id: great_mother
+    Type: 9
+    DisplayName:
+      Key: archetype.great_mother
+      Variants:
+      - Language: ru
+        Text: "\u0412\u0435\u043B\u0438\u043A\u0430\u044F \u043C\u0430\u0442\u044C"
+      - Language: en
+        Text: Great Mother
+    Weight: 1.15
+    AllowedZones: 030b0c06
+    MinHeight: 0
+    MaxHeight: 0.75
+    MinMoisture: 0.5
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 0.8
+    MinDrainage: 0
+    MaxDrainage: 0.65
+    ResourceChanceMultiplier: 1.2
+    PlantChanceMultiplier: 1.35
+    EventChanceMultiplier: 1.05
+    ProsperityBias: 2
+    DangerBias: 0
+    SanctityBias: 1
+    VisibilityBias: 0.1
+    DesignNoteRu: "\u041F\u043B\u043E\u0434\u043E\u0440\u043E\u0434\u0438\u0435,
+      \u0432\u043E\u0434\u0430, \u0442\u0435\u043B\u043E \u043C\u0438\u0440\u0430;
+      \u043C\u0435\u0441\u0442\u043E, \u043A\u043E\u0442\u043E\u0440\u043E\u0435
+      \u043A\u043E\u0440\u043C\u0438\u0442, \u0434\u0443\u0448\u0438\u0442 \u0438
+      \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043F\u043B\u0430\u0442\u044B."
+    Lines: []
+  - Id: wise_elder
+    Type: 8
+    DisplayName:
+      Key: archetype.wise_elder
+      Variants:
+      - Language: ru
+        Text: "\u041C\u0443\u0434\u0440\u044B\u0439 \u0441\u0442\u0430\u0440\u0435\u0446"
+      - Language: en
+        Text: Wise Elder
+    Weight: 1
+    AllowedZones: 050d
+    MinHeight: 0.65
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 0.8
+    MinHeat: 0
+    MaxHeat: 0.55
+    MinDrainage: 0.3
+    MaxDrainage: 1
+    ResourceChanceMultiplier: 0.9
+    PlantChanceMultiplier: 0.75
+    EventChanceMultiplier: 1.1
+    ProsperityBias: 0
+    DangerBias: 1
+    SanctityBias: 2
+    VisibilityBias: 0.2
+    DesignNoteRu: "\u0412\u044B\u0441\u043E\u0442\u0430, \u0445\u043E\u043B\u043E\u0434,
+      \u043F\u0430\u043C\u044F\u0442\u044C, \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F;
+      \u0437\u043D\u0430\u043D\u0438\u0435, \u043A\u043E\u0442\u043E\u0440\u043E\u0435
+      \u043D\u0435 \u043E\u0431\u044F\u0437\u0430\u043D\u043E \u0431\u044B\u0442\u044C
+      \u0434\u043E\u0431\u0440\u044B\u043C."
+    Lines: []
+  - Id: trickster
+    Type: 7
+    DisplayName:
+      Key: archetype.trickster
+      Variants:
+      - Language: ru
+        Text: "\u0422\u0440\u0438\u043A\u0441\u0442\u0435\u0440"
+      - Language: en
+        Text: Trickster
+    Weight: 0.9
+    AllowedZones: 010a0e
+    MinHeight: 0
+    MaxHeight: 0.85
+    MinMoisture: 0.15
+    MaxMoisture: 0.85
+    MinHeat: 0.2
+    MaxHeat: 0.95
+    MinDrainage: 0
+    MaxDrainage: 1
+    ResourceChanceMultiplier: 1.05
+    PlantChanceMultiplier: 0.95
+    EventChanceMultiplier: 1.35
+    ProsperityBias: 0
+    DangerBias: 2
+    SanctityBias: 0
+    VisibilityBias: 0.05
+    DesignNoteRu: "\u0421\u0440\u044B\u0432 \u043F\u0440\u0430\u0432\u0438\u043B,
+      \u043F\u0435\u0440\u0435\u0445\u043E\u0434, \u043E\u0431\u043C\u0430\u043D,
+      \u0441\u043B\u0443\u0447\u0430\u0439\u043D\u043E\u0441\u0442\u044C; \u0437\u043E\u043D\u0430,
+      \u0433\u0434\u0435 \u043A\u0430\u0440\u0442\u0430 \u043F\u0435\u0440\u0435\u0441\u0442\u0430\u0451\u0442
+      \u0432\u0435\u0441\u0442\u0438 \u0441\u0435\u0431\u044F \u043F\u0440\u0438\u043B\u0438\u0447\u043D\u043E."
+    Lines: []
+  - Id: death_rebirth
+    Type: 11
+    DisplayName:
+      Key: archetype.death_rebirth
+      Variants:
+      - Language: ru
+        Text: "\u0421\u043C\u0435\u0440\u0442\u044C/\u0412\u043E\u0437\u0440\u043E\u0436\u0434\u0435\u043D\u0438\u0435"
+      - Language: en
+        Text: Death/Rebirth
+    Weight: 1.05
+    AllowedZones: 0a08070b
+    MinHeight: 0
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 0.9
+    MinHeat: 0
+    MaxHeat: 1
+    MinDrainage: 0
+    MaxDrainage: 1
+    ResourceChanceMultiplier: 0.8
+    PlantChanceMultiplier: 0.9
+    EventChanceMultiplier: 1.25
+    ProsperityBias: -1
+    DangerBias: 2
+    SanctityBias: 2
+    VisibilityBias: -0.05
+    DesignNoteRu: "\u0420\u0430\u0441\u043F\u0430\u0434 \u0438 \u043D\u043E\u0432\u0430\u044F
+      \u0444\u043E\u0440\u043C\u0430; \u043C\u0435\u0441\u0442\u043E, \u0433\u0434\u0435
+      \u0441\u0442\u0430\u0440\u043E\u0435 \u0443\u043C\u0438\u0440\u0430\u0435\u0442
+      \u043D\u0435 \u0434\u043E \u043A\u043E\u043D\u0446\u0430, \u043F\u043E\u0442\u043E\u043C\u0443
+      \u0447\u0442\u043E \u0436\u0430\u043D\u0440 \u0442\u0440\u0435\u0431\u0443\u0435\u0442
+      \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u044F."
+    Lines: []
+  UseLatitudeHeat: 1
+  EquatorY: 0.5
+  PolarCooling: 0.65
+  AltitudeCooling: 0.48
+  RainShadowStrength: 0.22
+  RiverMoistureBoost: 0.18
+  DrainageFromHeight: 0.55
+  DrainageFromSlope: 0.45
+  GenerateRivers: 1
+  RiverCount: 9
+  RiverMaxSteps: 256
+  RiverSourceMinHeight: 0.68
+  LakeChance: 0.035
+  LakeMaxHeight: 0.52
+  ComputeVisibility: 1
+  VisibilityFromHeight: 0.35
+  VisibilityFromProsperity: 0.25
+  VisibilityFromSacred: 0.25
+  VisibilityFromWater: 0.15
+  VisibilityDangerPenalty: 0.25
+  VisibilityFog: 0.08
+  OceanHeight: 0.28
+  CoastHeight: 0.34
+  HillsHeight: 0.62
+  MountainHeight: 0.78
+  TundraHeat: 0.24
+  DesertHeat: 0.68
+  DesertMoisture: 0.28
+  SteppeMoisture: 0.38
+  SwampMoisture: 0.72
+  ForestMoisture: 0.52
+  WastelandChance: 0.018
+  SacredChance: 0.009
+  RuinsChance: 0.012
+  Resources:
+  - Id: iron
+    DisplayName:
+      Key: resource.iron
+      Variants:
+      - Language: ru
+        Text: "\u0416\u0435\u043B\u0435\u0437\u043D\u044B\u0435 \u0436\u0438\u043B\u044B"
+      - Language: en
+        Text: Iron Veins
+    AllowedZones: 0405
+    BaseChance: 0.18
+    MinHeight: 0.55
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 0.78
+    MinDrainage: 0.3
+    MaxDrainage: 1
+    DiscoveryLines:
+    - Key: resource.iron.discovery
+      Variants:
+      - Language: ru
+        Text: "\u0412 \u0441\u0442\u0430\u0440\u043E\u043C \u043A\u0430\u043C\u043D\u0435
+          \u043E\u0442\u043A\u0440\u044B\u043B\u0438\u0441\u044C \u0436\u0435\u043B\u0435\u0437\u043D\u044B\u0435
+          \u0436\u0438\u043B\u044B."
+      - Language: en
+        Text: Iron was found under the old stone.
+  - Id: salt
+    DisplayName:
+      Key: resource.salt
+      Variants:
+      - Language: ru
+        Text: "\u0421\u043E\u043B\u044F\u043D\u044B\u0435 \u043F\u043B\u0430\u0441\u0442\u044B"
+      - Language: en
+        Text: Salt Flats
+    AllowedZones: 07010c
+    BaseChance: 0.12
+    MinHeight: 0.22
+    MaxHeight: 0.8
+    MinMoisture: 0
+    MaxMoisture: 0.55
+    MinHeat: 0.45
+    MaxHeat: 1
+    MinDrainage: 0.35
+    MaxDrainage: 1
+    DiscoveryLines:
+    - Key: resource.salt.discovery
+      Variants:
+      - Language: ru
+        Text: "\u0421\u043E\u043B\u044C \u0432\u044B\u0448\u043B\u0430 \u043D\u0430
+          \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u044C \u0442\u0430\u043C,
+          \u0433\u0434\u0435 \u0432\u043E\u0434\u0430 \u043E\u0442\u0441\u0442\u0443\u043F\u0438\u043B\u0430."
+      - Language: en
+        Text: Salt surfaced where water abandoned the land.
+  - Id: old_bones
+    DisplayName:
+      Key: resource.old_bones
+      Variants:
+      - Language: ru
+        Text: "\u0421\u0442\u0430\u0440\u044B\u0435 \u043A\u043E\u0441\u0442\u0438"
+      - Language: en
+        Text: Old Bones
+    AllowedZones: 0a08
+    BaseChance: 0.25
+    MinHeight: 0
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 1
+    MinDrainage: 0
+    MaxDrainage: 1
+    DiscoveryLines:
+    - Key: resource.old_bones.discovery
+      Variants:
+      - Language: ru
+        Text: "\u041A\u043E\u0441\u0442\u0438 \u043F\u043E\u043A\u0430\u0437\u0430\u043B\u0438\u0441\u044C
+          \u0442\u0430\u043C, \u0433\u0434\u0435 \u0438\u0441\u0442\u043E\u0440\u0438\u044F
+          \u043D\u0435 \u0441\u043C\u043E\u0433\u043B\u0430 \u043E\u0441\u0442\u0430\u0442\u044C\u0441\u044F
+          \u043F\u043E\u0434 \u0437\u0435\u043C\u043B\u0451\u0439."
+      - Language: en
+        Text: Bones were uncovered where history failed to stay buried.
+  - Id: clear_water
+    DisplayName:
+      Key: resource.clear_water
+      Variants:
+      - Language: ru
+        Text: "\u0427\u0438\u0441\u0442\u0430\u044F \u0432\u043E\u0434\u0430"
+      - Language: en
+        Text: Clear Water
+    AllowedZones: 0304090b
+    BaseChance: 0.16
+    MinHeight: 0.3
+    MaxHeight: 0.8
+    MinMoisture: 0.55
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 0.75
+    MinDrainage: 0
+    MaxDrainage: 0.55
+    DiscoveryLines:
+    - Key: resource.clear_water.discovery
+      Variants:
+      - Language: ru
+        Text: "\u0427\u0438\u0441\u0442\u044B\u0439 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A
+          \u043F\u0440\u043E\u0440\u0435\u0437\u0430\u043B \u043F\u043E\u0447\u0432\u0443."
+      - Language: en
+        Text: A clear spring cut through the soil.
+  Plants:
+  - Id: red_grass
+    DisplayName:
+      Key: plant.red_grass
+      Variants:
+      - Language: ru
+        Text: "\u041A\u0440\u0430\u0441\u043D\u0430\u044F \u0442\u0440\u0430\u0432\u0430"
+      - Language: en
+        Text: Red Grass
+    AllowedZones: 02040e
+    BaseChance: 0.2
+    MinHeight: 0.3
+    MaxHeight: 0.75
+    MinMoisture: 0.25
+    MaxMoisture: 0.7
+    MinHeat: 0.25
+    MaxHeat: 0.8
+    MinDrainage: 0.25
+    MaxDrainage: 0.75
+    SpreadLines:
+    - Key: plant.red_grass.spread
+      Variants:
+      - Language: ru
+        Text: "\u041F\u043E\u0441\u043B\u0435 \u0442\u0451\u043F\u043B\u043E\u0433\u043E
+          \u0441\u0435\u0437\u043E\u043D\u0430 \u0440\u0430\u0437\u043E\u0448\u043B\u0430\u0441\u044C
+          \u043A\u0440\u0430\u0441\u043D\u0430\u044F \u0442\u0440\u0430\u0432\u0430."
+      - Language: en
+        Text: Red grass spread after a warm season.
+  - Id: reed
+    DisplayName:
+      Key: plant.reed
+      Variants:
+      - Language: ru
+        Text: "\u0411\u043E\u043B\u043E\u0442\u043D\u044B\u0439 \u0442\u0440\u043E\u0441\u0442\u043D\u0438\u043A"
+      - Language: en
+        Text: Marsh Reed
+    AllowedZones: 06010b0c
+    BaseChance: 0.32
+    MinHeight: 0.2
+    MaxHeight: 0.55
+    MinMoisture: 0.65
+    MaxMoisture: 1
+    MinHeat: 0.2
+    MaxHeat: 0.8
+    MinDrainage: 0
+    MaxDrainage: 0.45
+    SpreadLines:
+    - Key: plant.reed.spread
+      Variants:
+      - Language: ru
+        Text: "\u0422\u0440\u043E\u0441\u0442\u043D\u0438\u043A \u0437\u0430\u0431\u0438\u043B
+          \u043C\u043E\u043A\u0440\u044B\u0435 \u043A\u0440\u0430\u044F \u0432\u043E\u0434\u044B."
+      - Language: en
+        Text: Reeds crowded the wet margins.
+  - Id: grave_moss
+    DisplayName:
+      Key: plant.grave_moss
+      Variants:
+      - Language: ru
+        Text: "\u041C\u043E\u0433\u0438\u043B\u044C\u043D\u044B\u0439 \u043C\u043E\u0445"
+      - Language: en
+        Text: Grave Moss
+    AllowedZones: 0a09
+    BaseChance: 0.22
+    MinHeight: 0.2
+    MaxHeight: 0.8
+    MinMoisture: 0.4
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 0.7
+    MinDrainage: 0
+    MaxDrainage: 0.65
+    SpreadLines:
+    - Key: plant.grave_moss.spread
+      Variants:
+      - Language: ru
+        Text: "\u041C\u043E\u0433\u0438\u043B\u044C\u043D\u044B\u0439 \u043C\u043E\u0445
+          \u043E\u0442\u043C\u0435\u0442\u0438\u043B \u043A\u0430\u043C\u043D\u0438,
+          \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043D\u0438\u043A\u0442\u043E
+          \u043D\u0435 \u043F\u0440\u0438\u0437\u043D\u0430\u0432\u0430\u043B \u0440\u0443\u043A\u043E\u0442\u0432\u043E\u0440\u043D\u044B\u043C\u0438."
+      - Language: en
+        Text: Grave moss marked stones nobody admitted placing.
+  Events:
+  - Id: drought
+    DisplayName:
+      Key: event.drought
+      Variants:
+      - Language: ru
+        Text: "\u0417\u0430\u0441\u0443\u0445\u0430"
+      - Language: en
+        Text: Drought
+    AllowedZones: 0207040e
+    BaseChancePerYear: 0.075
+    MinHeight: 0
+    MaxHeight: 0.8
+    MinMoisture: 0
+    MaxMoisture: 0.45
+    MinHeat: 0.55
+    MaxHeat: 1
+    MinDrainage: 0.35
+    MaxDrainage: 1
+    MinYear: 0
+    MaxYear: 999
+    ProsperityDelta: -2
+    DangerDelta: 1
+    SanctityDelta: 0
+    Lines:
+    - Key: event.drought.line
+      Variants:
+      - Language: ru
+        Text: "\u0421\u0443\u0445\u043E\u0439 \u0433\u043E\u0434 \u0440\u0430\u0441\u0442\u0440\u0435\u0441\u043A\u0430\u043B
+          \u0437\u0435\u043C\u043B\u044E \u0438 \u0432\u044B\u0441\u0442\u0430\u0432\u0438\u043B
+          \u043A\u043E\u043B\u043E\u0434\u0446\u044B \u0431\u0435\u0441\u043F\u043E\u043B\u0435\u0437\u043D\u044B\u043C\u0438
+          \u0434\u044B\u0440\u043A\u0430\u043C\u0438."
+      - Language: en
+        Text: A dry year cracked the ground and made fools of wells.
+  - Id: pilgrimage
+    DisplayName:
+      Key: event.pilgrimage
+      Variants:
+      - Language: ru
+        Text: "\u041F\u0430\u043B\u043E\u043C\u043D\u0438\u0447\u0435\u0441\u0442\u0432\u043E"
+      - Language: en
+        Text: Pilgrimage
+    AllowedZones: 090503
+    BaseChancePerYear: 0.055
+    MinHeight: 0.35
+    MaxHeight: 1
+    MinMoisture: 0.25
+    MaxMoisture: 0.9
+    MinHeat: 0
+    MaxHeat: 0.75
+    MinDrainage: 0.2
+    MaxDrainage: 1
+    MinYear: 0
+    MaxYear: 999
+    ProsperityDelta: 1
+    DangerDelta: 0
+    SanctityDelta: 2
+    Lines:
+    - Key: event.pilgrimage.line
+      Variants:
+      - Language: ru
+        Text: "\u041F\u0430\u043B\u043E\u043C\u043D\u0438\u043A\u0438 \u043F\u043E\u0448\u043B\u0438
+          \u0437\u0430 \u0437\u043D\u0430\u043A\u043E\u043C, \u043A\u043E\u0442\u043E\u0440\u044B\u0439,
+          \u0432\u0435\u0440\u043E\u044F\u0442\u043D\u043E, \u043D\u0438\u0447\u0435\u0433\u043E
+          \u043D\u0435 \u0437\u043D\u0430\u0447\u0438\u043B. \u041F\u043E\u044D\u0442\u043E\u043C\u0443
+          \u043E\u043D, \u043A\u043E\u043D\u0435\u0447\u043D\u043E, \u0441\u0442\u0430\u043B
+          \u0432\u0430\u0436\u043D\u044B\u043C."
+      - Language: en
+        Text: Pilgrims followed a sign that probably meant nothing, so naturally
+          it mattered.
+  - Id: bandits
+    DisplayName:
+      Key: event.bandits
+      Variants:
+      - Language: ru
+        Text: "\u0420\u0430\u0437\u0431\u043E\u0439\u043D\u0430\u044F \u0437\u0438\u043C\u0430"
+      - Language: en
+        Text: Bandit Winter
+    AllowedZones: 03040a0e
+    BaseChancePerYear: 0.065
+    MinHeight: 0.3
+    MaxHeight: 0.9
+    MinMoisture: 0.2
+    MaxMoisture: 0.85
+    MinHeat: 0
+    MaxHeat: 0.85
+    MinDrainage: 0.2
+    MaxDrainage: 1
+    MinYear: 10
+    MaxYear: 999
+    ProsperityDelta: -1
+    DangerDelta: 3
+    SanctityDelta: 0
+    Lines:
+    - Key: event.bandits.line
+      Variants:
+      - Language: ru
+        Text: "\u0420\u0430\u0437\u0431\u043E\u0439\u043D\u0438\u043A\u0438 \u043E\u0441\u0435\u043B\u0438
+          \u0442\u0430\u043C, \u0433\u0434\u0435 \u0432\u043B\u0430\u0441\u0442\u044C
+          \u0438\u043C\u0435\u043B\u0430 \u0431\u043B\u0430\u0433\u043E\u0440\u0430\u0437\u0443\u043C\u0438\u0435
+          \u043E\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u043E\u0432\u0430\u0442\u044C."
+      - Language: en
+        Text: Bandits settled where authority had the good sense to be absent.
+  - Id: ruin_wakes
+    DisplayName:
+      Key: event.ruin_wakes
+      Variants:
+      - Language: ru
+        Text: "\u041F\u0440\u043E\u0431\u0443\u0436\u0434\u0435\u043D\u0438\u0435
+          \u0440\u0443\u0438\u043D"
+      - Language: en
+        Text: Ruin Wakes
+    AllowedZones: 0a08
+    BaseChancePerYear: 0.08
+    MinHeight: 0
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 1
+    MinDrainage: 0
+    MaxDrainage: 1
+    MinYear: 20
+    MaxYear: 999
+    ProsperityDelta: -1
+    DangerDelta: 4
+    SanctityDelta: 1
+    Lines:
+    - Key: event.ruin_wakes.line
+      Variants:
+      - Language: ru
+        Text: "\u041F\u043E\u0434 \u0440\u0443\u0438\u043D\u0430\u043C\u0438 \u0448\u0435\u0432\u0435\u043B\u044C\u043D\u0443\u043B\u043E\u0441\u044C
+          \u0447\u0442\u043E-\u0442\u043E \u0441\u0442\u0430\u0440\u043E\u0435. \u0410\u0440\u0445\u0438\u0432
+          \u043F\u043E\u0442\u043E\u043C \u043D\u0430\u0437\u0432\u0430\u043B \u044D\u0442\u043E
+          \u043F\u0440\u043E\u0441\u0430\u0434\u043A\u043E\u0439 \u0433\u0440\u0443\u043D\u0442\u0430,
+          \u043F\u043E\u0442\u043E\u043C\u0443 \u0447\u0442\u043E \u0442\u0440\u0443\u0441\u0430\u043C
+          \u0442\u043E\u0436\u0435 \u043D\u0443\u0436\u043D\u0430 \u0442\u0435\u0440\u043C\u0438\u043D\u043E\u043B\u043E\u0433\u0438\u044F."
+      - Language: en
+        Text: Something old moved under the ruins. The archive later called it subsidence,
+          because cowards need vocabulary.
+  WriteToPersistentDataPath: 1
+  OutputFolder: OUTL_WorldNarratives
+  IncludeTileDump: 0
+  ExportLayerTextures: 1
+  TextureWidth: 512
+  TextureHeight: 512
+  TextureFolder: Textures
+  TexturePrefix: deep_mirror
+  ExportHeightTexture: 1
+  ExportMoistureTexture: 1
+  ExportHeatTexture: 1
+  ExportDrainageTexture: 1
+  ExportZoneTexture: 1
+  ExportResourceTexture: 1
+  ExportPlantTexture: 1
+  ExportDangerTexture: 1
+  ExportProsperityTexture: 1
+  ExportSanctityTexture: 1
+  ExportArchetypeTexture: 1
+  ExportVisibilityTexture: 1

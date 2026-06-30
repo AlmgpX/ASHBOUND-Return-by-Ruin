@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4a53b4c3b3d4d6295379f5c455cce24, type: 3}
+  m_Name: OUTL_AI_Generic_Melee
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_AIProfile
+  ProfileId: ai.generic.melee
+  UseFactionHostility: 1
+  EnemyTags:
+  - Role.Targetable
+  FriendTags:
+  - Actor
+  ViewDistance: 30
+  AttackDistance: 2.1
+  MoveSpeed: 3.6
+  ThinkIntervalNear: 0.14
+  ThinkIntervalMid: 0.45
+  ThinkIntervalFar: 1.5
+  IdleSchedule: {fileID: 11400000, guid: 24bd97ee429c32242b7f2061b19e1534, type: 2}
+  CombatSchedule: {fileID: 11400000, guid: 6a72d889fc82d494a980d1852841bb68, type: 2}
+  SearchSchedule: {fileID: 11400000, guid: 8d43866206a280d4086362fcb054e142, type: 2}
+  FleeSchedule: {fileID: 11400000, guid: e322fd38f3227774291313dfb8671e34, type: 2}
+  LowHealthThreshold: 20
+  Rules: []

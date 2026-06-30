@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f7a4b5f8eea4a1da640449abdda988b, type: 3}
+  m_Name: OUTL_npc_basic_Def 1
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_EntityDef
+  ClassName: npc_basic
+  DisplayName: Basic NPC
+  Tags:
+  - Actor
+  - NPC
+  - Friendly
+  BaseStats:
+  - Key: Health
+    Value: 80
+  - Key: Damage
+    Value: 6
+  - Key: Speed
+    Value: 3
+  Actions: []
+  Modules: []
+  Prefab: {fileID: 0}

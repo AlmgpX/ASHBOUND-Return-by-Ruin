@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b45a53ccffb46659c8aa62e0fe9bfa0, type: 3}
+  m_Name: OUTL_AIStateTable_GenericCombat
+  m_EditorClassIdentifier: 
+  Rows:
+  - State: 0
+    EntryConditions: no active stimulus
+    ExitConditions: stimulus or order
+    Interrupts: SightEnemy, HeardNoise, TookDamage
+    MainCommand: Wait
+    TargetRule: none
+    MovementRule: stop
+    AttackProfile: {fileID: 0}
+    AnimationHint: idle
+    DebugColor: {r: 1, g: 1, b: 1, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 1
+    EntryConditions: patrol schedule
+    ExitConditions: stimulus or route end
+    Interrupts: SightEnemy, HeardNoise, TookDamage
+    MainCommand: Patrol
+    TargetRule: route point
+    MovementRule: move route
+    AttackProfile: {fileID: 0}
+    AnimationHint: move
+    DebugColor: {r: 0.3, g: 0.75, b: 1, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 3
+    EntryConditions: heard noise or interest point
+    ExitConditions: reached point or target found
+    Interrupts: SightEnemy, TookDamage
+    MainCommand: Investigate
+    TargetRule: last stimulus
+    MovementRule: move to stimulus
+    AttackProfile: {fileID: 0}
+    AnimationHint: search
+    DebugColor: {r: 1, g: 0.8, b: 0.25, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 5
+    EntryConditions: lost target
+    ExitConditions: memory expired or target found
+    Interrupts: SightEnemy, TookDamage
+    MainCommand: Search
+    TargetRule: last known target
+    MovementRule: move/search
+    AttackProfile: {fileID: 0}
+    AnimationHint: search
+    DebugColor: {r: 0.9, g: 0.65, b: 1, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 6
+    EntryConditions: danger or hit
+    ExitConditions: safe or target lost
+    Interrupts: LowHealth, Dead
+    MainCommand: MoveToCover
+    TargetRule: threat
+    MovementRule: cover
+    AttackProfile: {fileID: 0}
+    AnimationHint: cover
+    DebugColor: {r: 0.35, g: 0.45, b: 1, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 7
+    EntryConditions: visible target in preferred range
+    ExitConditions: target lost or too close
+    Interrupts: LowHealth, TookDamage
+    MainCommand: AttackTarget
+    TargetRule: enemy
+    MovementRule: hold range
+    AttackProfile: {fileID: 11400000, guid: 95cb9eea111d816438531fa20813c666, type: 2}
+    AnimationHint: attack_ranged
+    DebugColor: {r: 1, g: 0.25, b: 0.15, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 8
+    EntryConditions: target in melee range
+    ExitConditions: target lost
+    Interrupts: LowHealth
+    MainCommand: AttackTarget
+    TargetRule: enemy
+    MovementRule: close distance
+    AttackProfile: {fileID: 11400000, guid: 2ac5cb81aef65ad43bb79e34137c0e47, type: 2}
+    AnimationHint: attack_melee
+    DebugColor: {r: 1, g: 0.1, b: 0.05, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 9
+    EntryConditions: range/profile mismatch
+    ExitConditions: profile selected
+    Interrupts: Dead
+    MainCommand: SwitchWeapon
+    TargetRule: enemy
+    MovementRule: hold
+    AttackProfile: {fileID: 0}
+    AnimationHint: switch
+    DebugColor: {r: 1, g: 0.7, b: 0.2, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 10
+    EntryConditions: food/resource stimulus
+    ExitConditions: resource reached or danger
+    Interrupts: SightEnemy, SightDanger, TookDamage
+    MainCommand: UseResource
+    TargetRule: resource
+    MovementRule: move to resource
+    AttackProfile: {fileID: 0}
+    AnimationHint: use
+    DebugColor: {r: 0.25, g: 1, b: 0.35, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 11
+    EntryConditions: danger or low health
+    ExitConditions: safe or memory expired
+    Interrupts: Dead
+    MainCommand: FleeFromTarget
+    TargetRule: threat
+    MovementRule: move away
+    AttackProfile: {fileID: 0}
+    AnimationHint: flee
+    DebugColor: {r: 0.2, g: 0.9, b: 1, a: 1}
+    Notes: Generated abstract foundation row.
+  - State: 12
+    EntryConditions: killed
+    ExitConditions: none
+    Interrupts: none
+    MainCommand: Stop
+    TargetRule: none
+    MovementRule: stop
+    AttackProfile: {fileID: 0}
+    AnimationHint: dead
+    DebugColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
+    Notes: Generated abstract foundation row.

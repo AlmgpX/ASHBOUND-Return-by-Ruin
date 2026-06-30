@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0924c956b1a44a4f9ab789843561fec3, type: 3}
+  m_Name: OUTL_GameLoop_action_combat
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_GameLoopDef
+  LoopId: action_combat.loop.core
+  DisplayName: Action Combat Kernel
+  StartupChallenges:
+  - {fileID: 11400000, guid: 5a98c6e16fe625647a81ca28c4a941a8, type: 2}
+  RewardTable:
+  - {fileID: 11400000, guid: ca4d7b91f2250e64abf0445f901818a8, type: 2}
+  OnSessionStart: []
+  OnSessionFail: []
+  OnSessionWin: []
+  AutoStart: 1
+  ResetChallengesOnStart: 1

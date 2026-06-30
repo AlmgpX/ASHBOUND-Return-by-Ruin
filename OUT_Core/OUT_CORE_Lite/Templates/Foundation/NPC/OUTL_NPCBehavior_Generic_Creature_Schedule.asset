@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa57bef57c0e02d489a152147be430ab, type: 3}
+  m_Name: OUTL_NPCBehavior_Generic_Creature_Schedule
+  m_EditorClassIdentifier: 
+  ScheduleId: npc_behavior.generic.creature.schedule
+  Entries:
+  - EntryId: wander
+    StartTimeNormalized: 0
+    EndTimeNormalized: 0.55
+    Action: 9
+    TargetMode: 0
+    TargetPosition: {x: 0, y: 0, z: 0}
+    TargetSectorId: 0
+    TargetName: 
+    EntityClass: 
+    RequiredTags: []
+    Conditions: []
+    OnStartEffects: []
+    OnCompleteEffects: []
+    CanBeInterrupted: 1
+    MinDuration: 1
+    Priority: 1
+    RouteKey: route.generic.wander
+  - EntryId: feed_or_idle
+    StartTimeNormalized: 0.55
+    EndTimeNormalized: 0.85
+    Action: 7
+    TargetMode: 0
+    TargetPosition: {x: 0, y: 0, z: 0}
+    TargetSectorId: 0
+    TargetName: 
+    EntityClass: 
+    RequiredTags: []
+    Conditions: []
+    OnStartEffects: []
+    OnCompleteEffects: []
+    CanBeInterrupted: 1
+    MinDuration: 1
+    Priority: 1
+    RouteKey: route.generic.feed_or_idle
+  - EntryId: rest
+    StartTimeNormalized: 0.85
+    EndTimeNormalized: 1
+    Action: 0
+    TargetMode: 0
+    TargetPosition: {x: 0, y: 0, z: 0}
+    TargetSectorId: 0
+    TargetName: 
+    EntityClass: 
+    RequiredTags: []
+    Conditions: []
+    OnStartEffects: []
+    OnCompleteEffects: []
+    CanBeInterrupted: 1
+    MinDuration: 1
+    Priority: 1
+    RouteKey: route.generic.rest

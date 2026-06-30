@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d46f7267787f422e8299f8f20426de3e, type: 3}
+  m_Name: OUTL_Ability_Generic_Leap
+  m_EditorClassIdentifier: 
+  AbilityId: ability.generic.leap
+  AbilitySlot: 0
+  Cooldown: 2.4
+  MinRange: 2
+  MaxRange: 10
+  RequiresGround: 0
+  RequiresLineOfSight: 1
+  WindupTime: 0.08
+  RecoveryTime: 0.35
+  Interruptible: 1
+  StimulusOnUse: 18
+  Tags: []
+  LeapSpeed: 12
+  LeapArcHeight: 1.8
+  LeapDuration: 0.6
+  ImpactRadius: 1.15
+  ImpactDamage: 16
+  PreferWhenTargetDistanceMin: 3
+  PreferWhenTargetDistanceMax: 9
+  OvershootChance: 0.1
+  LandingRecovery: 0.35
+  UsePhysicsImpulse: 0
+  UseCharacterMotor: 0

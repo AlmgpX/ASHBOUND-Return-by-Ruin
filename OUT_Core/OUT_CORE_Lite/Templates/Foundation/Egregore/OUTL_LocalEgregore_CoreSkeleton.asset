@@ -1,0 +1,101 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f3d339e7b240fea10c2c19aeb20867, type: 3}
+  m_Name: OUTL_LocalEgregore_CoreSkeleton
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_LocalEgregoreDef
+  EgregoreId: skeleton.local_egregore
+  DisplayName: Local Egregore
+  Scope: 0
+  UpdateInterval: 2
+  InfluenceRadius: 48
+  DecayCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  ViolenceWeight: 0.35
+  FearWeight: 0.3
+  ProsperityWeight: 0.25
+  CorruptionWeight: 0
+  AlertnessWeight: 0.25
+  HostilityWeight: 0.55
+  ResourceWeight: 0.25
+  AlertThreshold: 0.45
+  HostilityThreshold: 0.65
+  FearThreshold: 0.6
+  ThresholdOpenTension: 0.45
+  CrisisTension: 0.65
+  RenewalThreshold: 0.7
+  CollapseThreshold: 0.85
+  ArchetypeProfile: {fileID: 0}
+  ArchetypalCycle:
+    InitialPhase: 0
+    RenewalFallback: 13
+    CorruptionFallback: 14
+    TensionDecay: 0.025
+    IntegrationDecay: 0.01
+    MemoryDecay: 0.015
+    MaxMemoryTraces: 32
+    MemoryDecayBudget: 8
+  InitialArchetypePressures:
+  - Archetype: 1
+    Pressure: 0.35
+    DecayRate: 0.01
+  - Archetype: 2
+    Pressure: 0.05
+    DecayRate: 0.01
+  TransformationRules: []
+  ShadowRules:
+  - TraceType: 2
+    ShadowArchetype: 20
+    Pressure: 0.6
+    Trauma: 0.2
+    Corruption: 0.05
+  - TraceType: 3
+    ShadowArchetype: 7
+    Pressure: 0.35
+    Trauma: 0.05
+    Corruption: 0.04
+  IntegrationRules:
+  - Hook: 8
+    Archetype: 1
+    Integration: 0.35
+    Renewal: 0.25
+    CorruptionRelief: 0.2
+  - Hook: 6
+    Archetype: 8
+    Integration: 0.2
+    Renewal: 0.15
+    CorruptionRelief: 0.1
+  OwnedSectorIds: 
+  DebugName: Local Egregore
+  PlaceArchetype: 0
+  DominantDrives: 
+  InfluenceRules: []
+  OutputRules:
+  - Phase: 4
+    Signal: 8
+    MinIntensity: 0.35
+    Key: threshold
+  - Phase: 14
+    Signal: 15
+    MinIntensity: 0.5
+    Key: corruption
+  - Phase: 13
+    Signal: 16
+    MinIntensity: 0.5
+    Key: renewal
+  QuestHooks: []
+  LootModifiers: []
+  BehaviorModifiers: []
+  SpawnModifiers: []

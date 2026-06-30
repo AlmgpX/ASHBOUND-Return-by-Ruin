@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d490fc697614997bbf53279a0e1d2c5, type: 3}
+  m_Name: OUTL_Action_Sheep_Eat
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_BehaviorActionDef
+  ActionId: sheep.eat
+  Type: 4
+  OutputAction: 7
+  Tags:
+  - Sheep
+  - Herbivore
+  - Eat
+  BaseWeight: 0.04
+  DriveWeights:
+  - Drive: 1
+    Weight: 3
+  - Drive: 0
+    Weight: -2
+  StimulusWeights:
+  - Stimulus: 8
+    Weight: 3
+  - Stimulus: 26
+    Weight: 1.5
+  EgregoreWeights: []
+  LocalDangerWeight: 0
+  LocalSafetyWeight: 0
+  RandomJitter: 0.025
+  Cooldown: 1
+  MinDuration: 2
+  MaxDuration: 0
+  RequiredDrive: 1
+  RequiredDriveMinimum: 0.5
+  RequiresAdult: 0
+  RequiresSafeArea: 1
+  CannotRunInCombat: 1
+  SupportsAbstractMode: 1
+  OnStartEffects: []
+  OnCompleteEffects: []
+  OnStartLivingEffects:
+  - Type: 3
+    Drive: 22
+    FloatValue: 0
+    IntValue: 1
+    Radius: 1.8
+    RequiredTag: Food
+    StimulusType: 0
+    Key: sheep.eat.consume
+    Tags: []
+    Strength: 0.65
+    Confidence: 1
+    Priority: 0.25
+    DecayTime: 3
+    Prefab: {fileID: 0}
+    Item: {fileID: 0}
+    EventType: 1000
+    BehaviorMode: 1
+    MoveDistance: 0
+  - Type: 2
+    Drive: 22
+    FloatValue: 0
+    IntValue: 1
+    Radius: 5
+    RequiredTag: 
+    StimulusType: 26
+    Key: sheep.eat
+    Tags:
+    - Sheep
+    - Food
+    - Grass
+    Strength: 0.65
+    Confidence: 1
+    Priority: 0.25
+    DecayTime: 3
+    Prefab: {fileID: 0}
+    Item: {fileID: 0}
+    EventType: 1000
+    BehaviorMode: 1
+    MoveDistance: 0
+  OutputStimulus: 0
+  OutputKey: 
+  OutputStimulusRadius: 6
+  OutputStimulusPriority: 0.25
+  OutputStimulusStrength: 1
+  OutputStimulusConfidence: 1
+  OutputStimulusDecayTime: 2

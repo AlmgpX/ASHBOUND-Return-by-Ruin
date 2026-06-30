@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c4bb4d5a0f14dc5a4c1fb3227f196a1, type: 3}
+  m_Name: OUTL_Shape_QuadrupedSmall_Sheep
+  m_EditorClassIdentifier: 
+  ShapeId: shape.quadruped.small.sheep
+  Medium: 0
+  BodyLength: 1.1
+  BodyHeight: 0.72
+  BodyWidth: 0.46
+  CenterOffset: {x: 0, y: 0.48, z: 0}
+  GroundOffset: 0
+  EyeHeight: 0.82
+  MovementRadius: 0.33
+  NavAgentHeight: 0.95
+  NavAgentRadius: 0.33
+  InteractionRadius: 1.15
+  HasCrouchPose: 0
+  CrouchHeight: 1
+  CrouchEyeHeight: 0.92

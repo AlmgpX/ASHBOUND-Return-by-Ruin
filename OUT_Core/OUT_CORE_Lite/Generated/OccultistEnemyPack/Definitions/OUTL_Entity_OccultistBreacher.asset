@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f7a4b5f8eea4a1da640449abdda988b, type: 3}
+  m_Name: OUTL_Entity_OccultistBreacher
+  m_EditorClassIdentifier: 
+  ClassName: enemy.occultist.breacher
+  DisplayName: Occultist Breacher
+  Tags:
+  - Actor
+  - NPC
+  - Enemy
+  - Occultist
+  - Ranged
+  - Breacher
+  BaseStats:
+  - Key: Health
+    Value: 95
+  - Key: MaxHealth
+    Value: 95
+  - Key: Damage
+    Value: 5
+  - Key: Speed
+    Value: 3
+  - Key: Armor
+    Value: 12
+  Actions: []
+  Modules: []
+  Prefab: {fileID: 260415458342134807, guid: e01ae88e2e18ee6468ca9e5e80e22e83, type: 3}

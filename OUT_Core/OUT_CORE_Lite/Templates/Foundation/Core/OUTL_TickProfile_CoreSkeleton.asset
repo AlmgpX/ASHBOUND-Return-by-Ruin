@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c41563f01a5742d6a45cebf448c67e72, type: 3}
+  m_Name: OUTL_TickProfile_CoreSkeleton
+  m_EditorClassIdentifier: 
+  logicInterval: 0.1
+  aiNearInterval: 0.12
+  aiMidInterval: 0.45
+  aiFarInterval: 1.5
+  aiDormantInterval: 3
+  questInterval: 0.5
+  stimulusInterval: 0.25
+  chunkProcessingInterval: 0.3
+  egregoreLocalInterval: 2
+  egregoreRegionalInterval: 5
+  egregoreWorldInterval: 10
+  npcFullInterval: 0.05
+  npcNearInterval: 0.25
+  npcMidInterval: 2
+  npcFarInterval: 10
+  npcDormantInterval: 60
+  maxAITicksPerFrame: 64
+  maxStimuliProcessedPerFrame: 256
+  maxSectorUpdatesPerFrame: 128
+  maxEgregoreSignalsPerFrame: 64
+  maxNpcBehaviorTicksPerFrame: 64
+  maxNpcRouteUpdatesPerFrame: 32
+  maxNpcPathRequestsPerFrame: 8
+  maxNpcStimulusInterruptsPerFrame: 32

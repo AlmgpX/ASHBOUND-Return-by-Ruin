@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08882f30af9f48498b0c5ce347a5096, type: 3}
+  m_Name: OUTL_Attack_FastArcaneBolt
+  m_EditorClassIdentifier: 
+  AttackId: archetype.projectile.fast_arcane_bolt
+  Mode: 1
+  Damage: 32
+  Range: 70
+  Radius: 0.16
+  Cooldown: 0.55
+  ProjectileSpeed: 44
+  ProjectileLifetime: 3.2
+  ProjectileUsesGravity: 0
+  ProjectileGravity: 9.81
+  ProjectileIgnoreTriggers: 1
+  ProjectileDetonateOnEntityHit: 1
+  ProjectileDetonateOnWorldHit: 1
+  ProjectileDetonateOnLifetimeEnd: 0
+  ProjectileBounceOnWorldHit: 0
+  ProjectileMaxBounces: 0
+  ProjectileBounceDamping: 0.65
+  ProjectileFrictionDamping: 0.92
+  UseExplosion: 0
+  ExplosionRadius: 0
+  ExplosionDamage: 0
+  ExplosionFalloff: 2
+  ExplosionHitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ExplosionRequireLineOfSight: 1
+  ExplosionObstacleMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ExplosionDamageKey: projectile.arcane_bolt
+  AimMode: 1
+  UseTargetVelocityPrediction: 1
+  PredictionStrength: 0.65
+  MaxPredictionTime: 0.8
+  HorizontalSpreadDegrees: 0.4
+  VerticalSpreadDegrees: 0.2
+  MinSpreadDistance: 2
+  HitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ProjectilePrefab: {fileID: 866320356441119494, guid: 6d15eb64acf1a2c46a0a5be039fb32ba, type: 3}
+  MuzzleVFX: {fileID: 0}
+  ImpactVFX: {fileID: 0}
+  FireSound: {fileID: 0}
+  ImpactSound: {fileID: 0}
+  ExtraHitEffects: []

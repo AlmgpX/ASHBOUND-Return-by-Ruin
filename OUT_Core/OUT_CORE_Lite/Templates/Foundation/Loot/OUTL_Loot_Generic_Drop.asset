@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25b47e994a53b46419ed8b162b6cad8a, type: 3}
+  m_Name: OUTL_Loot_Generic_Drop
+  m_EditorClassIdentifier: 
+  TableId: loot.generic.drop
+  Entries:
+  - Label: generic_pickup
+    Item: {fileID: 11400000, guid: 63438f21bf5cff045968ffd63d3f18e9, type: 2}
+    EntityDef: {fileID: 0}
+    PickupPrefab: {fileID: 5116037119334900594, guid: 72965ae4ff7cd31429c29961a772753d,
+      type: 3}
+    Chance: 1
+    Weight: 1
+    MinCount: 1
+    MaxCount: 3
+    SpawnOneObjectPerCount: 0
+    ScatterRadius: 0.45
+    SpawnOffset: {x: 0, y: 0.35, z: 0}
+    ContextTag: 
+    PreferredEgregorePhase: 0
+    EgregoreChanceMultiplier: 1
+    EgregoreCountMultiplier: 1
+  RollEachEntry: 1
+  MaxDrops: 4

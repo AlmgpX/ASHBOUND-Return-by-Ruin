@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f7a4b5f8eea4a1da640449abdda988b, type: 3}
+  m_Name: OUTL_Def_Nature_BasicSheep
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_EntityDef
+  ClassName: actor.nature.basic_sheep
+  DisplayName: Basic Sheep
+  Tags:
+  - Actor
+  - NPC
+  - Creature
+  - Animal
+  - PassiveAnimal
+  - Herbivore
+  - Sheep
+  - Role.Targetable
+  - FoodSource
+  BaseStats:
+  - Key: Health
+    Value: 35
+  - Key: MaxHealth
+    Value: 35
+  - Key: MoveSpeed
+    Value: 2.2
+  - Key: Fear
+    Value: 0.25
+  - Key: Hunger
+    Value: 0.35
+  Actions: []
+  Modules: []
+  Prefab: {fileID: 3276168599436187760, guid: 77caebc2f027f5b48aee5f4381bc430b, type: 3}

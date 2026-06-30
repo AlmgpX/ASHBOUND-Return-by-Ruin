@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01c2f6e74e18a2c43ac6d139d5975e28, type: 3}
+  m_Name: OUTL_NPCBehavior_Sheep_Herbivore
+  m_EditorClassIdentifier: 
+  ModelId: npc_behavior.sheep.herbivore
+  Archetype: 4
+  Schedule: {fileID: 11400000, guid: 3975c61383140d7409c324b21158986d, type: 2}
+  NavigationProfile: {fileID: 11400000, guid: c74a68d041e4e8d4ea6ce30c4a892de7, type: 2}
+  InterruptPolicies:
+  - StimulusTypes: 0c
+    MinimumPriority: 0.1
+    InterruptAction: 11
+    Cooldown: 0.5
+    MaxDuration: 6
+    CanInterruptCombat: 1
+    CanInterruptWork: 1
+    CanInterruptTravel: 1
+    ResumePreviousScheduleAfterCompletion: 1
+    WriteMemory: 1
+  - StimulusTypes: 15
+    MinimumPriority: 0.15
+    InterruptAction: 11
+    Cooldown: 1
+    MaxDuration: 5
+    CanInterruptCombat: 1
+    CanInterruptWork: 1
+    CanInterruptTravel: 1
+    ResumePreviousScheduleAfterCompletion: 1
+    WriteMemory: 1
+  - StimulusTypes: 09
+    MinimumPriority: 0.2
+    InterruptAction: 11
+    Cooldown: 1
+    MaxDuration: 8
+    CanInterruptCombat: 1
+    CanInterruptWork: 1
+    CanInterruptTravel: 1
+    ResumePreviousScheduleAfterCompletion: 1
+    WriteMemory: 1
+  - StimulusTypes: 0b
+    MinimumPriority: 0.25
+    InterruptAction: 11
+    Cooldown: 2
+    MaxDuration: 4
+    CanInterruptCombat: 1
+    CanInterruptWork: 1
+    CanInterruptTravel: 1
+    ResumePreviousScheduleAfterCompletion: 1
+    WriteMemory: 1
+  - StimulusTypes: 08
+    MinimumPriority: 0.2
+    InterruptAction: 7
+    Cooldown: 4
+    MaxDuration: 3
+    CanInterruptCombat: 1
+    CanInterruptWork: 1
+    CanInterruptTravel: 1
+    ResumePreviousScheduleAfterCompletion: 1
+    WriteMemory: 1
+  UseAIActorForNearTactics: 1
+  ResumeScheduleAfterInterrupt: 1
+  DayLengthSeconds: 1440
+  StimulusRadius: 22
+  StimulusMinimumPriority: 0.1
+  StimulusBudget: 6
+  Role: passive_herbivore

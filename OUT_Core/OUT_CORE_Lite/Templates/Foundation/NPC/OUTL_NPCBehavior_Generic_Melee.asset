@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01c2f6e74e18a2c43ac6d139d5975e28, type: 3}
+  m_Name: OUTL_NPCBehavior_Generic_Melee
+  m_EditorClassIdentifier: 
+  ModelId: npc_behavior.generic.melee
+  Archetype: 0
+  Schedule: {fileID: 11400000, guid: d09096bf89edc0144a329bfd45fec052, type: 2}
+  NavigationProfile: {fileID: 11400000, guid: 9a608b1d6cd10d84ca44fe7544aa33a7, type: 2}
+  InterruptPolicies:
+  - StimulusTypes: 0c060b
+    MinimumPriority: 0.35
+    InterruptAction: 13
+    Cooldown: 2
+    MaxDuration: 10
+    CanInterruptCombat: 1
+    CanInterruptWork: 1
+    CanInterruptTravel: 1
+    ResumePreviousScheduleAfterCompletion: 1
+    WriteMemory: 1
+  - StimulusTypes: 0a0d
+    MinimumPriority: 0.2
+    InterruptAction: 12
+    Cooldown: 2
+    MaxDuration: 8
+    CanInterruptCombat: 1
+    CanInterruptWork: 1
+    CanInterruptTravel: 1
+    ResumePreviousScheduleAfterCompletion: 1
+    WriteMemory: 1
+  - StimulusTypes: 0f09
+    MinimumPriority: 0.3
+    InterruptAction: 11
+    Cooldown: 2
+    MaxDuration: 8
+    CanInterruptCombat: 1
+    CanInterruptWork: 1
+    CanInterruptTravel: 1
+    ResumePreviousScheduleAfterCompletion: 1
+    WriteMemory: 1
+  UseAIActorForNearTactics: 1
+  ResumeScheduleAfterInterrupt: 1
+  DayLengthSeconds: 1440
+  StimulusRadius: 24
+  StimulusMinimumPriority: 0.15
+  StimulusBudget: 8
+  Role: combat_melee

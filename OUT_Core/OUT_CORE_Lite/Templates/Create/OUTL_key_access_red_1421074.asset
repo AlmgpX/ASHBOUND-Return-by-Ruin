@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f25ff9f8cb847e583893c2014cb1996, type: 3}
+  m_Name: OUTL_key_access_red_1421074
+  m_EditorClassIdentifier: 
+  ClassName: key.access.red.1421074
+  DisplayName: Red Access Key
+  Tags:
+  - Item
+  - Key
+  - Access.Red
+  BaseStats:
+  - Key: Value
+    Value: 1
+  Actions: []
+  Modules: []
+  Prefab: {fileID: 0}
+  MaxStack: 1
+  Equippable: 0
+  OnUse: {fileID: 0}
+  OnEquip: {fileID: 0}
+  OnUnequip: {fileID: 0}

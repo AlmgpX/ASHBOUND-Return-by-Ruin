@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa57bef57c0e02d489a152147be430ab, type: 3}
+  m_Name: OUTL_Schedule_Sheep_DayGrazeNightRest
+  m_EditorClassIdentifier: 
+  ScheduleId: schedule.sheep.day_graze_night_rest
+  Entries:
+  - EntryId: night_rest
+    StartTimeNormalized: 0
+    EndTimeNormalized: 0.22
+    Action: 1
+    TargetMode: 0
+    TargetPosition: {x: 0, y: 0, z: 0}
+    TargetSectorId: 0
+    TargetName: 
+    EntityClass: 
+    RequiredTags: []
+    Conditions: []
+    OnStartEffects: []
+    OnCompleteEffects: []
+    CanBeInterrupted: 1
+    MinDuration: 6
+    Priority: 0.8
+    RouteKey: 
+  - EntryId: day_graze
+    StartTimeNormalized: 0.22
+    EndTimeNormalized: 0.78
+    Action: 9
+    TargetMode: 5
+    TargetPosition: {x: 0, y: 0, z: 0}
+    TargetSectorId: 0
+    TargetName: 
+    EntityClass: 
+    RequiredTags:
+    - Food
+    - Grass
+    - Resource
+    Conditions: []
+    OnStartEffects: []
+    OnCompleteEffects: []
+    CanBeInterrupted: 1
+    MinDuration: 2
+    Priority: 1
+    RouteKey: 
+  - EntryId: dusk_return_rest
+    StartTimeNormalized: 0.78
+    EndTimeNormalized: 1
+    Action: 10
+    TargetMode: 0
+    TargetPosition: {x: 0, y: 0, z: 0}
+    TargetSectorId: 0
+    TargetName: 
+    EntityClass: 
+    RequiredTags: []
+    Conditions: []
+    OnStartEffects: []
+    OnCompleteEffects: []
+    CanBeInterrupted: 1
+    MinDuration: 3
+    Priority: 0.9
+    RouteKey: 

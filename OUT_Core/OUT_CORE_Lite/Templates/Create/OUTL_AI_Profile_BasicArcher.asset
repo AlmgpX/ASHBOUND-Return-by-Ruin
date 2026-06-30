@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4a53b4c3b3d4d6295379f5c455cce24, type: 3}
+  m_Name: OUTL_AI_Profile_BasicArcher
+  m_EditorClassIdentifier: Assembly-CSharp::OUTL_AIProfile
+  ProfileId: enemy.archer.basic
+  UseFactionHostility: 1
+  EnemyTags:
+  - Player
+  - Friendly
+  FriendTags: []
+  ViewDistance: 46
+  AttackDistance: 28
+  MoveSpeed: 3.1
+  ThinkIntervalNear: 0.14
+  ThinkIntervalMid: 0.45
+  ThinkIntervalFar: 1.4
+  IdleSchedule: {fileID: 11400000, guid: 9f7a9dba54a5ec840b218fc00fff7bdf, type: 2}
+  CombatSchedule: {fileID: 11400000, guid: 04df4403484ce2a4083bfde433022be9, type: 2}
+  SearchSchedule: {fileID: 11400000, guid: e14cf64b618d96b4583f14c3f2bf883e, type: 2}
+  FleeSchedule: {fileID: 0}
+  LowHealthThreshold: 15
+  Rules: []

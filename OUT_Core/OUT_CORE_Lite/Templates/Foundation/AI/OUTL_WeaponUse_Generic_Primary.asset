@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fac467983b664b34924642039e931e16, type: 3}
+  m_Name: OUTL_WeaponUse_Generic_Primary
+  m_EditorClassIdentifier: 
+  Role: 4
+  Slot: 0
+  AttackProfileOverride: {fileID: 11400000, guid: 95cb9eea111d816438531fa20813c666,
+    type: 2}
+  PreferredRange: 20
+  MinSafeRange: 3
+  MaxRange: 55
+  RequiresLineOfSight: 1
+  BlocksOnFriendlyFire: 1
+  AllowSuppression: 1
+  BurstDuration: 0.35
+  BurstCooldown: 0.75
+  SuppressionChance: 0.35

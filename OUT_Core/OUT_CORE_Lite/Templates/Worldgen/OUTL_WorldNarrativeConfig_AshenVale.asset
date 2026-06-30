@@ -1,0 +1,267 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77009fbb7624bdb47be4df2e638273cb, type: 3}
+  m_Name: OUTL_WorldNarrativeConfig_AshenVale
+  m_EditorClassIdentifier: 
+  WorldName: Ashen Vale
+  EraName: Age of First Smoke
+  Width: 48
+  Height: 32
+  Years: 120
+  Seed: 760409355
+  HeightScale: 12
+  MoistureScale: 10
+  HeatScale: 14
+  Octaves: 4
+  Persistence: 0.52
+  Lacunarity: 2.05
+  OceanHeight: 0.28
+  CoastHeight: 0.34
+  HillsHeight: 0.62
+  MountainHeight: 0.78
+  DesertHeat: 0.68
+  DesertMoisture: 0.28
+  SwampMoisture: 0.72
+  ForestMoisture: 0.52
+  WastelandChance: 0.025
+  SacredChance: 0.012
+  RuinsChance: 0.014
+  Resources:
+  - Id: iron
+    DisplayName: Iron Veins
+    AllowedZones: 0405
+    BaseChance: 0.18
+    MinHeight: 0.55
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 1
+    DiscoveryLines:
+    - Iron was found under the old stone.
+  - Id: salt
+    DisplayName: Salt Flats
+    AllowedZones: 0701
+    BaseChance: 0.12
+    MinHeight: 0.25
+    MaxHeight: 0.8
+    MinMoisture: 0
+    MaxMoisture: 0.55
+    MinHeat: 0.45
+    MaxHeat: 1
+    DiscoveryLines:
+    - Salt surfaced where water abandoned the land.
+  - Id: black_wood
+    DisplayName: Blackwood
+    AllowedZones: 0306
+    BaseChance: 0.14
+    MinHeight: 0.25
+    MaxHeight: 0.72
+    MinMoisture: 0.45
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 0.75
+    DiscoveryLines:
+    - Dark trees took root in wet soil.
+  - Id: old_bones
+    DisplayName: Old Bones
+    AllowedZones: 0a08
+    BaseChance: 0.25
+    MinHeight: 0
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 1
+    DiscoveryLines:
+    - Bones were uncovered where history failed to stay buried.
+  - Id: clear_water
+    DisplayName: Clear Water
+    AllowedZones: 030409
+    BaseChance: 0.16
+    MinHeight: 0.3
+    MaxHeight: 0.8
+    MinMoisture: 0.55
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 0.75
+    DiscoveryLines:
+    - A clear spring cut through the soil.
+  Plants:
+  - Id: red_grass
+    DisplayName: Red Grass
+    AllowedZones: 0204
+    BaseChance: 0.2
+    MinHeight: 0.3
+    MaxHeight: 0.75
+    MinMoisture: 0.25
+    MaxMoisture: 0.7
+    MinHeat: 0.25
+    MaxHeat: 0.8
+    SpreadLines:
+    - Red grass spread after a warm season.
+  - Id: reed
+    DisplayName: Marsh Reed
+    AllowedZones: 0601
+    BaseChance: 0.32
+    MinHeight: 0.2
+    MaxHeight: 0.55
+    MinMoisture: 0.65
+    MaxMoisture: 1
+    MinHeat: 0.2
+    MaxHeat: 0.8
+    SpreadLines:
+    - Reeds crowded the wet margins.
+  - Id: ashen_pine
+    DisplayName: Ashen Pine
+    AllowedZones: 0305
+    BaseChance: 0.16
+    MinHeight: 0.45
+    MaxHeight: 1
+    MinMoisture: 0.35
+    MaxMoisture: 0.85
+    MinHeat: 0
+    MaxHeat: 0.55
+    SpreadLines:
+    - Pines survived where gentler trees failed.
+  - Id: glass_cactus
+    DisplayName: Glass Cactus
+    AllowedZones: 0708
+    BaseChance: 0.18
+    MinHeight: 0.3
+    MaxHeight: 0.75
+    MinMoisture: 0
+    MaxMoisture: 0.35
+    MinHeat: 0.62
+    MaxHeat: 1
+    SpreadLines:
+    - Glass cactus appeared after the heat hardened the ground.
+  - Id: grave_moss
+    DisplayName: Grave Moss
+    AllowedZones: 0a09
+    BaseChance: 0.22
+    MinHeight: 0.2
+    MaxHeight: 0.8
+    MinMoisture: 0.4
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 0.7
+    SpreadLines:
+    - Grave moss marked stones nobody admitted placing.
+  Events:
+  - Id: drought
+    DisplayName: Drought
+    AllowedZones: 020704
+    BaseChancePerYear: 0.08
+    MinHeight: 0
+    MaxHeight: 0.8
+    MinMoisture: 0
+    MaxMoisture: 0.45
+    MinHeat: 0.55
+    MaxHeat: 1
+    MinYear: 0
+    MaxYear: 999
+    ProsperityDelta: -2
+    DangerDelta: 1
+    SanctityDelta: 0
+    Lines:
+    - A dry year cracked the ground and made fools of wells.
+  - Id: plague
+    DisplayName: Plague
+    AllowedZones: 010206
+    BaseChancePerYear: 0.045
+    MinHeight: 0.2
+    MaxHeight: 0.65
+    MinMoisture: 0.45
+    MaxMoisture: 1
+    MinHeat: 0.25
+    MaxHeat: 0.9
+    MinYear: 5
+    MaxYear: 999
+    ProsperityDelta: -3
+    DangerDelta: 3
+    SanctityDelta: 0
+    Lines:
+    - A sickness crossed the low roads faster than rumor.
+  - Id: pilgrimage
+    DisplayName: Pilgrimage
+    AllowedZones: 090503
+    BaseChancePerYear: 0.06
+    MinHeight: 0.35
+    MaxHeight: 1
+    MinMoisture: 0.25
+    MaxMoisture: 0.9
+    MinHeat: 0
+    MaxHeat: 0.75
+    MinYear: 0
+    MaxYear: 999
+    ProsperityDelta: 1
+    DangerDelta: 0
+    SanctityDelta: 2
+    Lines:
+    - Pilgrims followed a sign that probably meant nothing, so naturally it mattered.
+  - Id: bandits
+    DisplayName: Bandit Winter
+    AllowedZones: 03040a
+    BaseChancePerYear: 0.07
+    MinHeight: 0.3
+    MaxHeight: 0.9
+    MinMoisture: 0.2
+    MaxMoisture: 0.85
+    MinHeat: 0
+    MaxHeat: 0.85
+    MinYear: 10
+    MaxYear: 999
+    ProsperityDelta: -1
+    DangerDelta: 3
+    SanctityDelta: 0
+    Lines:
+    - Bandits settled where authority had the good sense to be absent.
+  - Id: founding
+    DisplayName: Settlement Founded
+    AllowedZones: 010203
+    BaseChancePerYear: 0.05
+    MinHeight: 0.25
+    MaxHeight: 0.65
+    MinMoisture: 0.35
+    MaxMoisture: 0.9
+    MinHeat: 0.2
+    MaxHeat: 0.75
+    MinYear: 0
+    MaxYear: 999
+    ProsperityDelta: 4
+    DangerDelta: 1
+    SanctityDelta: 0
+    Lines:
+    - A settlement was founded, and immediately began pretending it had always belonged
+      there.
+  - Id: ruin_wakes
+    DisplayName: Ruin Wakes
+    AllowedZones: 0a08
+    BaseChancePerYear: 0.08
+    MinHeight: 0
+    MaxHeight: 1
+    MinMoisture: 0
+    MaxMoisture: 1
+    MinHeat: 0
+    MaxHeat: 1
+    MinYear: 20
+    MaxYear: 999
+    ProsperityDelta: -1
+    DangerDelta: 4
+    SanctityDelta: 1
+    Lines:
+    - Something old moved under the ruins. The archive later called it subsidence,
+      because cowards need vocabulary.
+  WriteToPersistentDataPath: 1
+  OutputFolder: OUTL_WorldNarratives
+  IncludeTileDump: 0
