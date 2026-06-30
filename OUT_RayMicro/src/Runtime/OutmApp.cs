@@ -16,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT CORE // level authoring seed");
+        Raylib.InitWindow(1280, 720, "OUT CORE // map logic seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -28,6 +28,7 @@ public static class OutmApp
         OutmMapManifest manifest = OutmMapManifestLoader.LoadOrDefault();
         OutmMapManifestEntry mapEntry = manifest.FindDefault();
         OutmMapDef mapDef = OutmMapLoader.LoadOrDefault(mapEntry.Path);
+        OutmMapEntityDef[] entityDefs = OutmMapEntitySidecar.LoadEntitiesOrEmpty(mapEntry.Path);
         OutmMapValidationReport validation = OutmMapValidator.Validate(mapDef, world.PushLog);
         var map = OutmMapLoader.BuildDemoMap(mapDef);
         var corePhysics = new OutmCorePhysicsWorld(mapDef, map);
@@ -39,6 +40,8 @@ public static class OutmApp
         chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
         OutmMapRuntimeStores mapRuntime = OutmMapEntitySpawner.Spawn(world, mapDef, map, logicTicks);
         BindPhysicsHandles(mapRuntime, corePhysics);
+        OutmMapLogicRuntime logicRuntime = OutmMapEntityCompiler.Compile(world, mapDef, entityDefs);
+        var mapLogic = new OutmMapLogicSystem(logicRuntime);
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
         var use = new OutmUseSystem();
         var triggers = new OutmTriggerSystem(use);
@@ -60,6 +63,7 @@ public static class OutmApp
         world.PushLog($"map: {map.DisplayName}");
         world.PushLog(validation.Summary);
         world.PushLog($"map entities: static {mapRuntime.StaticWorldEntities} doors {mapRuntime.DoorEntities} triggers {mapRuntime.TriggerEntities} pickups {mapRuntime.PickupEntities}");
+        world.PushLog($"entity lump {entityDefs.Length} logic {mapLogic.EntityCount}/{mapLogic.OutputCount}");
         world.PushLog($"physics bodies {corePhysics.BodyCount} shapes {corePhysics.ShapeCount} proxies {corePhysics.ProxyCount}");
         world.PushLog($"physics bridge: {corePhysics.BackendRole}");
         world.PushLog($"mesh refs: {mapDef.Meshes.Length}");
@@ -101,7 +105,7 @@ public static class OutmApp
 
                 var userCommand = new OutmUserCommand(sampledInput.Sequence, simTick, fixedStep.FixedDelta, sampledInput.Move, look, sampledInput.Down, pressed, released);
                 commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
-                SimulateFixedTick(world, map, mapRuntime, collision, camera, weapons, triggers, pickups, chunks, logicTicks, surfaces, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
+                SimulateFixedTick(world, map, mapRuntime, collision, camera, weapons, triggers, pickups, mapLogic, chunks, logicTicks, surfaces, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
                 ticksThisFrame++;
             }
 
@@ -163,6 +167,7 @@ public static class OutmApp
         OutmWeaponSystem weapons,
         OutmTriggerSystem triggers,
         OutmPickupSystem pickups,
+        OutmMapLogicSystem mapLogic,
         OutmChunkStore chunks,
         OutmLogicTickScheduler logicTicks,
         OutmSurfaceRegistry surfaces,
@@ -189,7 +194,8 @@ public static class OutmApp
 
             chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
             HandleDebugSaveLoad(world, map, mapRuntime, weapons, camera, input, ref quickSave);
-            triggers.UpdateUseTriggers(world, map, collision, mapRuntime.Triggers, mapRuntime.Doors, camera.Position, camera.Forward, input);
+            triggers.UpdateUseTriggers(world, map, collision, mapRuntime.Triggers, mapRuntime.Doors, mapLogic, camera.Position, camera.Forward, input);
+            mapLogic.Update(world, mapRuntime);
             pickups.Update(world, mapRuntime.Pickups, camera.Position);
 
             if (!world.PlayerVitals.IsDead)
