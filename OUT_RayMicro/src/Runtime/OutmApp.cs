@@ -16,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT CORE // GLB scene seed");
+        Raylib.InitWindow(1280, 720, "OUT CORE // save slice");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -42,6 +42,7 @@ public static class OutmApp
         var fixedStep = new OutmFixedStep();
         var modelCache = new OutmModelCache();
         var sceneRenderer = new OutmSceneRenderer(modelCache);
+        OutmSaveSnapshot? quickSave = null;
         var audio = new OutmAudioSystem();
         audio.Load(world);
 
@@ -98,7 +99,7 @@ public static class OutmApp
                     released);
 
                 commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
-                SimulateFixedTick(world, map, collision, camera, weapons, triggers, commands, fixedStep.FixedDelta, ref stepTimer);
+                SimulateFixedTick(world, map, collision, camera, weapons, triggers, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
                 ticksThisFrame++;
             }
 
@@ -141,7 +142,8 @@ public static class OutmApp
         OutmTriggerSystem triggers,
         OutmCommandQueue commands,
         float fixedDt,
-        ref float stepTimer)
+        ref float stepTimer,
+        ref OutmSaveSnapshot? quickSave)
     {
         world.BeginFrame(fixedDt);
         collision.Step(fixedDt);
@@ -159,6 +161,7 @@ public static class OutmApp
                 UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
             }
 
+            HandleDebugSaveLoad(world, map, camera, input, ref quickSave);
             triggers.UpdateUseTriggers(world, map, camera.Position, camera.Forward, input);
 
             if (!world.PlayerVitals.IsDead)
@@ -167,6 +170,41 @@ public static class OutmApp
                 weapons.Update(input, muzzle, camera.Forward, collision, world);
             }
         }
+    }
+
+    private static void HandleDebugSaveLoad(OutmWorld world, OutmDemoMap map, OutmCameraMotor camera, in OutmInputFrame input, ref OutmSaveSnapshot? quickSave)
+    {
+        if (input.IsPressed(OutmButtons.DebugSave))
+        {
+            quickSave = OutmSaveSystem.Capture(world, map, camera.Position, camera.Velocity, camera.Yaw, camera.Pitch);
+            OutmSaveSystem.SaveToDisk(quickSave);
+            world.PushLog("quick save written");
+        }
+
+        if (!input.IsPressed(OutmButtons.DebugLoad))
+            return;
+
+        if (quickSave == null && OutmSaveSystem.TryLoadFromDisk(out OutmSaveSnapshot loaded))
+            quickSave = loaded;
+
+        if (quickSave == null)
+        {
+            world.PushLog("quick load failed: no snapshot");
+            return;
+        }
+
+        if (!string.Equals(quickSave.MapId, map.Id, StringComparison.OrdinalIgnoreCase))
+        {
+            world.PushLog($"quick load ignored: map mismatch {quickSave.MapId}");
+            return;
+        }
+
+        OutmSaveSystem.ApplyWorldState(world, map, quickSave);
+        camera.Position = quickSave.Player.Position.ToVector3();
+        camera.Velocity = quickSave.Player.Velocity.ToVector3();
+        camera.Yaw = quickSave.Player.Yaw;
+        camera.Pitch = quickSave.Player.Pitch;
+        world.PushLog("quick save loaded");
     }
 
     private static void UpdateFootsteps(OutmWorld world, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
