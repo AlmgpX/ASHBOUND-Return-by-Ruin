@@ -89,14 +89,14 @@ public readonly struct OutmInteractionHit
 
 public sealed class OutmUseSystem
 {
-    public OutmInteractionHit FocusTrigger(OutmDemoMap map, Vector3 actorPosition)
+    public OutmInteractionHit FocusTrigger(OutmTriggerStore triggers, Vector3 actorPosition)
     {
-        if (!map.TryGetEnteredTrigger(actorPosition, out OutmTriggerRuntime trigger))
+        if (!triggers.TryGetEntered(actorPosition, out OutmTriggerRecord trigger))
             return OutmInteractionHit.None;
 
         return new OutmInteractionHit(
             true,
-            EntityId.None,
+            trigger.Entity,
             trigger.Id,
             trigger.Kind,
             actorPosition,
@@ -104,27 +104,31 @@ public sealed class OutmUseSystem
             ResolveCaps(trigger.Kind));
     }
 
-    public OutmUseResult UseTrigger(OutmWorld world, OutmDemoMap map, OutmTriggerRuntime trigger, in OutmUseRequest request)
+    public OutmUseResult UseTrigger(OutmWorld world, OutmDemoMap map, OutmDoorStore doors, OutmTriggerRecord trigger, in OutmUseRequest request)
     {
         OutmUseCapabilityFlags caps = ResolveCaps(trigger.Kind);
         if (caps == OutmUseCapabilityFlags.None)
             return Reject(world, request, $"use rejected: unknown trigger kind {trigger.Kind}");
 
         if ((caps & OutmUseCapabilityFlags.Door) != 0)
-            return UseDoor(world, map, trigger, request, caps);
+            return UseDoor(world, map, doors, trigger, request, caps);
 
         return Reject(world, request, $"use rejected: unsupported caps {caps}");
     }
 
-    private static OutmUseResult UseDoor(OutmWorld world, OutmDemoMap map, OutmTriggerRuntime trigger, in OutmUseRequest request, OutmUseCapabilityFlags caps)
+    private static OutmUseResult UseDoor(OutmWorld world, OutmDemoMap map, OutmDoorStore doors, OutmTriggerRecord trigger, in OutmUseRequest request, OutmUseCapabilityFlags caps)
     {
-        bool open = map.TryToggleDoor(trigger.Target);
+        if (!doors.TryToggle(trigger.Target, out bool open))
+            return Reject(world, request, $"use rejected: missing door {trigger.Target}");
+
+        doors.SyncToDemoMap(map);
+        doors.TryGet(trigger.Target, out OutmDoorRecord door);
         string message = open ? "use door opened" : "use door closed";
 
         world.Emit(new OutmEvent(
             OutmEventType.TriggerEntered,
             request.User,
-            EntityId.None,
+            trigger.Entity,
             request.Origin,
             open ? 1.0f : 0.0f,
             message));
@@ -132,12 +136,12 @@ public sealed class OutmUseSystem
         world.Emit(new OutmEvent(
             OutmEventType.DoorToggled,
             request.User,
-            EntityId.None,
+            door.Entity,
             request.Origin,
             open ? 1.0f : 0.0f,
             open ? "door opened" : "door closed"));
 
-        return OutmUseResult.AcceptedResult(EntityId.None, caps, open ? 1.0f : 0.0f, message);
+        return OutmUseResult.AcceptedResult(door.Entity, caps, open ? 1.0f : 0.0f, message);
     }
 
     private static OutmUseResult Reject(OutmWorld world, in OutmUseRequest request, string message)
