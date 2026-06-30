@@ -4,6 +4,7 @@ using OUT_RayMicro.Content;
 using OUT_RayMicro.Core;
 using OUT_RayMicro.Input;
 using OUT_RayMicro.Physics;
+using OUT_RayMicro.World;
 
 namespace OUT_RayMicro.Gameplay;
 
@@ -86,7 +87,7 @@ public sealed class OutmWeaponSystem
         Array.Clear(projectiles, 0, projectiles.Length);
     }
 
-    public void Update(in OutmInputFrame input, Vector3 muzzle, Vector3 forward, IOutmCollisionWorld collision, OutmWorld world)
+    public void Update(in OutmInputFrame input, Vector3 muzzle, Vector3 forward, IOutmCollisionWorld collision, OutmDemoMap map, OutmSurfaceRegistry surfaces, OutmWorld world)
     {
         float dt = Math.Clamp(input.DeltaTime, 0.0f, 0.05f);
         fireCooldown = MathF.Max(0, fireCooldown - dt);
@@ -117,17 +118,22 @@ public sealed class OutmWeaponSystem
             if (collision.CollidesSphere(next, revolver.ProjectileRadius))
             {
                 Vector3 normal = EstimateCollisionNormal(previous, next, collision, revolver.ProjectileRadius);
+                string surfaceId = map.TryGetCollisionSurface(next, revolver.ProjectileRadius, out string hitSurface)
+                    ? hitSurface
+                    : OutmSurfaceId.Stone.Value;
+                OutmSurfaceDef surface = surfaces.Get(surfaceId);
+
                 if (p.Bounces < revolver.MaxBounces)
                 {
                     p.Position = previous + normal * revolver.ProjectileRadius;
                     p.Velocity = Vector3.Reflect(p.Velocity, normal) * revolver.BounceEnergy;
                     p.Bounces++;
-                    world.Emit(new OutmEvent(OutmEventType.ProjectileBounce, EntityId.None, EntityId.None, p.Position, p.Bounces, "bullet ricochet"));
+                    world.Emit(new OutmEvent(OutmEventType.ProjectileBounce, EntityId.None, EntityId.None, p.Position, p.Bounces, $"{surface.ImpactTag}: ricochet"));
                 }
                 else
                 {
                     p.Active = false;
-                    world.Emit(new OutmEvent(OutmEventType.ProjectileHit, EntityId.None, EntityId.None, previous, 0, "bullet stopped"));
+                    world.Emit(new OutmEvent(OutmEventType.ProjectileHit, EntityId.None, EntityId.None, previous, 0, $"{surface.ImpactTag}: stopped"));
                 }
             }
             else
