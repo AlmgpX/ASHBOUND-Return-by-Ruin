@@ -16,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT CORE // save slice");
+        Raylib.InitWindow(1280, 720, "OUT CORE // chunked world seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -33,6 +33,8 @@ public static class OutmApp
         var camera = new OutmCameraMotor(map.PlayerStart);
         world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
         var logicTicks = new OutmLogicTickScheduler();
+        var chunks = new OutmChunkStore();
+        chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
         var use = new OutmUseSystem();
         var triggers = new OutmTriggerSystem(use);
@@ -52,6 +54,7 @@ public static class OutmApp
         world.PushLog($"map: {map.DisplayName}");
         world.PushLog(validation.Summary);
         world.PushLog($"mesh refs: {mapDef.Meshes.Length}");
+        world.PushLog($"chunks: active {chunks.ActiveCount} resident {chunks.ResidentCount} sleeping {chunks.SleepingCount}");
         world.PushLog($"logic ticks: mid/{logicTicks.Policy.MidEveryTicks} far/{logicTicks.Policy.FarEveryTicks} dormant/{logicTicks.Policy.DormantEveryTicks}");
         world.PushLog($"defs: weapons {content.Weapons.Count}");
         world.PushLog($"fixed tick: {1.0f / fixedStep.FixedDelta:0} hz");
@@ -99,7 +102,7 @@ public static class OutmApp
                     released);
 
                 commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
-                SimulateFixedTick(world, map, collision, camera, weapons, triggers, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
+                SimulateFixedTick(world, map, collision, camera, weapons, triggers, chunks, logicTicks, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
                 ticksThisFrame++;
             }
 
@@ -121,7 +124,7 @@ public static class OutmApp
             Raylib.EndMode3D();
 
             DrawWeaponHud(world);
-            editor.Draw(world, camera, map);
+            editor.Draw(world, camera, map, chunks);
 
             Raylib.EndDrawing();
         }
@@ -140,6 +143,8 @@ public static class OutmApp
         OutmCameraMotor camera,
         OutmWeaponSystem weapons,
         OutmTriggerSystem triggers,
+        OutmChunkStore chunks,
+        OutmLogicTickScheduler logicTicks,
         OutmCommandQueue commands,
         float fixedDt,
         ref float stepTimer,
@@ -161,6 +166,7 @@ public static class OutmApp
                 UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
             }
 
+            chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
             HandleDebugSaveLoad(world, map, weapons, camera, input, ref quickSave);
             triggers.UpdateUseTriggers(world, map, camera.Position, camera.Forward, input);
 
