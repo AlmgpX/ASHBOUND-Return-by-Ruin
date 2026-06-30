@@ -25,7 +25,19 @@ public readonly struct OutmDamageResult
 
 public static class OutmDamageSystem
 {
+    public static OutmDamageResult ApplyDamage(OutmWorld world, in OutmDamageContext context)
+    {
+        string reason = string.IsNullOrWhiteSpace(context.Reason) ? context.DamageKind.ToString() : context.Reason;
+        return ApplyPlayerDamage(world, context.DamageAmount, reason, context.Instigator, context.Target, context.HitPoint);
+    }
+
     public static OutmDamageResult ApplyQuakeDamage(OutmWorld world, int incomingDamage, string reason)
+    {
+        var context = OutmDamageContext.PlayerDebug(world.PlayerEntity, incomingDamage, reason);
+        return ApplyDamage(world, context);
+    }
+
+    private static OutmDamageResult ApplyPlayerDamage(OutmWorld world, int incomingDamage, string reason, EntityId source, EntityId target, Vector3 point)
     {
         incomingDamage = Math.Max(0, incomingDamage);
         OutmPlayerVitals vitals = world.PlayerVitals;
@@ -59,9 +71,9 @@ public static class OutmDamageSystem
         var result = new OutmDamageResult(incomingDamage, armorSaved, healthDamage, vitals.Health, vitals.Armor, vitals.ArmorTier);
         world.Emit(new OutmEvent(
             OutmEventType.DamageApplied,
-            EntityId.None,
-            EntityId.None,
-            Vector3.Zero,
+            source,
+            target,
+            point,
             incomingDamage,
             $"{reason}: dmg {incomingDamage}, armor {armorSaved}, hp {healthDamage}"));
 
@@ -94,7 +106,7 @@ public static class OutmDamageSystem
         world.Emit(new OutmEvent(
             OutmEventType.ArmorPicked,
             EntityId.None,
-            EntityId.None,
+            world.PlayerEntity,
             Vector3.Zero,
             pickupArmor,
             $"{reason}: {OutmArmorRules.Code(tier)} {pickupArmor} absorb {OutmArmorRules.AbsorbFraction(tier):0.0}"));
