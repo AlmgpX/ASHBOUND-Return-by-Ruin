@@ -16,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT CORE // map entity slice");
+        Raylib.InitWindow(1280, 720, "OUT CORE // Jolt physics slice");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -30,7 +30,7 @@ public static class OutmApp
         OutmMapDef mapDef = OutmMapLoader.LoadOrDefault(mapEntry.Path);
         OutmMapValidationReport validation = OutmMapValidator.Validate(mapDef, world.PushLog);
         var map = OutmMapLoader.BuildDemoMap(mapDef);
-        IOutmCollisionWorld collision = new OutmDemoCollisionWorld(map);
+        IOutmCollisionWorld collision = new OutmJoltCollisionWorld(mapDef, map);
         var camera = new OutmCameraMotor(map.PlayerStart);
         world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
         var logicTicks = new OutmLogicTickScheduler();
@@ -174,7 +174,7 @@ public static class OutmApp
 
             chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
             HandleDebugSaveLoad(world, map, mapRuntime, weapons, camera, input, ref quickSave);
-            triggers.UpdateUseTriggers(world, map, mapRuntime.Triggers, mapRuntime.Doors, camera.Position, camera.Forward, input);
+            triggers.UpdateUseTriggers(world, map, collision, mapRuntime.Triggers, mapRuntime.Doors, camera.Position, camera.Forward, input);
             pickups.Update(world, mapRuntime.Pickups, camera.Position);
 
             if (!world.PlayerVitals.IsDead)
