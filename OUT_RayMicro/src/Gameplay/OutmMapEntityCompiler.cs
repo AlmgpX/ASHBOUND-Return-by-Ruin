@@ -42,11 +42,7 @@ public static class OutmMapEntityCompiler
             {
                 Id = item.Id,
                 TargetName = item.Id,
-                Class = OutmEntityClassId.TriggerMultiple,
-                Outputs = new[]
-                {
-                    new OutmMapIoDef { Event = "OnUse", Target = item.Target, Input = "Toggle" }
-                }
+                Class = OutmEntityClassId.TriggerMultiple
             });
         }
     }
