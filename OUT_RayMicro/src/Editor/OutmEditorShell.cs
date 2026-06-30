@@ -40,7 +40,7 @@ public sealed class OutmEditorShell
         }
     }
 
-    public void Draw(OutmWorld world, OutmCameraMotor camera, OutmDemoMap map)
+    public void Draw(OutmWorld world, OutmCameraMotor camera, OutmDemoMap map, OutmChunkStore chunks)
     {
         int w = Raylib.GetScreenWidth();
         int h = Raylib.GetScreenHeight();
@@ -51,23 +51,24 @@ public sealed class OutmEditorShell
         if (!Visible)
             return;
 
-        Raylib.DrawRectangle(10, 10, 560, 320, new Color(0, 0, 0, 170));
-        Raylib.DrawRectangleLines(10, 10, 560, 320, OverlayCyan);
-        Text("OUT CORE // OUTMAP SEED", 22, 20, 18, OverlayCyan);
+        Raylib.DrawRectangle(10, 10, 590, 348, new Color(0, 0, 0, 170));
+        Raylib.DrawRectangleLines(10, 10, 590, 348, OverlayCyan);
+        Text("OUT CORE // CHUNKED OUTMAP SEED", 22, 20, 18, OverlayCyan);
         Text("WASD move  SPACE jump  CTRL/C crouch", 22, 46, 14, OverlayText);
         Text("E use  LMB fire  F1 overlay  F2 damage  F3 armor", 22, 64, 14, OverlayText);
         Text("F5 quicksave  F9 quickload", 22, 82, 14, OverlayText);
         Text(OutmFontSystem.IsLoaded ? "FONT hud_unicode.ttf OK" : "FONT MISSING: data/fonts/hud_unicode.ttf", 22, 102, 14, OutmFontSystem.IsLoaded ? ManaAccent : Color.Orange);
         Text($"MAP {map.DisplayName}  boxes {map.Boxes.Count}  doors {map.Doors.Count}  triggers {map.Triggers.Count}", 22, 126, 14, OverlayText);
-        Text($"POS {camera.Position.X:0.00}, {camera.Position.Y:0.00}, {camera.Position.Z:0.00}", 22, 148, 14, Color.Yellow);
-        Text($"VEL {camera.HorizontalSpeed:0.00}  {(camera.Grounded ? "GROUND" : "AIR")}  {(camera.IsCrouching ? "CROUCH" : "STAND")}", 22, 168, 14, camera.Grounded ? ManaAccent : ArmorColor(world.PlayerVitals.ArmorTier));
-        Text(DoorStatus(map), 22, 188, 14, DoorStatusColor(map));
+        Text($"CHUNK {chunks.FocusChunk}  active {chunks.ActiveCount}  resident {chunks.ResidentCount}  sleeping {chunks.SleepingCount}  known {chunks.KnownCount}", 22, 148, 14, ManaAccent);
+        Text($"POS {camera.Position.X:0.00}, {camera.Position.Y:0.00}, {camera.Position.Z:0.00}", 22, 170, 14, Color.Yellow);
+        Text($"VEL {camera.HorizontalSpeed:0.00}  {(camera.Grounded ? "GROUND" : "AIR")}  {(camera.IsCrouching ? "CROUCH" : "STAND")}", 22, 190, 14, camera.Grounded ? ManaAccent : ArmorColor(world.PlayerVitals.ArmorTier));
+        Text(DoorStatus(map), 22, 210, 14, DoorStatusColor(map));
 
         for (int i = 0; i < 8; i++)
         {
             string line = world.GetLogLineFromNewest(i);
             if (!string.IsNullOrWhiteSpace(line))
-                Text(line, 22, 216 + i * 14, 12, OverlayText);
+                Text(line, 22, 238 + i * 14, 12, OverlayText);
         }
     }
 
