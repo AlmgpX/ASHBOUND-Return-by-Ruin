@@ -27,11 +27,11 @@ public struct OutmPickupRecord
 
 public sealed class OutmPickupStore
 {
-    private readonly List<OutmPickupRecord> pickups = new(64);
+    private readonly OutBuffer<OutmPickupRecord> pickups = new(128);
     private readonly Dictionary<string, int> byId = new(StringComparer.OrdinalIgnoreCase);
 
     public int Count => pickups.Count;
-    public IReadOnlyList<OutmPickupRecord> Pickups => pickups;
+    public OutBuffer<OutmPickupRecord> Pickups => pickups;
 
     public void Add(EntityId entity, string id, OutmPickupKind kind, Vector3 position, float radius, int amount, OutmArmorTier armorTier, string surfaceId)
     {
@@ -60,27 +60,27 @@ public sealed class OutmPickupStore
         if (!byId.TryGetValue(id, out int index))
             return false;
 
-        OutmPickupRecord pickup = pickups[index];
+        OutmPickupRecord pickup = pickups.Items[index];
         pickup.Collected = collected;
-        pickups[index] = pickup;
+        pickups.Items[index] = pickup;
         return true;
     }
 
     public void SetCollectedByIndex(int index, bool collected)
     {
-        if (index < 0 || index >= pickups.Count)
+        if ((uint)index >= (uint)pickups.Count)
             return;
 
-        OutmPickupRecord pickup = pickups[index];
+        OutmPickupRecord pickup = pickups.Items[index];
         pickup.Collected = collected;
-        pickups[index] = pickup;
+        pickups.Items[index] = pickup;
     }
 
     public bool TryGet(string id, out OutmPickupRecord pickup)
     {
         if (!string.IsNullOrWhiteSpace(id) && byId.TryGetValue(id, out int index))
         {
-            pickup = pickups[index];
+            pickup = pickups.Items[index];
             return true;
         }
 
