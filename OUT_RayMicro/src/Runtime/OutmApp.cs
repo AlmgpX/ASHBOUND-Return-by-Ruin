@@ -15,7 +15,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT RayMicro // outmap seed");
+        Raylib.InitWindow(1280, 720, "OUT RayMicro // systems seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -27,6 +27,7 @@ public static class OutmApp
         IOutmCollisionWorld collision = new OutmDemoCollisionWorld(map);
         var camera = new OutmCameraMotor(map.PlayerStart);
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
+        var triggers = new OutmTriggerSystem();
         var editor = new OutmEditorShell();
         var inputSampler = new OutmInputSampler();
         var commands = new OutmCommandQueue();
@@ -41,7 +42,6 @@ public static class OutmApp
         world.PushLog($"collision backend: {collision.BackendKind}");
         world.PushLog(OutmFontSystem.IsLoaded ? "unicode HUD font online" : "unicode HUD font missing");
 
-        string currentTriggerId = "";
         float stepTimer = 0.0f;
         OutmButtons bufferedPressed = OutmButtons.None;
         OutmButtons bufferedReleased = OutmButtons.None;
@@ -83,7 +83,7 @@ public static class OutmApp
                     released);
 
                 commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
-                SimulateFixedTick(world, map, collision, camera, weapons, commands, fixedStep.FixedDelta, ref currentTriggerId, ref stepTimer);
+                SimulateFixedTick(world, map, collision, camera, weapons, triggers, commands, fixedStep.FixedDelta, ref stepTimer);
                 ticksThisFrame++;
             }
 
@@ -121,9 +121,9 @@ public static class OutmApp
         IOutmCollisionWorld collision,
         OutmCameraMotor camera,
         OutmWeaponSystem weapons,
+        OutmTriggerSystem triggers,
         OutmCommandQueue commands,
         float fixedDt,
-        ref string currentTriggerId,
         ref float stepTimer)
     {
         world.BeginFrame(fixedDt);
@@ -141,7 +141,7 @@ public static class OutmApp
                 UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
             }
 
-            HandleUseTriggers(world, map, camera.Position, input, ref currentTriggerId);
+            triggers.UpdateUseTriggers(world, map, camera.Position, input);
 
             if (!world.PlayerVitals.IsDead)
             {
@@ -149,33 +149,6 @@ public static class OutmApp
                 weapons.Update(input, muzzle, camera.Forward, collision, world);
             }
         }
-    }
-
-    private static void HandleUseTriggers(OutmWorld world, OutmDemoMap map, Vector3 position, in OutmInputFrame input, ref string currentTriggerId)
-    {
-        if (world.PlayerVitals.IsDead)
-            return;
-
-        if (!map.TryGetEnteredTrigger(position, out OutmTriggerRuntime trigger))
-        {
-            currentTriggerId = "";
-            return;
-        }
-
-        if (!string.Equals(currentTriggerId, trigger.Id, StringComparison.OrdinalIgnoreCase))
-        {
-            currentTriggerId = trigger.Id;
-            world.Emit(new OutmEvent(OutmEventType.TriggerEntered, EntityId.None, EntityId.None, position, 0, trigger.Id));
-        }
-
-        if (!input.IsPressed(OutmButtons.Use))
-            return;
-
-        if (!string.Equals(trigger.Kind, "door_toggle", StringComparison.OrdinalIgnoreCase))
-            return;
-
-        bool open = map.TryToggleDoor(trigger.Target);
-        world.Emit(new OutmEvent(OutmEventType.DoorToggled, EntityId.None, EntityId.None, position, open ? 1 : 0, open ? "use: door opened" : "use: door closed"));
     }
 
     private static void UpdateFootsteps(OutmWorld world, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
