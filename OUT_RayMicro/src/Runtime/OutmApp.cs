@@ -1,5 +1,6 @@
 using System.Numerics;
 using Raylib_cs;
+using OUT_RayMicro.Content;
 using OUT_RayMicro.Core;
 using OUT_RayMicro.Editor;
 using OUT_RayMicro.Gameplay;
@@ -19,17 +20,19 @@ public static class OutmApp
         Raylib.DisableCursor();
         OutmFontSystem.Load();
 
+        var content = OutmContentRegistry.LoadDefault();
         var world = new OutmWorld();
         var map = OutmDemoMap.CreateQuakeRoom();
         IOutmCollisionWorld collision = new OutmDemoCollisionWorld(map);
         var camera = new OutmCameraMotor(map.PlayerStart);
-        var weapons = new OutmWeaponSystem();
+        var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
         var editor = new OutmEditorShell();
         var inputSampler = new OutmInputSampler();
         var audio = new OutmAudioSystem();
         audio.Load(world);
 
         world.PushLog("OUT RayMicro boot");
+        world.PushLog($"defs: weapons {content.Weapons.Count}");
         world.PushLog($"collision backend: {collision.BackendKind}");
         world.PushLog(OutmFontSystem.IsLoaded ? "unicode HUD font online" : "unicode HUD font missing");
 
@@ -61,7 +64,7 @@ public static class OutmApp
 
             Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
             if (!world.PlayerVitals.IsDead)
-                weapons.Update(input, muzzle, camera.Forward, map, world);
+                weapons.Update(input, muzzle, camera.Forward, collision, world);
             audio.ProcessEvents(world, camera.Position, camera.Right);
             audio.Update();
 
