@@ -20,15 +20,17 @@ public struct OutmTriggerRecord
 
 public sealed class OutmTriggerStore
 {
-    private readonly List<OutmTriggerRecord> triggers = new(64);
+    private readonly OutBuffer<OutmTriggerRecord> triggers = new(128);
     private readonly Dictionary<string, int> byId = new(StringComparer.OrdinalIgnoreCase);
 
     public int Count => triggers.Count;
-    public IReadOnlyList<OutmTriggerRecord> Triggers => triggers;
+    public OutBuffer<OutmTriggerRecord> Triggers => triggers;
 
     public void Add(EntityId entity, string id, string kind, string target, Vector3 center, Vector3 size)
     {
-        if (string.IsNullOrWhiteSpace(id)) id = $"trigger.{triggers.Count}";
+        if (string.IsNullOrWhiteSpace(id))
+            id = $"trigger.{triggers.Count}";
+
         var record = new OutmTriggerRecord
         {
             Entity = entity,
@@ -39,16 +41,19 @@ public sealed class OutmTriggerStore
             Center = center,
             Size = size
         };
+
         byId[id] = triggers.Count;
         triggers.Add(record);
     }
 
     public bool TryBindBody(string id, OutmBodyHandle body)
     {
-        if (!byId.TryGetValue(id, out int index)) return false;
-        OutmTriggerRecord trigger = triggers[index];
+        if (!byId.TryGetValue(id, out int index))
+            return false;
+
+        OutmTriggerRecord trigger = triggers.Items[index];
         trigger.Body = body;
-        triggers[index] = trigger;
+        triggers.Items[index] = trigger;
         return true;
     }
 
@@ -56,9 +61,10 @@ public sealed class OutmTriggerStore
     {
         if (!string.IsNullOrWhiteSpace(id) && byId.TryGetValue(id, out int index))
         {
-            trigger = triggers[index];
+            trigger = triggers.Items[index];
             return true;
         }
+
         trigger = default;
         return false;
     }
@@ -67,9 +73,11 @@ public sealed class OutmTriggerStore
     {
         for (int i = 0; i < triggers.Count; i++)
         {
-            trigger = triggers[i];
-            if (PointInsideBox(position, trigger.Min, trigger.Max)) return true;
+            trigger = triggers.Items[i];
+            if (PointInsideBox(position, trigger.Min, trigger.Max))
+                return true;
         }
+
         trigger = default;
         return false;
     }
