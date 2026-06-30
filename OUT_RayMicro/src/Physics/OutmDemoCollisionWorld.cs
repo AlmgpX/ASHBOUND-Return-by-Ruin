@@ -16,7 +16,7 @@ public sealed class OutmDemoCollisionWorld : IOutmCollisionWorld
 
     public void Step(float dt)
     {
-        // Static demo world. Jolt backend will actually step simulation later.
+        // Static demo world. Jolt backend owns actual physics scene stepping.
     }
 
     public bool CollidesSphere(Vector3 center, float radius)
@@ -73,6 +73,18 @@ public sealed class OutmDemoCollisionWorld : IOutmCollisionWorld
                 return true;
         }
 
+        return false;
+    }
+
+    public bool QuerySensor(Vector3 position, out OutmSensorProbe sensor)
+    {
+        if (map.TryGetEnteredTrigger(position, out OutmTriggerRuntime trigger))
+        {
+            sensor = new OutmSensorProbe(true, trigger.Id, trigger.Kind, trigger.Target, 0);
+            return true;
+        }
+
+        sensor = OutmSensorProbe.None;
         return false;
     }
 
