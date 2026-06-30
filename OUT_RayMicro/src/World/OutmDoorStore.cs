@@ -19,15 +19,17 @@ public struct OutmDoorRecord
 
 public sealed class OutmDoorStore
 {
-    private readonly List<OutmDoorRecord> doors = new(32);
+    private readonly OutBuffer<OutmDoorRecord> doors = new(64);
     private readonly Dictionary<string, int> byId = new(StringComparer.OrdinalIgnoreCase);
 
     public int Count => doors.Count;
-    public IReadOnlyList<OutmDoorRecord> Doors => doors;
+    public OutBuffer<OutmDoorRecord> Doors => doors;
 
     public void Add(EntityId entity, string id, Vector3 center, Vector3 size, Color color, bool open, string surfaceId)
     {
-        if (string.IsNullOrWhiteSpace(id)) id = $"door.{doors.Count}";
+        if (string.IsNullOrWhiteSpace(id))
+            id = $"door.{doors.Count}";
+
         var record = new OutmDoorRecord
         {
             Entity = entity,
@@ -39,16 +41,19 @@ public sealed class OutmDoorStore
             Open = open,
             SurfaceId = string.IsNullOrWhiteSpace(surfaceId) ? "surface.wood" : surfaceId
         };
+
         byId[id] = doors.Count;
         doors.Add(record);
     }
 
     public bool TryBindBody(string id, OutmBodyHandle body)
     {
-        if (!byId.TryGetValue(id, out int index)) return false;
-        OutmDoorRecord door = doors[index];
+        if (!byId.TryGetValue(id, out int index))
+            return false;
+
+        OutmDoorRecord door = doors.Items[index];
         door.Body = body;
-        doors[index] = door;
+        doors.Items[index] = door;
         return true;
     }
 
@@ -56,19 +61,22 @@ public sealed class OutmDoorStore
     {
         if (!string.IsNullOrWhiteSpace(id) && byId.TryGetValue(id, out int index))
         {
-            door = doors[index];
+            door = doors.Items[index];
             return true;
         }
+
         door = default;
         return false;
     }
 
     public bool TrySetOpen(string id, bool open)
     {
-        if (!byId.TryGetValue(id, out int index)) return false;
-        OutmDoorRecord door = doors[index];
+        if (!byId.TryGetValue(id, out int index))
+            return false;
+
+        OutmDoorRecord door = doors.Items[index];
         door.Open = open;
-        doors[index] = door;
+        doors.Items[index] = door;
         return true;
     }
 
@@ -79,9 +87,10 @@ public sealed class OutmDoorStore
             open = false;
             return false;
         }
-        OutmDoorRecord door = doors[index];
+
+        OutmDoorRecord door = doors.Items[index];
         door.Open = !door.Open;
-        doors[index] = door;
+        doors.Items[index] = door;
         open = door.Open;
         return true;
     }
@@ -89,6 +98,6 @@ public sealed class OutmDoorStore
     public void SyncToDemoMap(OutmDemoMap map)
     {
         for (int i = 0; i < doors.Count; i++)
-            map.TrySetDoorOpen(doors[i].Id, doors[i].Open);
+            map.TrySetDoorOpen(doors.Items[i].Id, doors.Items[i].Open);
     }
 }
