@@ -8,6 +8,12 @@ public enum OutmCollisionBackendKind : byte
     Jolt
 }
 
+public enum OutmPhysicsBackendRole : byte
+{
+    ManagedFallback,
+    NativeJolt
+}
+
 public readonly struct OutmRayHit
 {
     public readonly bool Hit;
@@ -15,17 +21,19 @@ public readonly struct OutmRayHit
     public readonly Vector3 Normal;
     public readonly float Distance;
     public readonly int BodyId;
+    public readonly string SurfaceId;
 
-    public OutmRayHit(bool hit, Vector3 point, Vector3 normal, float distance, int bodyId)
+    public OutmRayHit(bool hit, Vector3 point, Vector3 normal, float distance, int bodyId, string surfaceId = "surface.stone")
     {
         Hit = hit;
         Point = point;
         Normal = normal;
         Distance = distance;
         BodyId = bodyId;
+        SurfaceId = string.IsNullOrWhiteSpace(surfaceId) ? "surface.stone" : surfaceId;
     }
 
-    public static readonly OutmRayHit None = new(false, Vector3.Zero, Vector3.UnitY, 0.0f, -1);
+    public static readonly OutmRayHit None = new(false, Vector3.Zero, Vector3.UnitY, 0.0f, -1, "surface.stone");
 }
 
 public readonly struct OutmSensorProbe
