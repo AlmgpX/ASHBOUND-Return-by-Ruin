@@ -16,7 +16,9 @@ public enum OutmButtons : uint
     Melee = 1 << 6,
     Overlay = 1 << 7,
     DebugDamage = 1 << 8,
-    DebugArmor = 1 << 9
+    DebugArmor = 1 << 9,
+    DebugSave = 1 << 10,
+    DebugLoad = 1 << 11
 }
 
 public readonly struct OutmInputFrame
@@ -91,6 +93,8 @@ public sealed class OutmInputSampler
         if (Raylib.IsKeyDown(KeyboardKey.F1)) buttons |= OutmButtons.Overlay;
         if (Raylib.IsKeyDown(KeyboardKey.F2)) buttons |= OutmButtons.DebugDamage;
         if (Raylib.IsKeyDown(KeyboardKey.F3)) buttons |= OutmButtons.DebugArmor;
+        if (Raylib.IsKeyDown(KeyboardKey.F5)) buttons |= OutmButtons.DebugSave;
+        if (Raylib.IsKeyDown(KeyboardKey.F9)) buttons |= OutmButtons.DebugLoad;
 
         return buttons;
     }
