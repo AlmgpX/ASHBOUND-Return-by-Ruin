@@ -59,11 +59,18 @@ public sealed class OutmCorePhysicsWorld : IOutmCollisionWorld
             for (int i = 0; i < runtime.ProxyCount; i++)
             {
                 OutmBroadphaseProxy proxy = runtime.Proxies.Items[i];
-                if (!proxy.Active) continue;
+                if (!proxy.Active)
+                    continue;
+
                 OutmBody body = runtime.Bodies.Items[proxy.BodyId];
-                if ((body.Flags & OutmBodyFlags.Sensor) != 0) continue;
+                if ((body.Flags & OutmBodyFlags.Sensor) != 0)
+                    continue;
+
                 if (PointInside(point, proxy.Min, proxy.Max))
-                    return new OutmRayHit(true, previous, EstimateNormal(previous, point), distance, proxy.BodyId);
+                {
+                    string surface = runtime.Shapes.Items[body.ShapeId].SurfaceId;
+                    return new OutmRayHit(true, previous, EstimateNormal(previous, point), distance, proxy.BodyId, surface);
+                }
             }
             previous = point;
             distance += step;
