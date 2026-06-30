@@ -16,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT CORE // surface map seed");
+        Raylib.InitWindow(1280, 720, "OUT CORE // map entity slice");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -36,9 +36,11 @@ public static class OutmApp
         var logicTicks = new OutmLogicTickScheduler();
         var chunks = new OutmChunkStore();
         chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
+        OutmMapRuntimeStores mapRuntime = OutmMapEntitySpawner.Spawn(world, mapDef, map, logicTicks);
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
         var use = new OutmUseSystem();
         var triggers = new OutmTriggerSystem(use);
+        var pickups = new OutmPickupSystem();
         var editor = new OutmEditorShell();
         var inputSampler = new OutmInputSampler();
         var commands = new OutmCommandQueue();
@@ -54,6 +56,7 @@ public static class OutmApp
         world.PushLog($"manifest maps: {manifest.Maps.Length}");
         world.PushLog($"map: {map.DisplayName}");
         world.PushLog(validation.Summary);
+        world.PushLog($"map entities: static {mapRuntime.StaticWorldEntities} doors {mapRuntime.DoorEntities} triggers {mapRuntime.TriggerEntities} pickups {mapRuntime.PickupEntities}");
         world.PushLog($"mesh refs: {mapDef.Meshes.Length}");
         world.PushLog($"chunks: active {chunks.ActiveCount} resident {chunks.ResidentCount} sleeping {chunks.SleepingCount}");
         world.PushLog($"logic ticks: mid/{logicTicks.Policy.MidEveryTicks} far/{logicTicks.Policy.FarEveryTicks} dormant/{logicTicks.Policy.DormantEveryTicks}");
@@ -101,7 +104,7 @@ public static class OutmApp
                     released);
 
                 commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
-                SimulateFixedTick(world, map, collision, camera, weapons, triggers, chunks, logicTicks, surfaces, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
+                SimulateFixedTick(world, map, mapRuntime, collision, camera, weapons, triggers, pickups, chunks, logicTicks, surfaces, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
                 ticksThisFrame++;
             }
 
@@ -118,6 +121,7 @@ public static class OutmApp
             Raylib.DrawGrid(18, 1.0f);
             sceneRenderer.Draw(mapDef);
             map.Draw();
+            pickups.Draw(mapRuntime.Pickups);
             weapons.Draw();
             DrawViewRay(camera);
             Raylib.EndMode3D();
@@ -138,10 +142,12 @@ public static class OutmApp
     private static void SimulateFixedTick(
         OutmWorld world,
         OutmDemoMap map,
+        OutmMapRuntimeStores mapRuntime,
         IOutmCollisionWorld collision,
         OutmCameraMotor camera,
         OutmWeaponSystem weapons,
         OutmTriggerSystem triggers,
+        OutmPickupSystem pickups,
         OutmChunkStore chunks,
         OutmLogicTickScheduler logicTicks,
         OutmSurfaceRegistry surfaces,
@@ -167,8 +173,9 @@ public static class OutmApp
             }
 
             chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
-            HandleDebugSaveLoad(world, map, weapons, camera, input, ref quickSave);
-            triggers.UpdateUseTriggers(world, map, camera.Position, camera.Forward, input);
+            HandleDebugSaveLoad(world, map, mapRuntime, weapons, camera, input, ref quickSave);
+            triggers.UpdateUseTriggers(world, map, mapRuntime.Triggers, mapRuntime.Doors, camera.Position, camera.Forward, input);
+            pickups.Update(world, mapRuntime.Pickups, camera.Position);
 
             if (!world.PlayerVitals.IsDead)
             {
@@ -178,13 +185,13 @@ public static class OutmApp
         }
     }
 
-    private static void HandleDebugSaveLoad(OutmWorld world, OutmDemoMap map, OutmWeaponSystem weapons, OutmCameraMotor camera, in OutmInputFrame input, ref OutmSaveSnapshot? quickSave)
+    private static void HandleDebugSaveLoad(OutmWorld world, OutmDemoMap map, OutmMapRuntimeStores mapRuntime, OutmWeaponSystem weapons, OutmCameraMotor camera, in OutmInputFrame input, ref OutmSaveSnapshot? quickSave)
     {
         if (input.IsPressed(OutmButtons.DebugSave))
         {
-            quickSave = OutmSaveSystem.Capture(world, map, weapons, camera.Position, camera.Velocity, camera.Yaw, camera.Pitch);
+            quickSave = OutmSaveSystem.Capture(world, map, mapRuntime.Doors, mapRuntime.Pickups, weapons, camera.Position, camera.Velocity, camera.Yaw, camera.Pitch);
             OutmSaveSystem.SaveToDisk(quickSave);
-            world.PushLog($"quick save written: projectiles {quickSave.Projectiles.Length}");
+            world.PushLog($"quick save written: pickups {quickSave.Pickups.Length} projectiles {quickSave.Projectiles.Length}");
         }
 
         if (!input.IsPressed(OutmButtons.DebugLoad))
@@ -205,12 +212,12 @@ public static class OutmApp
             return;
         }
 
-        OutmSaveSystem.ApplyWorldState(world, map, weapons, quickSave);
+        OutmSaveSystem.ApplyWorldState(world, map, mapRuntime.Doors, mapRuntime.Pickups, weapons, quickSave);
         camera.Position = quickSave.Player.Position.ToVector3();
         camera.Velocity = quickSave.Player.Velocity.ToVector3();
         camera.Yaw = quickSave.Player.Yaw;
         camera.Pitch = quickSave.Player.Pitch;
-        world.PushLog($"quick save loaded: projectiles {quickSave.Projectiles.Length}");
+        world.PushLog($"quick save loaded: pickups {quickSave.Pickups.Length} projectiles {quickSave.Projectiles.Length}");
     }
 
     private static void UpdateFootsteps(OutmWorld world, OutmDemoMap map, OutmSurfaceRegistry surfaces, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
