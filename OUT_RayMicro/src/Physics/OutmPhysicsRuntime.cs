@@ -175,16 +175,16 @@ public sealed class OutmPhysicsRuntime
     public bool SphereOverlap(Vector3 center, float radius, out OutmBodyHandle body)
     {
         radius = MathF.Max(0.001f, radius);
-        CellOf(center, out int cx, out int cy, out int cz);
-        for (int dz = -1; dz <= 1; dz++) for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++)
+        for (int i = 0; i < Proxies.Count; i++)
         {
-            int p = bucketHeads[HashCell(cx + dx, cy + dy, cz + dz)];
-            while (p >= 0)
+            OutmBroadphaseProxy proxy = Proxies.Items[i];
+            if (!proxy.Active) continue;
+            ref OutmBody item = ref Bodies[proxy.BodyId];
+            if ((item.Flags & OutmBodyFlags.Sensor) != 0) continue;
+            if (SphereAgainstAabb(center, radius, proxy.Min, proxy.Max))
             {
-                OutmBroadphaseProxy proxy = Proxies.Items[p];
-                ref OutmBody item = ref Bodies[proxy.BodyId];
-                if (proxy.Active && (item.Flags & OutmBodyFlags.Sensor) == 0 && SphereAgainstAabb(center, radius, proxy.Min, proxy.Max)) { body = new OutmBodyHandle(proxy.BodyId); return true; }
-                p = proxyNext[p];
+                body = new OutmBodyHandle(proxy.BodyId);
+                return true;
             }
         }
         body = OutmBodyHandle.None;
@@ -193,16 +193,16 @@ public sealed class OutmPhysicsRuntime
 
     public bool PointInSensor(Vector3 point, out OutmBodyHandle body)
     {
-        CellOf(point, out int cx, out int cy, out int cz);
-        for (int dz = -1; dz <= 1; dz++) for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++)
+        for (int i = 0; i < Proxies.Count; i++)
         {
-            int p = bucketHeads[HashCell(cx + dx, cy + dy, cz + dz)];
-            while (p >= 0)
+            OutmBroadphaseProxy proxy = Proxies.Items[i];
+            if (!proxy.Active) continue;
+            ref OutmBody item = ref Bodies[proxy.BodyId];
+            if ((item.Flags & OutmBodyFlags.Sensor) == 0) continue;
+            if (PointInsideAabb(point, proxy.Min, proxy.Max))
             {
-                OutmBroadphaseProxy proxy = Proxies.Items[p];
-                ref OutmBody item = ref Bodies[proxy.BodyId];
-                if (proxy.Active && (item.Flags & OutmBodyFlags.Sensor) != 0 && PointInsideAabb(point, proxy.Min, proxy.Max)) { body = new OutmBodyHandle(item.BodyId); return true; }
-                p = proxyNext[p];
+                body = new OutmBodyHandle(item.BodyId);
+                return true;
             }
         }
         body = OutmBodyHandle.None;
@@ -214,17 +214,13 @@ public sealed class OutmPhysicsRuntime
         Vector3 half = SanitizeSize(size) * 0.5f;
         Vector3 min = center - half;
         Vector3 max = center + half;
-        CellOf(center, out int cx, out int cy, out int cz);
-        for (int dz = -1; dz <= 1; dz++) for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++)
+        for (int i = 0; i < Proxies.Count; i++)
         {
-            int p = bucketHeads[HashCell(cx + dx, cy + dy, cz + dz)];
-            while (p >= 0)
-            {
-                OutmBroadphaseProxy proxy = Proxies.Items[p];
-                ref OutmBody item = ref Bodies[proxy.BodyId];
-                if (proxy.Active && (item.Flags & OutmBodyFlags.Sensor) == 0 && AabbOverlap(min, max, proxy.Min, proxy.Max)) return true;
-                p = proxyNext[p];
-            }
+            OutmBroadphaseProxy proxy = Proxies.Items[i];
+            if (!proxy.Active) continue;
+            ref OutmBody item = ref Bodies[proxy.BodyId];
+            if ((item.Flags & OutmBodyFlags.Sensor) != 0) continue;
+            if (AabbOverlap(min, max, proxy.Min, proxy.Max)) return true;
         }
         return false;
     }
