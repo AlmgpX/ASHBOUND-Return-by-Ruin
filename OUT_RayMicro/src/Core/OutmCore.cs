@@ -29,6 +29,7 @@ public enum OutmEventType : ushort
     Footstep,
     DamageApplied,
     ArmorPicked,
+    Died,
     Debug
 }
 
@@ -110,6 +111,7 @@ public struct OutmPlayerVitals
     public int MaxArmor;
     public int MaxMana;
     public OutmArmorTier ArmorTier;
+    public bool IsDead;
 
     public static OutmPlayerVitals Default => new()
     {
@@ -119,7 +121,8 @@ public struct OutmPlayerVitals
         MaxHealth = 100,
         MaxArmor = OutmArmorRules.Capacity(OutmArmorTier.Green),
         MaxMana = 100,
-        ArmorTier = OutmArmorTier.Green
+        ArmorTier = OutmArmorTier.Green,
+        IsDead = false
     };
 }
 
