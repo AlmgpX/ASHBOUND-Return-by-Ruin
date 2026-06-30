@@ -16,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT CORE // Jolt physics slice");
+        Raylib.InitWindow(1280, 720, "OUT CORE // level authoring seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -42,6 +42,7 @@ public static class OutmApp
         var triggers = new OutmTriggerSystem(use);
         var pickups = new OutmPickupSystem();
         var editor = new OutmEditorShell();
+        var levelPanel = new OutmLevelDesignPanel();
         var inputSampler = new OutmInputSampler();
         var commands = new OutmCommandQueue();
         var fixedStep = new OutmFixedStep();
@@ -75,6 +76,7 @@ public static class OutmApp
             float frameDt = Math.Clamp(Raylib.GetFrameTime(), 0.0f, 0.10f);
             OutmInputFrame sampledInput = inputSampler.Sample(frameDt);
             editor.Update(world, sampledInput);
+            levelPanel.Update(world, mapDef, map, mapRuntime, sampledInput);
 
             bufferedPressed |= sampledInput.Pressed;
             bufferedReleased |= sampledInput.Released;
@@ -128,6 +130,7 @@ public static class OutmApp
 
             DrawWeaponHud(world);
             editor.Draw(world, camera, map, chunks, mapRuntime);
+            levelPanel.Draw(mapDef, map, mapRuntime);
 
             Raylib.EndDrawing();
         }
