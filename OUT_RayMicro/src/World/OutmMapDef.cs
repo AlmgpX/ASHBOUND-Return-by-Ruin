@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Raylib_cs;
+using OUT_RayMicro.Core;
 using OUT_RayMicro.Gameplay;
 using OUT_RayMicro.Runtime;
 
