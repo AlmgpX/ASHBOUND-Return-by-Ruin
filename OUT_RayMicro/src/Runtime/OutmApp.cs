@@ -27,6 +27,7 @@ public static class OutmApp
         var map = OutmMapLoader.BuildDemoMap(mapDef);
         IOutmCollisionWorld collision = new OutmDemoCollisionWorld(map);
         var camera = new OutmCameraMotor(map.PlayerStart);
+        world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
         var triggers = new OutmTriggerSystem();
         var editor = new OutmEditorShell();
@@ -140,6 +141,7 @@ public static class OutmApp
             if (!world.PlayerVitals.IsDead)
             {
                 camera.Update(input, collision);
+                world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
                 UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
             }
 
