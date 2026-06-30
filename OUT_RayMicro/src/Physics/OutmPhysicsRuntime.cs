@@ -147,6 +147,7 @@ public sealed class OutmPhysicsRuntime
         Contacts.Clear();
         TriggerOverlaps.Clear();
         BuildBuckets();
+        Array.Clear(proxyStamp, 0, Math.Min(proxyStamp.Length, Proxies.Count));
 
         for (int a = 0; a < Proxies.Count; a++)
         {
@@ -154,9 +155,7 @@ public sealed class OutmPhysicsRuntime
             if (!pa.Active) continue;
             int anchorStamp = a + 1;
             CellOf((pa.Min + pa.Max) * 0.5f, out int cx, out int cy, out int cz);
-            for (int dz = -1; dz <= 1; dz++)
-            for (int dy = -1; dy <= 1; dy++)
-            for (int dx = -1; dx <= 1; dx++)
+            for (int dz = -1; dz <= 1; dz++) for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++)
             {
                 int b = bucketHeads[HashCell(cx + dx, cy + dy, cz + dz)];
                 while (b >= 0)
