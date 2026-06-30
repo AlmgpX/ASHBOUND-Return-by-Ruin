@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>OUT_RayMicro</AssemblyName>
+    <AssemblyName>OUT_CORE</AssemblyName>
     <RootNamespace>OUT_RayMicro</RootNamespace>
   </PropertyGroup>
 
