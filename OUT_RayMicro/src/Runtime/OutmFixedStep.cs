@@ -39,4 +39,9 @@ public sealed class OutmFixedStep
     {
         accumulator = Math.Min(accumulator, FixedDelta);
     }
+
+    public void ClearAccumulator()
+    {
+        accumulator = 0.0f;
+    }
 }
