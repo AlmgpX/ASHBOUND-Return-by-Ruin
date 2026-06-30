@@ -1,21 +1,18 @@
 bl_info = {
     "name": "OUT CORE Exporter",
     "author": "Delirium Interactive / OUT CORE",
-    "version": (0, 1, 0),
+    "version": (0, 2, 0),
     "blender": (3, 6, 0),
     "location": "File > Export > OUT CORE Level",
-    "description": "Exports OUT CORE visual GLB and OUTMAP gameplay metadata from named Blender objects.",
+    "description": "Exports OUT CORE visual GLB, material manifest and OUTMAP gameplay metadata from named Blender objects.",
     "category": "Import-Export",
 }
 
 import json
 import math
-import os
 from pathlib import Path
 
 import bpy
-from mathutils import Vector
-
 
 PREFIX_PLAYER_START = "OUT_SPAWN_PlayerStart"
 PREFIX_VISUAL = "OUT_VIS_"
@@ -24,7 +21,6 @@ PREFIX_COLLIDER_MESH = "OUT_COLLIDER_Mesh_"
 PREFIX_DOOR = "OUT_DOOR_"
 PREFIX_TRIGGER = "OUT_TRIGGER_"
 PREFIX_PICKUP = "OUT_PICKUP_"
-
 
 DEFAULT_SURFACE = "surface.stone"
 DEFAULT_DOOR_SURFACE = "surface.wood"
@@ -35,7 +31,7 @@ def prop(obj, name, fallback):
 
 
 def clean_id(value):
-    value = value.strip().replace(" ", "_")
+    value = str(value).strip().replace(" ", "_")
     allowed = []
     for ch in value:
         if ch.isalnum() or ch in "._-":
@@ -70,6 +66,94 @@ def color_rgba(obj, fallback):
 def euler_deg(obj):
     rot = obj.rotation_euler
     return [round(math.degrees(rot.x), 4), round(math.degrees(rot.y), 4), round(math.degrees(rot.z), 4)]
+
+
+def material_surface(material):
+    if material is None:
+        return DEFAULT_SURFACE
+    return str(material.get("surface", material.get("out_surface", DEFAULT_SURFACE)))
+
+
+def material_base_color(material):
+    if material is None:
+        return [1.0, 1.0, 1.0, 1.0]
+    if material.use_nodes and material.node_tree:
+        bsdf = find_principled_bsdf(material)
+        if bsdf:
+            socket = bsdf.inputs.get("Base Color")
+            if socket:
+                c = socket.default_value
+                return [round(float(c[0]), 4), round(float(c[1]), 4), round(float(c[2]), 4), round(float(c[3]), 4)]
+    c = material.diffuse_color
+    return [round(float(c[0]), 4), round(float(c[1]), 4), round(float(c[2]), 4), round(float(c[3]), 4)]
+
+
+def material_float_input(material, socket_name, fallback):
+    if material and material.use_nodes and material.node_tree:
+        bsdf = find_principled_bsdf(material)
+        if bsdf:
+            socket = bsdf.inputs.get(socket_name)
+            if socket:
+                try:
+                    return round(float(socket.default_value), 4)
+                except Exception:
+                    return fallback
+    return fallback
+
+
+def find_principled_bsdf(material):
+    for node in material.node_tree.nodes:
+        if node.type == "BSDF_PRINCIPLED":
+            return node
+    return None
+
+
+def find_texture_path(material, socket_name):
+    if not material or not material.use_nodes or not material.node_tree:
+        return ""
+    bsdf = find_principled_bsdf(material)
+    if not bsdf:
+        return ""
+    socket = bsdf.inputs.get(socket_name)
+    if not socket or not socket.links:
+        return ""
+    from_node = socket.links[0].from_node
+    if from_node.type == "TEX_IMAGE" and from_node.image:
+        return bpy.path.abspath(from_node.image.filepath)
+    if from_node.type == "NORMAL_MAP":
+        normal_color = from_node.inputs.get("Color")
+        if normal_color and normal_color.links:
+            tex = normal_color.links[0].from_node
+            if tex.type == "TEX_IMAGE" and tex.image:
+                return bpy.path.abspath(tex.image.filepath)
+    return ""
+
+
+def collect_materials(visual_objects, manifest_id):
+    by_name = {}
+    for obj in visual_objects:
+        for slot in obj.material_slots:
+            mat = slot.material
+            if mat is None:
+                continue
+            key = mat.name
+            if key in by_name:
+                continue
+            by_name[key] = {
+                "id": "mat." + clean_id(mat.name),
+                "blenderName": mat.name,
+                "surface": material_surface(mat),
+                "baseColor": material_base_color(mat),
+                "metallic": material_float_input(mat, "Metallic", 0.0),
+                "roughness": material_float_input(mat, "Roughness", 0.75),
+                "baseColorTexture": find_texture_path(mat, "Base Color"),
+                "normalTexture": find_texture_path(mat, "Normal"),
+                "emissiveTexture": find_texture_path(mat, "Emission Color"),
+            }
+    return {
+        "id": manifest_id,
+        "materials": list(by_name.values()),
+    }
 
 
 def make_box(obj):
@@ -169,10 +253,13 @@ def collect_level(scene):
             pickups.append(make_pickup(obj))
 
     visual_path = f"meshes/rooms/{visual_name}.glb"
+    material_path = f"materials/rooms/{visual_name}.materials.json"
+    material_manifest = collect_materials(visual_objects, "materials." + visual_name)
     if visual_objects:
         meshes.insert(0, {
             "id": "visual." + visual_name,
             "path": visual_path,
+            "materialManifest": material_path,
             "position": [0.0, 0.0, 0.0],
             "rotation": [0.0, 0.0, 0.0],
             "scale": [1.0, 1.0, 1.0],
@@ -189,7 +276,7 @@ def collect_level(scene):
         "triggers": triggers,
         "pickups": pickups,
         "meshes": meshes,
-    }, visual_objects, visual_path
+    }, visual_objects, visual_path, material_path, material_manifest
 
 
 def export_visual_glb(visual_objects, output_root, visual_path):
@@ -212,6 +299,8 @@ def export_visual_glb(visual_objects, output_root, visual_path):
         export_format='GLB',
         use_selection=True,
         export_apply=True,
+        export_materials='EXPORT',
+        export_image_format='AUTO',
     )
 
     bpy.ops.object.select_all(action='DESELECT')
@@ -230,11 +319,19 @@ def write_outmap(outmap, output_root):
     return str(path)
 
 
+def write_material_manifest(manifest, output_root, material_path):
+    target = Path(output_root) / material_path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    return str(target)
+
+
 def export_out_core_level(output_root):
-    outmap, visual_objects, visual_path = collect_level(bpy.context.scene)
+    outmap, visual_objects, visual_path, material_path, material_manifest = collect_level(bpy.context.scene)
     glb_path = export_visual_glb(visual_objects, output_root, visual_path)
+    material_manifest_path = write_material_manifest(material_manifest, output_root, material_path) if visual_objects else None
     map_path = write_outmap(outmap, output_root)
-    return map_path, glb_path
+    return map_path, glb_path, material_manifest_path
 
 
 class OUTCORE_OT_export_level(bpy.types.Operator):
@@ -251,10 +348,12 @@ class OUTCORE_OT_export_level(bpy.types.Operator):
     def execute(self, context):
         root = bpy.path.abspath(self.output_root)
         try:
-            map_path, glb_path = export_out_core_level(root)
+            map_path, glb_path, material_path = export_out_core_level(root)
             message = f"OUTMAP: {map_path}"
             if glb_path:
                 message += f" | GLB: {glb_path}"
+            if material_path:
+                message += f" | MAT: {material_path}"
             self.report({'INFO'}, message)
             return {'FINISHED'}
         except Exception as ex:
@@ -279,11 +378,12 @@ class OUTCORE_PT_export_panel(bpy.types.Panel):
         layout.prop(scene, "out_core_display_name")
         layout.prop(scene, "out_core_visual_name")
         layout.operator("out_core.export_level")
-        layout.label(text="Use OUT_* object names. Yes, naming conventions, the duct tape of civilization.")
+        layout.label(text="OUT_VIS_* exports GLB with Blender materials.")
+        layout.label(text="Material custom prop: surface = surface.stone/wood/metal")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(OUTCORE_OT_export_level.bl_idname, text="OUT CORE Level (.outmap + .glb)")
+    self.layout.operator(OUTCORE_OT_export_level.bl_idname, text="OUT CORE Level (.outmap + .glb + materials)")
 
 
 def register():
