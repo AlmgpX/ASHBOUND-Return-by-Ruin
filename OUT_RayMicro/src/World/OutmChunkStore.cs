@@ -39,6 +39,7 @@ public sealed class OutmChunkStore
     private readonly List<OutmChunkKey> active = new(128);
     private readonly List<OutmChunkKey> resident = new(512);
     private readonly List<OutmChunkKey> sleeping = new(512);
+    private readonly List<OutmChunkKey> keyScratch = new(512);
     private int revision;
 
     public int ActiveRadiusChunks = 1;
@@ -80,8 +81,13 @@ public sealed class OutmChunkStore
             }
         }
 
-        foreach (OutmChunkKey key in chunks.Keys.ToArray())
+        keyScratch.Clear();
+        foreach (OutmChunkKey key in chunks.Keys)
+            keyScratch.Add(key);
+
+        for (int i = 0; i < keyScratch.Count; i++)
         {
+            OutmChunkKey key = keyScratch[i];
             OutmChunkRuntime chunk = chunks[key];
             if (chunk.LastSeenRevision == revision)
                 continue;
