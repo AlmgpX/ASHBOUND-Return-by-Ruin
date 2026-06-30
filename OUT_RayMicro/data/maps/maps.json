@@ -1,0 +1,10 @@
+{
+  "defaultMap": "map.test_room",
+  "maps": [
+    {
+      "id": "map.test_room",
+      "displayName": "Test Room OUTMAP",
+      "path": "maps/test_room.outmap.json"
+    }
+  ]
+}
