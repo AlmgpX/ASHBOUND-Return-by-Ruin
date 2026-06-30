@@ -7,39 +7,39 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
 {
     private readonly OutmDemoMap map;
     private readonly OutmPhysicsScene scene;
+    private readonly OutmPhysicsRuntime runtime;
+    private readonly Dictionary<string, OutmBodyHandle> doorBodies = new(StringComparer.OrdinalIgnoreCase);
 
     public OutmJoltCollisionWorld(OutmMapDef def, OutmDemoMap map)
     {
         this.map = map;
         scene = OutmPhysicsSceneBuilder.Build(def, map);
+        runtime = BuildRuntime(scene);
+        runtime.FlushDirtyProxies();
+        runtime.BuildPairs();
     }
 
     public OutmCollisionBackendKind BackendKind => OutmCollisionBackendKind.Jolt;
-    public int BodyCount => scene.Bodies.Count;
-    public int SensorCount => scene.Triggers.Count;
+    public int BodyCount => runtime.BodyCount;
+    public int ShapeCount => runtime.ShapeCount;
+    public int ProxyCount => runtime.ProxyCount;
+    public int PairCount => runtime.PairCount;
+    public int ContactCount => runtime.ContactCount;
+    public int SensorOverlapCount => runtime.TriggerOverlapCount;
 
     public void Step(float dt)
     {
         SyncDoorBodies();
-        // Native Jolt stepping will be inserted here. The gameplay side already talks to this backend contract.
+        runtime.FlushDirtyProxies();
+        runtime.BuildPairs();
+        // Native Jolt stepping will replace the current proxy-only broadphase internals.
+        // Gameplay already sees Body/Shape/Proxy buffers through IOutmCollisionWorld, not authoring buckets.
     }
 
     public bool CollidesSphere(Vector3 center, float radius)
     {
-        SyncDoorBodies();
-        radius = MathF.Max(0.001f, radius);
-
-        for (int i = 0; i < scene.Bodies.Count; i++)
-        {
-            OutmPhysicsBody body = scene.Bodies[i];
-            if (!body.Active)
-                continue;
-
-            if (SphereAgainstBox(center, radius, body.Min, body.Max))
-                return true;
-        }
-
-        return false;
+        runtime.FlushDirtyProxies();
+        return runtime.SphereOverlap(center, radius, out _);
     }
 
     public OutmRayHit Raycast(Vector3 origin, Vector3 direction, float maxDistance)
@@ -52,19 +52,24 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
         float distance = 0.0f;
         Vector3 previous = origin;
 
+        runtime.FlushDirtyProxies();
         while (distance <= maxDistance)
         {
             Vector3 point = origin + direction * distance;
-            for (int i = 0; i < scene.Bodies.Count; i++)
+            for (int i = 0; i < runtime.ProxyCount; i++)
             {
-                OutmPhysicsBody body = scene.Bodies[i];
-                if (!body.Active)
+                OutmBroadphaseProxy proxy = runtime.Proxies.Items[i];
+                if (!proxy.Active)
                     continue;
 
-                if (PointInsideBox(point, body.Min, body.Max))
+                OutmBody body = runtime.Bodies.Items[proxy.BodyId];
+                if ((body.Flags & OutmBodyFlags.Sensor) != 0)
+                    continue;
+
+                if (PointInsideBox(point, proxy.Min, proxy.Max))
                 {
                     Vector3 normal = EstimateNormal(previous, point);
-                    return new OutmRayHit(true, previous, normal, distance, body.BodyId);
+                    return new OutmRayHit(true, previous, normal, distance, proxy.BodyId);
                 }
             }
 
@@ -77,36 +82,34 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
 
     public bool OverlapBox(Vector3 center, Vector3 size)
     {
-        Vector3 min = center - size * 0.5f;
-        Vector3 max = center + size * 0.5f;
-
-        for (int i = 0; i < scene.Bodies.Count; i++)
-        {
-            OutmPhysicsBody body = scene.Bodies[i];
-            if (!body.Active)
-                continue;
-
-            if (BoxesOverlap(min, max, body.Min, body.Max))
-                return true;
-        }
-
-        return false;
+        runtime.FlushDirtyProxies();
+        return runtime.BoxOverlap(center, size);
     }
 
     public bool QuerySensor(Vector3 position, out OutmSensorProbe sensor)
     {
-        for (int i = 0; i < scene.Triggers.Count; i++)
+        runtime.FlushDirtyProxies();
+        if (!runtime.PointInSensor(position, out OutmBodyHandle sensorBody))
         {
-            OutmPhysicsTrigger trigger = scene.Triggers[i];
-            if (!PointInsideBox(position, trigger.Min, trigger.Max))
-                continue;
-
-            sensor = new OutmSensorProbe(true, trigger.Id, trigger.Kind, trigger.Target, trigger.TriggerId);
-            return true;
+            sensor = OutmSensorProbe.None;
+            return false;
         }
 
-        sensor = OutmSensorProbe.None;
-        return false;
+        if (!runtime.TryGetBody(sensorBody, out OutmBody body) || body.SourceKind != OutmPhysicsSourceKind.AuthoringSensor)
+        {
+            sensor = OutmSensorProbe.None;
+            return false;
+        }
+
+        if ((uint)body.SourceIndex >= (uint)scene.Triggers.Count)
+        {
+            sensor = OutmSensorProbe.None;
+            return false;
+        }
+
+        OutmPhysicsTrigger trigger = scene.Triggers[body.SourceIndex];
+        sensor = new OutmSensorProbe(true, trigger.Id, trigger.Kind, trigger.Target, trigger.TriggerId);
+        return true;
     }
 
     public OutmCharacterMove MoveCharacter(Vector3 position, Vector3 velocity, float radius, float floorHeight, float dt)
@@ -134,38 +137,49 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
         return new OutmCharacterMove(next, velocity, grounded, Vector3.UnitY);
     }
 
+    private OutmPhysicsRuntime BuildRuntime(OutmPhysicsScene sourceScene)
+    {
+        int bodyCount = Math.Max(4096, sourceScene.Bodies.Count + sourceScene.Triggers.Count + 128);
+        var result = new OutmPhysicsRuntime(bodyCapacity: bodyCount, shapeCapacity: bodyCount * 2);
+
+        for (int i = 0; i < sourceScene.Bodies.Count; i++)
+        {
+            OutmPhysicsBody src = sourceScene.Bodies[i];
+            OutmShapeHandle shape = result.AddShape(src.ShapeKind, src.Size, src.SurfaceId);
+            OutmBodyFlags flags = OutmBodyFlags.Static;
+            if (src.Active)
+                flags |= OutmBodyFlags.Active;
+            if (src.BodyKind == OutmPhysicsBodyKind.Door)
+                flags |= OutmBodyFlags.Door | OutmBodyFlags.Kinematic;
+
+            OutmBodyHandle body = result.AddBody(shape, src.Center, flags, OutmPhysicsSourceKind.AuthoringBody, i);
+            if (src.BodyKind == OutmPhysicsBodyKind.Door)
+                doorBodies[src.Id] = body;
+        }
+
+        for (int i = 0; i < sourceScene.Triggers.Count; i++)
+        {
+            OutmPhysicsTrigger src = sourceScene.Triggers[i];
+            OutmShapeHandle shape = result.AddShape(OutmPhysicsShapeKind.Box, src.Size, "surface.sensor");
+            result.AddBody(shape, src.Center, OutmBodyFlags.Active | OutmBodyFlags.Sensor | OutmBodyFlags.Static, OutmPhysicsSourceKind.AuthoringSensor, i);
+        }
+
+        return result;
+    }
+
     private void SyncDoorBodies()
     {
         for (int i = 0; i < map.Doors.Count; i++)
         {
             OutmDoorRuntime door = map.Doors[i];
-            scene.SetDoorActive(door.Id, !door.Open);
+            if (doorBodies.TryGetValue(door.Id, out OutmBodyHandle body))
+                runtime.SetBodyActive(body, !door.Open);
         }
-    }
-
-    private static bool SphereAgainstBox(Vector3 point, float radius, Vector3 min, Vector3 max)
-    {
-        float closestX = Math.Clamp(point.X, min.X, max.X);
-        float closestY = Math.Clamp(point.Y, min.Y, max.Y);
-        float closestZ = Math.Clamp(point.Z, min.Z, max.Z);
-        float dx = point.X - closestX;
-        float dy = point.Y - closestY;
-        float dz = point.Z - closestZ;
-        return dx * dx + dy * dy + dz * dz < radius * radius;
     }
 
     private static bool PointInsideBox(Vector3 point, Vector3 min, Vector3 max)
     {
-        return point.X >= min.X && point.X <= max.X &&
-               point.Y >= min.Y && point.Y <= max.Y &&
-               point.Z >= min.Z && point.Z <= max.Z;
-    }
-
-    private static bool BoxesOverlap(Vector3 minA, Vector3 maxA, Vector3 minB, Vector3 maxB)
-    {
-        return minA.X <= maxB.X && maxA.X >= minB.X &&
-               minA.Y <= maxB.Y && maxA.Y >= minB.Y &&
-               minA.Z <= maxB.Z && maxA.Z >= minB.Z;
+        return point.X >= min.X && point.X <= max.X && point.Y >= min.Y && point.Y <= max.Y && point.Z >= min.Z && point.Z <= max.Z;
     }
 
     private static Vector3 EstimateNormal(Vector3 previous, Vector3 current)
