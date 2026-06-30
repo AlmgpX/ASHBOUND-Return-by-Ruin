@@ -10,18 +10,20 @@ public readonly struct OutmBox
     public readonly Vector3 Size;
     public readonly Color Color;
     public readonly bool Solid;
+    public readonly string SurfaceId;
 
-    public OutmBox(string id, Vector3 center, Vector3 size, Color color, bool solid = true)
+    public OutmBox(string id, Vector3 center, Vector3 size, Color color, bool solid = true, string surfaceId = "surface.stone")
     {
         Id = id;
         Center = center;
         Size = size;
         Color = color;
         Solid = solid;
+        SurfaceId = string.IsNullOrWhiteSpace(surfaceId) ? "surface.stone" : surfaceId;
     }
 
     public OutmBox(Vector3 center, Vector3 size, Color color, bool solid = true)
-        : this("box", center, size, color, solid)
+        : this("box", center, size, color, solid, "surface.stone")
     {
     }
 
@@ -36,14 +38,16 @@ public struct OutmDoorRuntime
     public Vector3 Size;
     public Color Color;
     public bool Open;
+    public string SurfaceId;
 
-    public OutmDoorRuntime(string id, Vector3 center, Vector3 size, Color color, bool open)
+    public OutmDoorRuntime(string id, Vector3 center, Vector3 size, Color color, bool open, string surfaceId = "surface.wood")
     {
         Id = id;
         Center = center;
         Size = size;
         Color = color;
         Open = open;
+        SurfaceId = string.IsNullOrWhiteSpace(surfaceId) ? "surface.wood" : surfaceId;
     }
 
     public Vector3 Min => Center - Size * 0.5f;
@@ -159,7 +163,31 @@ public sealed class OutmDemoMap
         return false;
     }
 
-    public bool Collides(Vector3 point, float radius)
+    public bool TryGetSurfaceAtFoot(Vector3 position, out string surfaceId)
+    {
+        surfaceId = "surface.stone";
+        float bestTop = float.NegativeInfinity;
+
+        foreach (OutmBox box in Boxes)
+        {
+            if (!box.Solid)
+                continue;
+
+            if (position.X < box.Min.X || position.X > box.Max.X || position.Z < box.Min.Z || position.Z > box.Max.Z)
+                continue;
+
+            float top = box.Max.Y;
+            if (top <= position.Y + 0.15f && top > bestTop)
+            {
+                bestTop = top;
+                surfaceId = box.SurfaceId;
+            }
+        }
+
+        return bestTop > float.NegativeInfinity;
+    }
+
+    public bool TryGetCollisionSurface(Vector3 point, float radius, out string surfaceId)
     {
         foreach (OutmDoorRuntime door in Doors)
         {
@@ -167,19 +195,31 @@ public sealed class OutmDemoMap
                 continue;
 
             if (SphereAgainstBoxXZ(point, radius, door.Min, door.Max) && point.Y < door.Max.Y + 1.8f)
+            {
+                surfaceId = door.SurfaceId;
                 return true;
+            }
         }
 
-        foreach (var box in Boxes)
+        foreach (OutmBox box in Boxes)
         {
             if (!box.Solid || box.Size.Y < 0.35f)
                 continue;
 
             if (SphereAgainstBoxXZ(point, radius, box.Min, box.Max) && point.Y < box.Max.Y + 1.8f)
+            {
+                surfaceId = box.SurfaceId;
                 return true;
+            }
         }
 
+        surfaceId = "surface.stone";
         return false;
+    }
+
+    public bool Collides(Vector3 point, float radius)
+    {
+        return TryGetCollisionSurface(point, radius, out _);
     }
 
     public Vector3 MoveWithCollision(Vector3 position, Vector3 delta, float radius, float floorHeight)
