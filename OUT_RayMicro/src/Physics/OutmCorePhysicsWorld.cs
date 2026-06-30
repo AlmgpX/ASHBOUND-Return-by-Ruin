@@ -8,6 +8,7 @@ public sealed class OutmCorePhysicsWorld : IOutmCollisionWorld
     private readonly OutmDemoMap map;
     private readonly OutmPhysicsScene scene;
     private readonly OutmPhysicsRuntime runtime;
+    private readonly IOutmPhysicsBackendBridge backend;
     private readonly Dictionary<string, OutmBodyHandle> solidBodies = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, OutmBodyHandle> sensorBodies = new(StringComparer.OrdinalIgnoreCase);
 
@@ -16,11 +17,14 @@ public sealed class OutmCorePhysicsWorld : IOutmCollisionWorld
         this.map = map;
         scene = OutmPhysicsSceneBuilder.Build(def, map);
         runtime = BuildRuntime(scene);
+        backend = OutmPhysicsBackendFactory.CreateDefault();
         runtime.FlushDirtyProxies();
         runtime.BuildPairs();
+        backend.BuildFromRuntime(runtime);
     }
 
     public OutmCollisionBackendKind BackendKind => OutmCollisionBackendKind.Jolt;
+    public OutmPhysicsBackendRole BackendRole => backend.Role;
     public int BodyCount => runtime.BodyCount;
     public int ShapeCount => runtime.ShapeCount;
     public int ProxyCount => runtime.ProxyCount;
@@ -34,6 +38,7 @@ public sealed class OutmCorePhysicsWorld : IOutmCollisionWorld
         SyncSolidsFromComponents();
         runtime.FlushDirtyProxies();
         runtime.BuildPairs();
+        backend.Step(dt);
     }
 
     public bool CollidesSphere(Vector3 center, float radius)
