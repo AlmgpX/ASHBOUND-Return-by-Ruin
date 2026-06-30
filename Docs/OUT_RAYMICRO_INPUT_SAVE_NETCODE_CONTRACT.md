@@ -19,10 +19,12 @@ OUT RayMicro must not allow every system to call raylib input directly.
 
 ## Current implementation
 
-File:
+Files:
 
 ```text
 OUT_RayMicro/src/Input/OutmInputFrame.cs
+OUT_RayMicro/src/Input/OutmCommand.cs
+OUT_RayMicro/src/Runtime/OutmFixedStep.cs
 ```
 
 Current types:
@@ -31,18 +33,23 @@ Current types:
 OutmButtons
 OutmInputFrame
 OutmInputSampler
+OutmUserCommand
+OutmCommand
+OutmCommandQueue
+OutmFixedStep
 ```
 
-Current frame data:
+Current frame / command data:
 
 ```text
 Sequence
-DeltaTime
-Move        // Vector2, normalized WASD intent
-LookDelta   // mouse delta for this frame
-Down        // current button bitset
-Pressed     // edge bitset this frame
-Released    // release edge bitset this frame
+Tick
+FixedDeltaTime
+Move
+LookDelta
+Down
+Pressed
+Released
 ```
 
 Current buttons:
@@ -63,18 +70,50 @@ DebugArmor
 Raylib input is sampled in one place only:
 
 ```text
-OutmInputSampler.Sample(dt)
+OutmInputSampler.Sample(frameDt)
 ```
 
-The runtime then passes the frame into systems:
+The runtime now converts that sampled frame into fixed user commands:
 
 ```text
-editor.Update(world, input)
-camera.Update(input, map)
-weapons.Update(input, muzzle, forward, map, world)
+OutmInputFrame -> OutmUserCommand -> OutmCommandQueue -> SimulateFixedTick
 ```
 
-This is the correct direction. Hardware input is an edge boundary, not seasoning to sprinkle across gameplay code like a gremlin with a salt shaker.
+Hardware input is an edge boundary, not seasoning to sprinkle across gameplay code like a gremlin with a salt shaker.
+
+---
+
+## Current fixed tick loop
+
+Current runtime pattern:
+
+```text
+render frame:
+  sample raw input once
+  editor overlay consumes raw edge input for UI/debug only
+  add frame time to accumulator
+  while accumulator >= 1/60 and tick count is under safety cap:
+    build OutmUserCommand
+    enqueue command
+    SimulateFixedTick(command queue)
+  process audio events
+  update streamed music
+  render latest state
+```
+
+Initial tick rate:
+
+```text
+60 Hz
+```
+
+Safety cap:
+
+```text
+5 simulation ticks per render frame
+```
+
+This is not final deterministic netcode yet, but it is the first real transition away from variable-delta soup.
 
 ---
 
@@ -97,6 +136,7 @@ entity states
 lore facts
 scheduler queue
 random seeds
+def version/hash
 ```
 
 Optional debug/replay save may also store:
@@ -112,7 +152,7 @@ Replay can be done by storing:
 
 ```text
 initial state snapshot
-input frames by sequence
+input commands by sequence/tick
 random seed
 version/hash of defs
 ```
@@ -121,7 +161,7 @@ Then replay is:
 
 ```text
 load snapshot
-for each input frame:
+for each fixed user command:
   simulate fixed tick
   compare optional checksums
 ```
@@ -134,6 +174,7 @@ Client:
 
 ```text
 samples OutmInputFrame
+builds OutmUserCommand
 predicts local movement/rendering
 sends compact command to server
 keeps pending command buffer
@@ -142,7 +183,7 @@ keeps pending command buffer
 Server:
 
 ```text
-receives input command
+receives user command
 validates timing/order
 simulates authoritative movement/fire/use
 spawns projectiles/damage/events
@@ -154,7 +195,7 @@ Client reconciliation later:
 ```text
 receive authoritative snapshot
 rewind to server tick
-reapply pending input frames
+reapply pending input commands
 smooth visual correction
 ```
 
@@ -162,52 +203,29 @@ smooth visual correction
 
 ## Command shape target
 
-`OutmInputFrame` is currently the runtime input container. It should eventually produce a compact network command:
+`OutmUserCommand` is now the compact gameplay intent container:
 
 ```text
 OutmUserCommand
   sequence
   tick
-  msec or fixedTickDelta
-  moveX
-  moveY
-  lookYawDelta or viewYaw
-  lookPitchDelta or viewPitch
+  fixedDeltaTime
+  move
+  lookDelta
   buttonsDown
   buttonsPressed
-  selectedWeapon
-  checksum/debug optional
+  buttonsReleased
+```
+
+Next additions:
+
+```text
+selectedWeapon
+checksum/debug optional
+clientTime optional
 ```
 
 Do not send raw keyboard names. Do not send strings. Do not send `Raylib` enums. The network does not care that a human pressed `C`; it cares that `Crouch` is held.
-
----
-
-## Fixed-tick target
-
-The current slice still uses clamped frame delta. That is acceptable for seed code only.
-
-Target:
-
-```text
-render frame:
-  sample hardware input
-  accumulate time
-  while accumulator >= fixedDt:
-    build fixed OutmInputFrame
-    simulate fixed tick
-    accumulator -= fixedDt
-  render interpolated state
-```
-
-Suggested fixed tick:
-
-```text
-60 Hz first
-later 72/100/125 Hz if movement feel demands it
-```
-
-Quake-like movement and netcode become cleaner when simulation uses stable ticks. Variable dt is where determinism goes to be quietly murdered behind a shed.
 
 ---
 
@@ -216,7 +234,7 @@ Quake-like movement and netcode become cleaner when simulation uses stable ticks
 Allowed:
 
 ```text
-RuntimeInput -> OutmInputFrame -> CommandQueue -> Systems -> Events
+RuntimeInput -> OutmInputFrame -> OutmUserCommand -> OutmCommandQueue -> Systems -> Events
 ```
 
 Forbidden:
@@ -229,7 +247,7 @@ Network packet contains raw key names
 Save file stores transient hardware input state as truth
 ```
 
-Current code already moved camera, weapon and overlay debug to `OutmInputFrame`. Continue this pattern.
+Current code already moved camera, weapon and fixed gameplay tick to command-fed simulation. Continue this pattern.
 
 ---
 
@@ -242,27 +260,28 @@ BuildUnityInputFrame()
 OUTL_ApplyInput(frame, world)
 ```
 
-RayMicro must follow that pattern, but smaller:
+RayMicro now follows that pattern in smaller standalone form:
 
 ```text
-OutmInputSampler.Sample(dt)
-OutmSystems.Apply(input, world)
+OutmInputSampler.Sample(frameDt)
+OutmUserCommand.ToInputFrame()
+SimulateFixedTick(...)
 ```
 
-The eventual target is not a camera controller with key checks. The target is an actor motor consuming a command frame.
+The target is not a camera controller with key checks. The target is an actor motor consuming command frames.
 
 ---
 
 ## Next implementation steps
 
 ```text
-1. Rename/refine OutmInputFrame into a stable user command contract if needed.
-2. Add OutmCommandQueue for gameplay commands generated from input.
-3. Add fixed tick accumulator in OutmApp.
-4. Move trigger door interaction into TriggerSystem, not raw app code.
-5. Move weapon firing request into CommandQueue.
-6. Add save snapshot structs.
-7. Add simple state checksum for debugging replays.
+1. Add state checksum for replay/debug.
+2. Add selected weapon to OutmUserCommand.
+3. Move trigger door logic into TriggerSystem.
+4. Move debug F2/F3 into command types, not overlay-only direct calls.
+5. Add save snapshot structs.
+6. Add pending command history ring for future client prediction/reconciliation.
+7. Add OutmJoltCollisionWorld backend behind IOutmCollisionWorld.
 ```
 
-Do this before enemies, pickups and lore. Otherwise all later systems will inherit the wrong disease.
+The command stream exists now. Do not sneak hardware reads back into gameplay, unless the goal is to summon bugs from 1998 and pretend they are retro charm.
