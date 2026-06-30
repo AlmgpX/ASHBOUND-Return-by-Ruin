@@ -16,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT CORE // map logic seed");
+        Raylib.InitWindow(1280, 720, "OUT CORE // blender material seed");
         Raylib.SetExitKey(KeyboardKey.Null);
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
@@ -70,6 +70,7 @@ public static class OutmApp
         world.PushLog($"physics bodies {corePhysics.BodyCount} shapes {corePhysics.ShapeCount} proxies {corePhysics.ProxyCount}");
         world.PushLog($"physics bridge: {corePhysics.BackendRole}");
         world.PushLog($"mesh refs: {mapDef.Meshes.Length}");
+        LogMaterialManifests(world, mapDef);
         world.PushLog($"chunks: active {chunks.ActiveCount} resident {chunks.ResidentCount} sleeping {chunks.SleepingCount}");
         world.PushLog($"logic ticks: mid/{logicTicks.Policy.MidEveryTicks} far/{logicTicks.Policy.FarEveryTicks} dormant/{logicTicks.Policy.DormantEveryTicks}");
         world.PushLog($"defs: weapons {content.Weapons.Count}");
@@ -168,6 +169,19 @@ public static class OutmApp
         OutmFontSystem.Unload();
         Raylib.EnableCursor();
         Raylib.CloseWindow();
+    }
+
+    private static void LogMaterialManifests(OutmWorld world, OutmMapDef mapDef)
+    {
+        for (int i = 0; i < mapDef.Meshes.Length; i++)
+        {
+            OutmMeshRefDef mesh = mapDef.Meshes[i];
+            if (string.IsNullOrWhiteSpace(mesh.MaterialManifest))
+                continue;
+
+            OutmMaterialManifest manifest = OutmMaterialManifestLoader.LoadOrEmpty(mesh.MaterialManifest);
+            world.PushLog($"materials {manifest.Id}: {manifest.Materials.Length}");
+        }
     }
 
     private static void BindPhysicsHandles(OutmMapRuntimeStores runtime, OutmCorePhysicsWorld physics)
