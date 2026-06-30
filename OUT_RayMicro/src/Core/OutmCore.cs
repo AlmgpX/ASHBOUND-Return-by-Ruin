@@ -174,6 +174,7 @@ public sealed class OutmWorld
 
     public readonly OutmEventQueue Events = new(512);
     public readonly OutmEntityStore Entities = new(512);
+    public readonly OutmTransformStore Transforms = new(512);
     public EntityId PlayerEntity = EntityId.None;
     public OutmPlayerVitals PlayerVitals = OutmPlayerVitals.Default;
     public float Time;
