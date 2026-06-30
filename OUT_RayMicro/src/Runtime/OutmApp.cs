@@ -15,7 +15,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT RayMicro // systems seed");
+        Raylib.InitWindow(1280, 720, "OUT RayMicro // map manifest seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -23,7 +23,10 @@ public static class OutmApp
         var content = OutmContentRegistry.LoadDefault();
         var world = new OutmWorld();
         world.PlayerEntity = world.Entities.Create(OutmEntityKind.Player, "player.local");
-        OutmMapDef mapDef = OutmMapLoader.LoadOrDefault("maps/test_room.outmap.json");
+        OutmMapManifest manifest = OutmMapManifestLoader.LoadOrDefault();
+        OutmMapManifestEntry mapEntry = manifest.FindDefault();
+        OutmMapDef mapDef = OutmMapLoader.LoadOrDefault(mapEntry.Path);
+        OutmMapValidationReport validation = OutmMapValidator.Validate(mapDef, world.PushLog);
         var map = OutmMapLoader.BuildDemoMap(mapDef);
         IOutmCollisionWorld collision = new OutmDemoCollisionWorld(map);
         var camera = new OutmCameraMotor(map.PlayerStart);
@@ -39,7 +42,9 @@ public static class OutmApp
 
         world.PushLog("OUT RayMicro boot");
         world.PushLog($"player entity: {world.PlayerEntity}");
+        world.PushLog($"manifest maps: {manifest.Maps.Length}");
         world.PushLog($"map: {map.DisplayName}");
+        world.PushLog(validation.Summary);
         world.PushLog($"defs: weapons {content.Weapons.Count}");
         world.PushLog($"fixed tick: {1.0f / fixedStep.FixedDelta:0} hz");
         world.PushLog($"collision backend: {collision.BackendKind}");
