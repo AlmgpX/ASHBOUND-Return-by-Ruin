@@ -113,16 +113,7 @@ public sealed class OutmPhysicsRuntime
     public int ContactCount => Contacts.Count;
     public int TriggerOverlapCount => TriggerOverlaps.Count;
 
-    public OutmPhysicsRuntime(
-        int bodyCapacity = 4096,
-        int shapeCapacity = 8192,
-        int proxyCapacity = 8192,
-        int pairCapacity = 16384,
-        int contactCapacity = 4096,
-        int triggerOverlapCapacity = 4096,
-        int dirtyCapacity = 2048,
-        int dynamicCapacity = 2048,
-        int kinematicCapacity = 1024)
+    public OutmPhysicsRuntime(int bodyCapacity = 4096, int shapeCapacity = 8192, int proxyCapacity = 8192, int pairCapacity = 16384, int contactCapacity = 4096, int triggerOverlapCapacity = 4096, int dirtyCapacity = 2048, int dynamicCapacity = 2048, int kinematicCapacity = 1024)
     {
         Bodies = new OutBuffer<OutmBody>(bodyCapacity);
         Shapes = new OutBuffer<OutmShape>(shapeCapacity);
@@ -137,14 +128,7 @@ public sealed class OutmPhysicsRuntime
 
     public OutmShapeHandle AddShape(OutmPhysicsShapeKind kind, Vector3 size, string surfaceId, ushort collisionFlags = 0)
     {
-        int id = Shapes.Add(new OutmShape
-        {
-            ShapeId = Shapes.Count,
-            Kind = kind,
-            Size = SanitizeSize(size),
-            SurfaceId = string.IsNullOrWhiteSpace(surfaceId) ? "surface.stone" : surfaceId,
-            CollisionFlags = collisionFlags
-        });
+        int id = Shapes.Add(new OutmShape { ShapeId = Shapes.Count, Kind = kind, Size = SanitizeSize(size), SurfaceId = string.IsNullOrWhiteSpace(surfaceId) ? "surface.stone" : surfaceId, CollisionFlags = collisionFlags });
         return new OutmShapeHandle(id);
     }
 
@@ -154,29 +138,11 @@ public sealed class OutmPhysicsRuntime
             return OutmBodyHandle.None;
 
         int proxyId = Proxies.Count;
-        int bodyId = Bodies.Add(new OutmBody
-        {
-            BodyId = Bodies.Count,
-            ShapeId = shape.Id,
-            ProxyId = proxyId,
-            SourceKind = sourceKind,
-            SourceIndex = sourceIndex,
-            Position = position,
-            Flags = flags | OutmBodyFlags.Dirty
-        });
+        int bodyId = Bodies.Add(new OutmBody { BodyId = Bodies.Count, ShapeId = shape.Id, ProxyId = proxyId, SourceKind = sourceKind, SourceIndex = sourceIndex, Position = position, Flags = flags | OutmBodyFlags.Dirty });
+        Proxies.Add(new OutmBroadphaseProxy { ProxyId = proxyId, BodyId = bodyId, ShapeId = shape.Id, Active = (flags & OutmBodyFlags.Active) != 0 });
 
-        Proxies.Add(new OutmBroadphaseProxy
-        {
-            ProxyId = proxyId,
-            BodyId = bodyId,
-            ShapeId = shape.Id,
-            Active = (flags & OutmBodyFlags.Active) != 0
-        });
-
-        if ((flags & OutmBodyFlags.Dynamic) != 0)
-            DynamicBodies.Add(bodyId);
-        if ((flags & OutmBodyFlags.Kinematic) != 0)
-            KinematicBodies.Add(bodyId);
+        if ((flags & OutmBodyFlags.Dynamic) != 0) DynamicBodies.Add(bodyId);
+        if ((flags & OutmBodyFlags.Kinematic) != 0) KinematicBodies.Add(bodyId);
 
         MarkDirty(bodyId);
         return new OutmBodyHandle(bodyId);
@@ -184,25 +150,21 @@ public sealed class OutmPhysicsRuntime
 
     public void SetBodyActive(OutmBodyHandle handle, bool active)
     {
-        if (!IsValidBody(handle))
-            return;
-
+        if (!IsValidBody(handle)) return;
         ref OutmBody body = ref Bodies[handle.Id];
-        if (active)
-            body.Flags |= OutmBodyFlags.Active;
-        else
-            body.Flags &= ~OutmBodyFlags.Active;
-
+        bool currentlyActive = (body.Flags & OutmBodyFlags.Active) != 0;
+        if (currentlyActive == active) return;
+        if (active) body.Flags |= OutmBodyFlags.Active;
+        else body.Flags &= ~OutmBodyFlags.Active;
         body.Flags |= OutmBodyFlags.Dirty;
         MarkDirty(handle.Id);
     }
 
     public void SetBodyPosition(OutmBodyHandle handle, Vector3 position)
     {
-        if (!IsValidBody(handle))
-            return;
-
+        if (!IsValidBody(handle)) return;
         ref OutmBody body = ref Bodies[handle.Id];
+        if (Vector3.DistanceSquared(body.Position, position) <= 0.000001f) return;
         body.Position = position;
         body.Flags |= OutmBodyFlags.Dirty;
         MarkDirty(handle.Id);
@@ -213,27 +175,14 @@ public sealed class OutmPhysicsRuntime
         for (int i = 0; i < DirtyBodies.Count; i++)
         {
             int bodyId = DirtyBodies.Items[i];
-            if ((uint)bodyId >= (uint)Bodies.Count)
-                continue;
-
+            if ((uint)bodyId >= (uint)Bodies.Count) continue;
             ref OutmBody body = ref Bodies[bodyId];
             ref OutmShape shape = ref Shapes[body.ShapeId];
             Vector3 half = shape.Size * 0.5f;
             int proxyId = body.ProxyId;
-
-            Proxies[proxyId] = new OutmBroadphaseProxy
-            {
-                ProxyId = proxyId,
-                BodyId = bodyId,
-                ShapeId = body.ShapeId,
-                Min = body.Position - half,
-                Max = body.Position + half,
-                Active = (body.Flags & OutmBodyFlags.Active) != 0
-            };
-
+            Proxies[proxyId] = new OutmBroadphaseProxy { ProxyId = proxyId, BodyId = bodyId, ShapeId = body.ShapeId, Min = body.Position - half, Max = body.Position + half, Active = (body.Flags & OutmBodyFlags.Active) != 0 };
             body.Flags &= ~OutmBodyFlags.Dirty;
         }
-
         DirtyBodies.Clear();
     }
 
@@ -242,19 +191,14 @@ public sealed class OutmPhysicsRuntime
         ActivePairs.Clear();
         Contacts.Clear();
         TriggerOverlaps.Clear();
-
         for (int a = 0; a < Proxies.Count; a++)
         {
             OutmBroadphaseProxy pa = Proxies.Items[a];
-            if (!pa.Active)
-                continue;
-
+            if (!pa.Active) continue;
             for (int b = a + 1; b < Proxies.Count; b++)
             {
                 OutmBroadphaseProxy pb = Proxies.Items[b];
-                if (!pb.Active || !AabbOverlap(pa.Min, pa.Max, pb.Min, pb.Max))
-                    continue;
-
+                if (!pb.Active || !AabbOverlap(pa.Min, pa.Max, pb.Min, pb.Max)) continue;
                 AddPair(pa.BodyId, pb.BodyId);
             }
         }
@@ -266,20 +210,11 @@ public sealed class OutmPhysicsRuntime
         for (int i = 0; i < Proxies.Count; i++)
         {
             OutmBroadphaseProxy proxy = Proxies.Items[i];
-            if (!proxy.Active)
-                continue;
-
+            if (!proxy.Active) continue;
             ref OutmBody candidate = ref Bodies[proxy.BodyId];
-            if ((candidate.Flags & OutmBodyFlags.Sensor) != 0)
-                continue;
-
-            if (SphereAgainstAabb(center, radius, proxy.Min, proxy.Max))
-            {
-                body = new OutmBodyHandle(proxy.BodyId);
-                return true;
-            }
+            if ((candidate.Flags & OutmBodyFlags.Sensor) != 0) continue;
+            if (SphereAgainstAabb(center, radius, proxy.Min, proxy.Max)) { body = new OutmBodyHandle(proxy.BodyId); return true; }
         }
-
         body = OutmBodyHandle.None;
         return false;
     }
@@ -289,17 +224,10 @@ public sealed class OutmPhysicsRuntime
         for (int i = 0; i < Bodies.Count; i++)
         {
             ref OutmBody candidate = ref Bodies[i];
-            if ((candidate.Flags & (OutmBodyFlags.Active | OutmBodyFlags.Sensor)) != (OutmBodyFlags.Active | OutmBodyFlags.Sensor))
-                continue;
-
+            if ((candidate.Flags & (OutmBodyFlags.Active | OutmBodyFlags.Sensor)) != (OutmBodyFlags.Active | OutmBodyFlags.Sensor)) continue;
             OutmBroadphaseProxy proxy = Proxies.Items[candidate.ProxyId];
-            if (PointInsideAabb(point, proxy.Min, proxy.Max))
-            {
-                body = new OutmBodyHandle(candidate.BodyId);
-                return true;
-            }
+            if (PointInsideAabb(point, proxy.Min, proxy.Max)) { body = new OutmBodyHandle(candidate.BodyId); return true; }
         }
-
         body = OutmBodyHandle.None;
         return false;
     }
@@ -309,29 +237,19 @@ public sealed class OutmPhysicsRuntime
         Vector3 half = SanitizeSize(size) * 0.5f;
         Vector3 min = center - half;
         Vector3 max = center + half;
-
         for (int i = 0; i < Proxies.Count; i++)
         {
             OutmBroadphaseProxy proxy = Proxies.Items[i];
-            if (!proxy.Active)
-                continue;
-
+            if (!proxy.Active) continue;
             ref OutmBody body = ref Bodies[proxy.BodyId];
-            if ((body.Flags & OutmBodyFlags.Sensor) == 0 && AabbOverlap(min, max, proxy.Min, proxy.Max))
-                return true;
+            if ((body.Flags & OutmBodyFlags.Sensor) == 0 && AabbOverlap(min, max, proxy.Min, proxy.Max)) return true;
         }
-
         return false;
     }
 
     public bool TryGetBody(OutmBodyHandle handle, out OutmBody body)
     {
-        if (!IsValidBody(handle))
-        {
-            body = default;
-            return false;
-        }
-
+        if (!IsValidBody(handle)) { body = default; return false; }
         body = Bodies.Items[handle.Id];
         return true;
     }
@@ -339,54 +257,21 @@ public sealed class OutmPhysicsRuntime
     private void AddPair(int a, int b)
     {
         ActivePairs.Add(new OutmActivePair { A = a, B = b });
-
         bool aSensor = (Bodies.Items[a].Flags & OutmBodyFlags.Sensor) != 0;
         bool bSensor = (Bodies.Items[b].Flags & OutmBodyFlags.Sensor) != 0;
         if (aSensor || bSensor)
         {
-            TriggerOverlaps.Add(new OutmTriggerOverlap
-            {
-                SensorBodyId = aSensor ? a : b,
-                OtherBodyId = aSensor ? b : a
-            });
+            TriggerOverlaps.Add(new OutmTriggerOverlap { SensorBodyId = aSensor ? a : b, OtherBodyId = aSensor ? b : a });
             return;
         }
-
-        Contacts.Add(new OutmContactManifold
-        {
-            BodyA = a,
-            BodyB = b,
-            Point = (Bodies.Items[a].Position + Bodies.Items[b].Position) * 0.5f,
-            Normal = Vector3.UnitY,
-            Penetration = 0.0f
-        });
+        Contacts.Add(new OutmContactManifold { BodyA = a, BodyB = b, Point = (Bodies.Items[a].Position + Bodies.Items[b].Position) * 0.5f, Normal = Vector3.UnitY, Penetration = 0.0f });
     }
 
-    private void MarkDirty(int bodyId)
-    {
-        DirtyBodies.Add(bodyId);
-    }
-
-    private bool IsValidBody(OutmBodyHandle handle)
-    {
-        return (uint)handle.Id < (uint)Bodies.Count;
-    }
-
-    private static Vector3 SanitizeSize(Vector3 size)
-    {
-        return new Vector3(MathF.Max(0.01f, MathF.Abs(size.X)), MathF.Max(0.01f, MathF.Abs(size.Y)), MathF.Max(0.01f, MathF.Abs(size.Z)));
-    }
-
-    private static bool AabbOverlap(Vector3 minA, Vector3 maxA, Vector3 minB, Vector3 maxB)
-    {
-        return minA.X <= maxB.X && maxA.X >= minB.X && minA.Y <= maxB.Y && maxA.Y >= minB.Y && minA.Z <= maxB.Z && maxA.Z >= minB.Z;
-    }
-
-    private static bool PointInsideAabb(Vector3 point, Vector3 min, Vector3 max)
-    {
-        return point.X >= min.X && point.X <= max.X && point.Y >= min.Y && point.Y <= max.Y && point.Z >= min.Z && point.Z <= max.Z;
-    }
-
+    private void MarkDirty(int bodyId) => DirtyBodies.Add(bodyId);
+    private bool IsValidBody(OutmBodyHandle handle) => (uint)handle.Id < (uint)Bodies.Count;
+    private static Vector3 SanitizeSize(Vector3 size) => new(MathF.Max(0.01f, MathF.Abs(size.X)), MathF.Max(0.01f, MathF.Abs(size.Y)), MathF.Max(0.01f, MathF.Abs(size.Z)));
+    private static bool AabbOverlap(Vector3 minA, Vector3 maxA, Vector3 minB, Vector3 maxB) => minA.X <= maxB.X && maxA.X >= minB.X && minA.Y <= maxB.Y && maxA.Y >= minB.Y && minA.Z <= maxB.Z && maxA.Z >= minB.Z;
+    private static bool PointInsideAabb(Vector3 point, Vector3 min, Vector3 max) => point.X >= min.X && point.X <= max.X && point.Y >= min.Y && point.Y <= max.Y && point.Z >= min.Z && point.Z <= max.Z;
     private static bool SphereAgainstAabb(Vector3 point, float radius, Vector3 min, Vector3 max)
     {
         float x = Math.Clamp(point.X, min.X, max.X);
