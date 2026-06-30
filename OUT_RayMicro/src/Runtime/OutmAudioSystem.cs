@@ -34,27 +34,40 @@ public sealed class OutmAudioSystem
 
     public void Load(OutmWorld world)
     {
-        if (!Raylib.IsAudioDeviceReady())
-            Raylib.InitAudioDevice();
-
-        ready = Raylib.IsAudioDeviceReady();
-        if (!ready)
+        try
         {
-            world.PushLog("audio device failed");
-            return;
+            OutmCrashLog.Write("audio: init device");
+            if (!Raylib.IsAudioDeviceReady())
+                Raylib.InitAudioDevice();
+
+            ready = Raylib.IsAudioDeviceReady();
+            if (!ready)
+            {
+                world.PushLog("audio device failed");
+                OutmCrashLog.Write("audio: device failed");
+                return;
+            }
+
+            LoadBank(OutmSoundId.Shot, FindFiles("audio/Weapon", "OUT_" + "BulletShot_*.wav"));
+            LoadBank(OutmSoundId.Ricochet, FindFiles("audio/Misc", "Bullet" + "RicImpact.*").Concat(FindFiles("audio/Weapon", "OUT_Impact_Base.wav")));
+            LoadBank(OutmSoundId.Impact, FindFiles("audio/Weapon", "OUT_Impact*.wav"));
+            LoadBank(OutmSoundId.Door, FindFiles("audio/Misc", "DoorOpen.wav"));
+            LoadBank(OutmSoundId.StepStone, FindFiles("audio/Footstep", "Step_*.wav").Concat(FindFiles("audio/Footstep", "step_*.wav")));
+            LoadBank(OutmSoundId.StepWood, FindFiles("audio/Footstep", "Step_Wood_*.wav"));
+            LoadBank(OutmSoundId.StepCarpet, FindFiles("audio/Footstep", "Step_Carpet_*.wav"));
+            LoadBank(OutmSoundId.StepWater, FindFiles("audio/Footstep", "Step_Water_*.wav"));
+            LoadFirstMusic(world);
+
+            world.PushLog($"audio online: {LoadedSoundCount} sounds");
+            OutmCrashLog.Write($"audio: loaded {LoadedSoundCount} sounds");
         }
-
-        LoadBank(OutmSoundId.Shot, FindFiles("audio/Weapon", "OUT_" + "BulletShot_*.wav"));
-        LoadBank(OutmSoundId.Ricochet, FindFiles("audio/Misc", "Bullet" + "RicImpact.*").Concat(FindFiles("audio/Weapon", "OUT_Impact_Base.wav")));
-        LoadBank(OutmSoundId.Impact, FindFiles("audio/Weapon", "OUT_Impact*.wav"));
-        LoadBank(OutmSoundId.Door, FindFiles("audio/Misc", "DoorOpen.wav"));
-        LoadBank(OutmSoundId.StepStone, FindFiles("audio/Footstep", "Step_*.wav").Concat(FindFiles("audio/Footstep", "step_*.wav")));
-        LoadBank(OutmSoundId.StepWood, FindFiles("audio/Footstep", "Step_Wood_*.wav"));
-        LoadBank(OutmSoundId.StepCarpet, FindFiles("audio/Footstep", "Step_Carpet_*.wav"));
-        LoadBank(OutmSoundId.StepWater, FindFiles("audio/Footstep", "Step_Water_*.wav"));
-        LoadFirstMusic(world);
-
-        world.PushLog($"audio online: {LoadedSoundCount} sounds");
+        catch (Exception ex)
+        {
+            ready = false;
+            hasMusic = false;
+            world.PushLog("audio disabled after startup error");
+            OutmCrashLog.Write("audio managed error\n" + ex);
+        }
     }
 
     public void Update()
@@ -62,7 +75,15 @@ public sealed class OutmAudioSystem
         if (!ready || !hasMusic)
             return;
 
-        Raylib.UpdateMusicStream(currentMusic);
+        try
+        {
+            Raylib.UpdateMusicStream(currentMusic);
+        }
+        catch (Exception ex)
+        {
+            hasMusic = false;
+            OutmCrashLog.Write("music update failed\n" + ex);
+        }
     }
 
     public void ProcessEvents(OutmWorld world, Vector3 listenerPosition, Vector3 listenerRight)
@@ -131,33 +152,47 @@ public sealed class OutmAudioSystem
             return;
 
         float pitch = RandomRange(minPitch, maxPitch);
-        Raylib.SetSoundVolume(sound, Math.Clamp(volume, 0.0f, 1.0f));
-        Raylib.SetSoundPitch(sound, Math.Clamp(pitch, 0.25f, 4.0f));
-        Raylib.SetSoundPan(sound, Math.Clamp(pan, -1.0f, 1.0f));
-        Raylib.PlaySound(sound);
+        try
+        {
+            Raylib.SetSoundVolume(sound, Math.Clamp(volume, 0.0f, 1.0f));
+            Raylib.SetSoundPitch(sound, Math.Clamp(pitch, 0.25f, 4.0f));
+            Raylib.SetSoundPan(sound, Math.Clamp(pan, -1.0f, 1.0f));
+            Raylib.PlaySound(sound);
+        }
+        catch (Exception ex)
+        {
+            OutmCrashLog.Write("sound playback failed\n" + ex);
+        }
     }
 
     public void Unload()
     {
-        if (hasMusic)
+        try
         {
-            Raylib.StopMusicStream(currentMusic);
-            Raylib.UnloadMusicStream(currentMusic);
-            hasMusic = false;
-        }
+            if (hasMusic)
+            {
+                Raylib.StopMusicStream(currentMusic);
+                Raylib.UnloadMusicStream(currentMusic);
+                hasMusic = false;
+            }
 
-        for (int b = 0; b < banks.Length; b++)
+            for (int b = 0; b < banks.Length; b++)
+            {
+                SoundSlot[] slots = banks[b].Slots;
+                for (int i = 0; i < slots.Length; i++)
+                    Raylib.UnloadSound(slots[i].Sound);
+
+                banks[b].Slots = Array.Empty<SoundSlot>();
+                banks[b].Cursor = 0;
+            }
+
+            if (ready && Raylib.IsAudioDeviceReady())
+                Raylib.CloseAudioDevice();
+        }
+        catch (Exception ex)
         {
-            SoundSlot[] slots = banks[b].Slots;
-            for (int i = 0; i < slots.Length; i++)
-                Raylib.UnloadSound(slots[i].Sound);
-
-            banks[b].Slots = Array.Empty<SoundSlot>();
-            banks[b].Cursor = 0;
+            OutmCrashLog.Write("audio unload failed\n" + ex);
         }
-
-        if (ready && Raylib.IsAudioDeviceReady())
-            Raylib.CloseAudioDevice();
 
         ready = false;
     }
@@ -181,8 +216,16 @@ public sealed class OutmAudioSystem
             if (!File.Exists(path))
                 continue;
 
-            Sound sound = Raylib.LoadSound(path);
-            slots.Add(new SoundSlot(sound));
+            try
+            {
+                OutmCrashLog.Write($"audio: load sound {path}");
+                Sound sound = Raylib.LoadSound(path);
+                slots.Add(new SoundSlot(sound));
+            }
+            catch (Exception ex)
+            {
+                OutmCrashLog.Write($"audio: failed sound {path}\n{ex}");
+            }
         }
 
         banks[(int)id].Slots = slots.ToArray();
@@ -195,19 +238,29 @@ public sealed class OutmAudioSystem
         if (!Directory.Exists(folder))
             return;
 
-        string? path = Directory.GetFiles(folder, "*.mp3", SearchOption.TopDirectoryOnly)
-            .Concat(Directory.GetFiles(folder, "*.ogg", SearchOption.TopDirectoryOnly))
+        string? path = Directory.GetFiles(folder, "*.ogg", SearchOption.TopDirectoryOnly)
+            .Concat(Directory.GetFiles(folder, "*.mp3", SearchOption.TopDirectoryOnly))
             .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(path))
             return;
 
-        currentMusic = Raylib.LoadMusicStream(path);
-        Raylib.SetMusicVolume(currentMusic, 0.45f);
-        Raylib.PlayMusicStream(currentMusic);
-        hasMusic = true;
-        world.PushLog($"music stream: {Path.GetFileName(path)}");
+        try
+        {
+            OutmCrashLog.Write($"audio: load music {path}");
+            currentMusic = Raylib.LoadMusicStream(path);
+            Raylib.SetMusicVolume(currentMusic, 0.45f);
+            Raylib.PlayMusicStream(currentMusic);
+            hasMusic = true;
+            world.PushLog($"music stream: {Path.GetFileName(path)}");
+        }
+        catch (Exception ex)
+        {
+            hasMusic = false;
+            world.PushLog("music stream failed");
+            OutmCrashLog.Write($"audio: failed music {path}\n{ex}");
+        }
     }
 
     private float RandomRange(float min, float max)
