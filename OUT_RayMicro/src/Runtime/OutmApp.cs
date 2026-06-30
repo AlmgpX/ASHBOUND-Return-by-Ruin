@@ -6,6 +6,7 @@ using OUT_RayMicro.Editor;
 using OUT_RayMicro.Gameplay;
 using OUT_RayMicro.Input;
 using OUT_RayMicro.Physics;
+using OUT_RayMicro.Render;
 using OUT_RayMicro.World;
 
 namespace OUT_RayMicro.Runtime;
@@ -15,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT RayMicro // map manifest seed");
+        Raylib.InitWindow(1280, 720, "OUT RayMicro // GLB scene seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -37,6 +38,8 @@ public static class OutmApp
         var inputSampler = new OutmInputSampler();
         var commands = new OutmCommandQueue();
         var fixedStep = new OutmFixedStep();
+        var modelCache = new OutmModelCache();
+        var sceneRenderer = new OutmSceneRenderer(modelCache);
         var audio = new OutmAudioSystem();
         audio.Load(world);
 
@@ -45,6 +48,7 @@ public static class OutmApp
         world.PushLog($"manifest maps: {manifest.Maps.Length}");
         world.PushLog($"map: {map.DisplayName}");
         world.PushLog(validation.Summary);
+        world.PushLog($"mesh refs: {mapDef.Meshes.Length}");
         world.PushLog($"defs: weapons {content.Weapons.Count}");
         world.PushLog($"fixed tick: {1.0f / fixedStep.FixedDelta:0} hz");
         world.PushLog($"collision backend: {collision.BackendKind}");
@@ -106,6 +110,7 @@ public static class OutmApp
 
             Raylib.BeginMode3D(camera.ToRayCamera());
             Raylib.DrawGrid(18, 1.0f);
+            sceneRenderer.Draw(mapDef);
             map.Draw();
             weapons.Draw();
             DrawViewRay(camera);
@@ -117,6 +122,7 @@ public static class OutmApp
             Raylib.EndDrawing();
         }
 
+        modelCache.Unload();
         audio.Unload();
         OutmFontSystem.Unload();
         Raylib.EnableCursor();
