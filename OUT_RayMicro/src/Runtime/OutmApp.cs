@@ -22,6 +22,7 @@ public static class OutmApp
 
         var content = OutmContentRegistry.LoadDefault();
         var world = new OutmWorld();
+        world.PlayerEntity = world.Entities.Create(OutmEntityKind.Player, "player.local");
         OutmMapDef mapDef = OutmMapLoader.LoadOrDefault("maps/test_room.outmap.json");
         var map = OutmMapLoader.BuildDemoMap(mapDef);
         IOutmCollisionWorld collision = new OutmDemoCollisionWorld(map);
@@ -36,6 +37,7 @@ public static class OutmApp
         audio.Load(world);
 
         world.PushLog("OUT RayMicro boot");
+        world.PushLog($"player entity: {world.PlayerEntity}");
         world.PushLog($"map: {map.DisplayName}");
         world.PushLog($"defs: weapons {content.Weapons.Count}");
         world.PushLog($"fixed tick: {1.0f / fixedStep.FixedDelta:0} hz");
