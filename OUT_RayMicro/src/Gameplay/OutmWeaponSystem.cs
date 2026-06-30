@@ -1,8 +1,9 @@
 using System.Numerics;
 using Raylib_cs;
+using OUT_RayMicro.Content;
 using OUT_RayMicro.Core;
 using OUT_RayMicro.Input;
-using OUT_RayMicro.World;
+using OUT_RayMicro.Physics;
 
 namespace OUT_RayMicro.Gameplay;
 
@@ -18,9 +19,15 @@ public struct OutmProjectile
 public sealed class OutmWeaponSystem
 {
     private readonly OutmProjectile[] projectiles = new OutmProjectile[128];
+    private readonly OutmWeaponDef revolver;
     private float fireCooldown;
 
-    public void Update(in OutmInputFrame input, Vector3 muzzle, Vector3 forward, OutmDemoMap map, OutmWorld world)
+    public OutmWeaponSystem(OutmWeaponDef revolver)
+    {
+        this.revolver = revolver;
+    }
+
+    public void Update(in OutmInputFrame input, Vector3 muzzle, Vector3 forward, IOutmCollisionWorld collision, OutmWorld world)
     {
         float dt = Math.Clamp(input.DeltaTime, 0.0f, 0.05f);
         fireCooldown = MathF.Max(0, fireCooldown - dt);
@@ -28,7 +35,7 @@ public sealed class OutmWeaponSystem
         if (input.IsDown(OutmButtons.FirePrimary) && fireCooldown <= 0)
         {
             Fire(muzzle, forward, world);
-            fireCooldown = 0.22f;
+            fireCooldown = revolver.Cooldown;
         }
 
         for (int i = 0; i < projectiles.Length; i++)
@@ -48,13 +55,13 @@ public sealed class OutmWeaponSystem
             Vector3 previous = p.Position;
             Vector3 next = p.Position + p.Velocity * dt;
 
-            if (map.Collides(next, 0.08f))
+            if (collision.CollidesSphere(next, revolver.ProjectileRadius))
             {
-                Vector3 normal = EstimateCollisionNormal(previous, next, map);
-                if (p.Bounces < 2)
+                Vector3 normal = EstimateCollisionNormal(previous, next, collision, revolver.ProjectileRadius);
+                if (p.Bounces < revolver.MaxBounces)
                 {
-                    p.Position = previous + normal * 0.08f;
-                    p.Velocity = Vector3.Reflect(p.Velocity, normal) * 0.72f;
+                    p.Position = previous + normal * revolver.ProjectileRadius;
+                    p.Velocity = Vector3.Reflect(p.Velocity, normal) * revolver.BounceEnergy;
                     p.Bounces++;
                     world.Emit(new OutmEvent(OutmEventType.ProjectileBounce, EntityId.None, EntityId.None, p.Position, p.Bounces, "bullet ricochet"));
                 }
@@ -97,26 +104,26 @@ public sealed class OutmWeaponSystem
             {
                 Active = true,
                 Position = muzzle + forward * 0.35f,
-                Velocity = Vector3.Normalize(forward) * 42.0f,
-                Life = 4.0f,
+                Velocity = Vector3.Normalize(forward) * revolver.ProjectileSpeed,
+                Life = revolver.ProjectileLife,
                 Bounces = 0
             };
 
-            world.Emit(new OutmEvent(OutmEventType.Fired, EntityId.None, EntityId.None, muzzle, 0, "revolver projectile"));
+            world.Emit(new OutmEvent(OutmEventType.Fired, EntityId.None, EntityId.None, muzzle, 0, revolver.Id));
             return;
         }
 
         world.PushLog("Projectile pool full. The machine refuses your drama.");
     }
 
-    private static Vector3 EstimateCollisionNormal(Vector3 previous, Vector3 next, OutmDemoMap map)
+    private static Vector3 EstimateCollisionNormal(Vector3 previous, Vector3 next, IOutmCollisionWorld collision, float radius)
     {
         Vector3 testX = new(next.X, previous.Y, previous.Z);
-        if (map.Collides(testX, 0.08f))
+        if (collision.CollidesSphere(testX, radius))
             return new Vector3(next.X > previous.X ? -1 : 1, 0, 0);
 
         Vector3 testZ = new(previous.X, previous.Y, next.Z);
-        if (map.Collides(testZ, 0.08f))
+        if (collision.CollidesSphere(testZ, radius))
             return new Vector3(0, 0, next.Z > previous.Z ? -1 : 1);
 
         return Vector3.UnitY;
