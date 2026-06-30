@@ -1,6 +1,7 @@
 using System.Numerics;
 using OUT_RayMicro.Core;
 using OUT_RayMicro.Input;
+using OUT_RayMicro.Physics;
 using OUT_RayMicro.World;
 
 namespace OUT_RayMicro.Gameplay;
@@ -15,12 +16,12 @@ public sealed class OutmTriggerSystem
         this.useSystem = useSystem;
     }
 
-    public void UpdateUseTriggers(OutmWorld world, OutmDemoMap map, OutmTriggerStore triggers, OutmDoorStore doors, Vector3 actorPosition, Vector3 actorForward, in OutmInputFrame input)
+    public void UpdateUseTriggers(OutmWorld world, OutmDemoMap map, IOutmCollisionWorld collision, OutmTriggerStore triggers, OutmDoorStore doors, Vector3 actorPosition, Vector3 actorForward, in OutmInputFrame input)
     {
         if (world.PlayerVitals.IsDead)
             return;
 
-        if (!triggers.TryGetEntered(actorPosition, out OutmTriggerRecord trigger))
+        if (!collision.QuerySensor(actorPosition, out OutmSensorProbe sensor) || !triggers.TryGet(sensor.Id, out OutmTriggerRecord trigger))
         {
             currentTriggerId = "";
             return;
