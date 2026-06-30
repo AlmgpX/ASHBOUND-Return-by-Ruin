@@ -16,7 +16,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT RayMicro // GLB scene seed");
+        Raylib.InitWindow(1280, 720, "OUT CORE // GLB scene seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -34,7 +34,8 @@ public static class OutmApp
         world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
         var logicTicks = new OutmLogicTickScheduler();
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
-        var triggers = new OutmTriggerSystem();
+        var use = new OutmUseSystem();
+        var triggers = new OutmTriggerSystem(use);
         var editor = new OutmEditorShell();
         var inputSampler = new OutmInputSampler();
         var commands = new OutmCommandQueue();
@@ -44,7 +45,7 @@ public static class OutmApp
         var audio = new OutmAudioSystem();
         audio.Load(world);
 
-        world.PushLog("OUT RayMicro boot");
+        world.PushLog("OUT CORE boot");
         world.PushLog($"player entity: {world.PlayerEntity}");
         world.PushLog($"manifest maps: {manifest.Maps.Length}");
         world.PushLog($"map: {map.DisplayName}");
@@ -158,7 +159,7 @@ public static class OutmApp
                 UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
             }
 
-            triggers.UpdateUseTriggers(world, map, camera.Position, input);
+            triggers.UpdateUseTriggers(world, map, camera.Position, camera.Forward, input);
 
             if (!world.PlayerVitals.IsDead)
             {
