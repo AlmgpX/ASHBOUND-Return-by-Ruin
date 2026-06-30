@@ -9,6 +9,7 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
     private readonly OutmPhysicsScene scene;
     private readonly OutmPhysicsRuntime runtime;
     private readonly Dictionary<string, OutmBodyHandle> doorBodies = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, OutmBodyHandle> sensorBodies = new(StringComparer.OrdinalIgnoreCase);
 
     public OutmJoltCollisionWorld(OutmMapDef def, OutmDemoMap map)
     {
@@ -27,13 +28,14 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
     public int ContactCount => runtime.ContactCount;
     public int SensorOverlapCount => runtime.TriggerOverlapCount;
 
+    public bool TryGetDoorBody(string id, out OutmBodyHandle body) => doorBodies.TryGetValue(id, out body);
+    public bool TryGetSensorBody(string id, out OutmBodyHandle body) => sensorBodies.TryGetValue(id, out body);
+
     public void Step(float dt)
     {
         SyncDoorBodies();
         runtime.FlushDirtyProxies();
         runtime.BuildPairs();
-        // Native Jolt stepping will replace the current proxy-only broadphase internals.
-        // Gameplay already sees Body/Shape/Proxy buffers through IOutmCollisionWorld, not authoring buckets.
     }
 
     public bool CollidesSphere(Vector3 center, float radius)
@@ -59,20 +61,12 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
             for (int i = 0; i < runtime.ProxyCount; i++)
             {
                 OutmBroadphaseProxy proxy = runtime.Proxies.Items[i];
-                if (!proxy.Active)
-                    continue;
-
+                if (!proxy.Active) continue;
                 OutmBody body = runtime.Bodies.Items[proxy.BodyId];
-                if ((body.Flags & OutmBodyFlags.Sensor) != 0)
-                    continue;
-
+                if ((body.Flags & OutmBodyFlags.Sensor) != 0) continue;
                 if (PointInsideBox(point, proxy.Min, proxy.Max))
-                {
-                    Vector3 normal = EstimateNormal(previous, point);
-                    return new OutmRayHit(true, previous, normal, distance, proxy.BodyId);
-                }
+                    return new OutmRayHit(true, previous, EstimateNormal(previous, point), distance, proxy.BodyId);
             }
-
             previous = point;
             distance += step;
         }
@@ -95,13 +89,7 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
             return false;
         }
 
-        if (!runtime.TryGetBody(sensorBody, out OutmBody body) || body.SourceKind != OutmPhysicsSourceKind.AuthoringSensor)
-        {
-            sensor = OutmSensorProbe.None;
-            return false;
-        }
-
-        if ((uint)body.SourceIndex >= (uint)scene.Triggers.Count)
+        if (!runtime.TryGetBody(sensorBody, out OutmBody body) || body.SourceKind != OutmPhysicsSourceKind.AuthoringSensor || (uint)body.SourceIndex >= (uint)scene.Triggers.Count)
         {
             sensor = OutmSensorProbe.None;
             return false;
@@ -118,20 +106,15 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
         Vector3 next = position;
 
         Vector3 tryX = next + new Vector3(delta.X, 0.0f, 0.0f);
-        if (!CollidesSphere(tryX, radius))
-            next = tryX;
-        else
-            velocity.X = 0.0f;
+        if (!CollidesSphere(tryX, radius)) next = tryX;
+        else velocity.X = 0.0f;
 
         Vector3 tryZ = next + new Vector3(0.0f, 0.0f, delta.Z);
-        if (!CollidesSphere(tryZ, radius))
-            next = tryZ;
-        else
-            velocity.Z = 0.0f;
+        if (!CollidesSphere(tryZ, radius)) next = tryZ;
+        else velocity.Z = 0.0f;
 
         next.Y = MathF.Max(floorHeight, next.Y + delta.Y);
-        if (next.Y <= floorHeight + 0.001f && velocity.Y < 0.0f)
-            velocity.Y = 0.0f;
+        if (next.Y <= floorHeight + 0.001f && velocity.Y < 0.0f) velocity.Y = 0.0f;
 
         bool grounded = next.Y <= floorHeight + 0.001f && velocity.Y <= 0.05f;
         return new OutmCharacterMove(next, velocity, grounded, Vector3.UnitY);
@@ -147,21 +130,19 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
             OutmPhysicsBody src = sourceScene.Bodies[i];
             OutmShapeHandle shape = result.AddShape(src.ShapeKind, src.Size, src.SurfaceId);
             OutmBodyFlags flags = OutmBodyFlags.Static;
-            if (src.Active)
-                flags |= OutmBodyFlags.Active;
-            if (src.BodyKind == OutmPhysicsBodyKind.Door)
-                flags |= OutmBodyFlags.Door | OutmBodyFlags.Kinematic;
+            if (src.Active) flags |= OutmBodyFlags.Active;
+            if (src.BodyKind == OutmPhysicsBodyKind.Door) flags |= OutmBodyFlags.Door | OutmBodyFlags.Kinematic;
 
             OutmBodyHandle body = result.AddBody(shape, src.Center, flags, OutmPhysicsSourceKind.AuthoringBody, i);
-            if (src.BodyKind == OutmPhysicsBodyKind.Door)
-                doorBodies[src.Id] = body;
+            if (src.BodyKind == OutmPhysicsBodyKind.Door) doorBodies[src.Id] = body;
         }
 
         for (int i = 0; i < sourceScene.Triggers.Count; i++)
         {
             OutmPhysicsTrigger src = sourceScene.Triggers[i];
             OutmShapeHandle shape = result.AddShape(OutmPhysicsShapeKind.Box, src.Size, "surface.sensor");
-            result.AddBody(shape, src.Center, OutmBodyFlags.Active | OutmBodyFlags.Sensor | OutmBodyFlags.Static, OutmPhysicsSourceKind.AuthoringSensor, i);
+            OutmBodyHandle body = result.AddBody(shape, src.Center, OutmBodyFlags.Active | OutmBodyFlags.Sensor | OutmBodyFlags.Static, OutmPhysicsSourceKind.AuthoringSensor, i);
+            sensorBodies[src.Id] = body;
         }
 
         return result;
@@ -172,8 +153,7 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
         for (int i = 0; i < map.Doors.Count; i++)
         {
             OutmDoorRuntime door = map.Doors[i];
-            if (doorBodies.TryGetValue(door.Id, out OutmBodyHandle body))
-                runtime.SetBodyActive(body, !door.Open);
+            if (doorBodies.TryGetValue(door.Id, out OutmBodyHandle body)) runtime.SetBodyActive(body, !door.Open);
         }
     }
 
@@ -188,12 +168,8 @@ public sealed class OutmJoltCollisionWorld : IOutmCollisionWorld
         float ax = MathF.Abs(delta.X);
         float ay = MathF.Abs(delta.Y);
         float az = MathF.Abs(delta.Z);
-
-        if (ax >= ay && ax >= az)
-            return new Vector3(delta.X > 0.0f ? -1.0f : 1.0f, 0.0f, 0.0f);
-        if (ay >= ax && ay >= az)
-            return new Vector3(0.0f, delta.Y > 0.0f ? -1.0f : 1.0f, 0.0f);
-
+        if (ax >= ay && ax >= az) return new Vector3(delta.X > 0.0f ? -1.0f : 1.0f, 0.0f, 0.0f);
+        if (ay >= ax && ay >= az) return new Vector3(0.0f, delta.Y > 0.0f ? -1.0f : 1.0f, 0.0f);
         return new Vector3(0.0f, 0.0f, delta.Z > 0.0f ? -1.0f : 1.0f);
     }
 }
