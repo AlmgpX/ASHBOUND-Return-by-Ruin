@@ -29,6 +29,8 @@ public static class OutmDamageSystem
     {
         incomingDamage = Math.Max(0, incomingDamage);
         OutmPlayerVitals vitals = world.PlayerVitals;
+        if (vitals.IsDead)
+            return new OutmDamageResult(incomingDamage, 0, 0, vitals.Health, vitals.Armor, vitals.ArmorTier);
 
         int armorSaved = 0;
         float absorb = OutmArmorRules.AbsorbFraction(vitals.ArmorTier);
@@ -51,6 +53,7 @@ public static class OutmDamageSystem
 
         int healthDamage = Math.Max(0, incomingDamage - armorSaved);
         vitals.Health = Math.Max(0, vitals.Health - healthDamage);
+        vitals.IsDead = vitals.Health <= 0;
         world.PlayerVitals = vitals;
 
         var result = new OutmDamageResult(incomingDamage, armorSaved, healthDamage, vitals.Health, vitals.Armor, vitals.ArmorTier);
@@ -72,8 +75,9 @@ public static class OutmDamageSystem
             return false;
 
         OutmPlayerVitals vitals = world.PlayerVitals;
+        if (vitals.IsDead)
+            return false;
 
-        // Quake-style replacement: compare effective protection, not just raw armor points.
         int currentScore = OutmArmorRules.EffectiveProtectionScore(vitals.ArmorTier, vitals.Armor);
         int pickupScore = OutmArmorRules.EffectiveProtectionScore(tier, pickupArmor);
         if (currentScore >= pickupScore)
