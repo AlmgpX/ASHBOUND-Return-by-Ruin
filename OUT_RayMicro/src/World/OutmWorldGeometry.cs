@@ -143,6 +143,22 @@ public sealed class OutmDemoMap
         return false;
     }
 
+    public bool TrySetDoorOpen(string doorId, bool open)
+    {
+        for (int i = 0; i < Doors.Count; i++)
+        {
+            OutmDoorRuntime door = Doors[i];
+            if (!string.Equals(door.Id, doorId, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            door.Open = open;
+            Doors[i] = door;
+            return true;
+        }
+
+        return false;
+    }
+
     public bool Collides(Vector3 point, float radius)
     {
         foreach (OutmDoorRuntime door in Doors)
