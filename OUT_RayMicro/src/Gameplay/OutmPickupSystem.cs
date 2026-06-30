@@ -91,6 +91,9 @@ public sealed class OutmPickupStore
 
 public sealed class OutmPickupSystem
 {
+    private const float PlayerPickupRadius = 0.55f;
+    private const float PlayerPickupVerticalReach = 1.35f;
+
     public void Update(OutmWorld world, OutmPickupStore pickups, Vector3 playerPosition)
     {
         for (int i = 0; i < pickups.Count; i++)
@@ -99,8 +102,7 @@ public sealed class OutmPickupSystem
             if (pickup.Collected)
                 continue;
 
-            float radius = MathF.Max(0.1f, pickup.Radius);
-            if (Vector3.DistanceSquared(playerPosition, pickup.Position) > radius * radius)
+            if (!PlayerOverlapsPickup(playerPosition, pickup))
                 continue;
 
             if (ApplyPickup(world, pickup))
@@ -127,6 +129,15 @@ public sealed class OutmPickupSystem
             Raylib.DrawSphere(pickup.Position, 0.22f, color);
             Raylib.DrawSphereWires(pickup.Position, pickup.Radius, 8, 8, new Color(255, 255, 255, 120));
         }
+    }
+
+    private static bool PlayerOverlapsPickup(Vector3 playerPosition, OutmPickupRecord pickup)
+    {
+        float horizontalRadius = MathF.Max(0.1f, pickup.Radius) + PlayerPickupRadius;
+        float dx = playerPosition.X - pickup.Position.X;
+        float dz = playerPosition.Z - pickup.Position.Z;
+        float dy = MathF.Abs(playerPosition.Y - pickup.Position.Y);
+        return dx * dx + dz * dz <= horizontalRadius * horizontalRadius && dy <= PlayerPickupVerticalReach;
     }
 
     private static bool ApplyPickup(OutmWorld world, OutmPickupRecord pickup)
