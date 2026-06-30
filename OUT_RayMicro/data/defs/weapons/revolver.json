@@ -1,0 +1,11 @@
+{
+  "id": "weapon.revolver",
+  "displayName": "Revolver",
+  "cooldown": 0.24,
+  "projectileSpeed": 38.0,
+  "projectileLife": 4.0,
+  "projectileRadius": 0.08,
+  "maxBounces": 2,
+  "bounceEnergy": 0.72,
+  "fireSound": "shot"
+}
