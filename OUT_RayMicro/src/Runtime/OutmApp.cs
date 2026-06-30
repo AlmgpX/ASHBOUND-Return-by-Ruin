@@ -61,6 +61,7 @@ public static class OutmApp
         world.PushLog(validation.Summary);
         world.PushLog($"map entities: static {mapRuntime.StaticWorldEntities} doors {mapRuntime.DoorEntities} triggers {mapRuntime.TriggerEntities} pickups {mapRuntime.PickupEntities}");
         world.PushLog($"physics bodies {corePhysics.BodyCount} shapes {corePhysics.ShapeCount} proxies {corePhysics.ProxyCount}");
+        world.PushLog($"physics bridge: {corePhysics.BackendRole}");
         world.PushLog($"mesh refs: {mapDef.Meshes.Length}");
         world.PushLog($"chunks: active {chunks.ActiveCount} resident {chunks.ResidentCount} sleeping {chunks.SleepingCount}");
         world.PushLog($"logic ticks: mid/{logicTicks.Policy.MidEveryTicks} far/{logicTicks.Policy.FarEveryTicks} dormant/{logicTicks.Policy.DormantEveryTicks}");
@@ -98,16 +99,7 @@ public static class OutmApp
                 bufferedReleased = OutmButtons.None;
                 bufferedLook = Vector2.Zero;
 
-                var userCommand = new OutmUserCommand(
-                    sampledInput.Sequence,
-                    simTick,
-                    fixedStep.FixedDelta,
-                    sampledInput.Move,
-                    look,
-                    sampledInput.Down,
-                    pressed,
-                    released);
-
+                var userCommand = new OutmUserCommand(sampledInput.Sequence, simTick, fixedStep.FixedDelta, sampledInput.Move, look, sampledInput.Down, pressed, released);
                 commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
                 SimulateFixedTick(world, map, mapRuntime, collision, camera, weapons, triggers, pickups, chunks, logicTicks, surfaces, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
                 ticksThisFrame++;
@@ -192,7 +184,7 @@ public static class OutmApp
             {
                 camera.Update(input, collision);
                 world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
-                UpdateFootsteps(world, map, surfaces, camera, input, fixedDt, ref stepTimer);
+                UpdateFootsteps(world, collision, surfaces, camera, input, fixedDt, ref stepTimer);
             }
 
             chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
@@ -243,7 +235,7 @@ public static class OutmApp
         world.PushLog($"quick save loaded: pickups {quickSave.Pickups.Length} projectiles {quickSave.Projectiles.Length}");
     }
 
-    private static void UpdateFootsteps(OutmWorld world, OutmDemoMap map, OutmSurfaceRegistry surfaces, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
+    private static void UpdateFootsteps(OutmWorld world, IOutmCollisionWorld collision, OutmSurfaceRegistry surfaces, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
     {
         float speed = camera.HorizontalSpeed;
         if (!camera.Grounded || speed < 1.2f)
@@ -256,9 +248,8 @@ public static class OutmApp
         if (stepTimer > 0.0f)
             return;
 
-        string surfaceId = map.TryGetSurfaceAtFoot(camera.Position, out string footSurface)
-            ? footSurface
-            : OutmSurfaceId.Stone.Value;
+        OutmRayHit ground = collision.Raycast(camera.Position, -Vector3.UnitY, 2.4f);
+        string surfaceId = ground.Hit ? ground.SurfaceId : OutmSurfaceId.Stone.Value;
         OutmSurfaceDef surface = surfaces.Get(surfaceId);
         world.Emit(new OutmEvent(OutmEventType.Footstep, EntityId.None, EntityId.None, camera.Position, speed, surface.FootstepTag));
 
