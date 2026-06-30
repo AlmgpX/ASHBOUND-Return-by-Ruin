@@ -51,22 +51,40 @@ public sealed class OutmEditorShell
         if (!Visible)
             return;
 
-        Raylib.DrawRectangle(10, 10, 520, 286, new Color(0, 0, 0, 170));
-        Raylib.DrawRectangleLines(10, 10, 520, 286, OverlayCyan);
-        Text("OUT RAYMICRO // M0-M1 SEED", 22, 20, 18, OverlayCyan);
+        Raylib.DrawRectangle(10, 10, 520, 306, new Color(0, 0, 0, 170));
+        Raylib.DrawRectangleLines(10, 10, 520, 306, OverlayCyan);
+        Text("OUT RAYMICRO // OUTMAP SEED", 22, 20, 18, OverlayCyan);
         Text("WASD move  SPACE jump  CTRL/C crouch", 22, 46, 14, OverlayText);
-        Text("LMB fire  F1 overlay  F2 damage  F3 armor", 22, 64, 14, OverlayText);
+        Text("E use  LMB fire  F1 overlay  F2 damage  F3 armor", 22, 64, 14, OverlayText);
         Text(OutmFontSystem.IsLoaded ? "FONT hud_unicode.ttf OK" : "FONT MISSING: data/fonts/hud_unicode.ttf", 22, 82, 14, OutmFontSystem.IsLoaded ? ManaAccent : Color.Orange);
-        Text($"POS {camera.Position.X:0.00}, {camera.Position.Y:0.00}, {camera.Position.Z:0.00}", 22, 108, 14, Color.Yellow);
-        Text($"VEL {camera.HorizontalSpeed:0.00}  {(camera.Grounded ? "GROUND" : "AIR")}  {(camera.IsCrouching ? "CROUCH" : "STAND")}", 22, 128, 14, camera.Grounded ? ManaAccent : ArmorColor(world.PlayerVitals.ArmorTier));
-        Text($"DOOR {(map.DoorOpen ? "OPEN" : "CLOSED")}", 22, 148, 14, map.DoorOpen ? Color.Green : Color.Orange);
+        Text($"MAP {map.DisplayName}  boxes {map.Boxes.Count}  doors {map.Doors.Count}  triggers {map.Triggers.Count}", 22, 106, 14, OverlayText);
+        Text($"POS {camera.Position.X:0.00}, {camera.Position.Y:0.00}, {camera.Position.Z:0.00}", 22, 128, 14, Color.Yellow);
+        Text($"VEL {camera.HorizontalSpeed:0.00}  {(camera.Grounded ? "GROUND" : "AIR")}  {(camera.IsCrouching ? "CROUCH" : "STAND")}", 22, 148, 14, camera.Grounded ? ManaAccent : ArmorColor(world.PlayerVitals.ArmorTier));
+        Text(DoorStatus(map), 22, 168, 14, DoorStatusColor(map));
 
         for (int i = 0; i < 8; i++)
         {
             string line = world.GetLogLineFromNewest(i);
             if (!string.IsNullOrWhiteSpace(line))
-                Text(line, 22, 176 + i * 14, 12, OverlayText);
+                Text(line, 22, 196 + i * 14, 12, OverlayText);
         }
+    }
+
+    private static string DoorStatus(OutmDemoMap map)
+    {
+        if (map.Doors.Count == 0)
+            return "DOORS none";
+
+        OutmDoorRuntime door = map.Doors[0];
+        return $"USE/E DOOR {door.Id} {(door.Open ? "OPEN" : "CLOSED")}";
+    }
+
+    private static Color DoorStatusColor(OutmDemoMap map)
+    {
+        if (map.Doors.Count == 0)
+            return OverlayText;
+
+        return map.Doors[0].Open ? Color.Green : Color.Orange;
     }
 
     private static void DrawVitalsHud(OutmPlayerVitals vitals, int x, int y)
