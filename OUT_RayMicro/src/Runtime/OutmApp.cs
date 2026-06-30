@@ -32,6 +32,7 @@ public static class OutmApp
         IOutmCollisionWorld collision = new OutmDemoCollisionWorld(map);
         var camera = new OutmCameraMotor(map.PlayerStart);
         world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
+        var logicTicks = new OutmLogicTickScheduler();
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
         var triggers = new OutmTriggerSystem();
         var editor = new OutmEditorShell();
@@ -49,6 +50,7 @@ public static class OutmApp
         world.PushLog($"map: {map.DisplayName}");
         world.PushLog(validation.Summary);
         world.PushLog($"mesh refs: {mapDef.Meshes.Length}");
+        world.PushLog($"logic ticks: mid/{logicTicks.Policy.MidEveryTicks} far/{logicTicks.Policy.FarEveryTicks} dormant/{logicTicks.Policy.DormantEveryTicks}");
         world.PushLog($"defs: weapons {content.Weapons.Count}");
         world.PushLog($"fixed tick: {1.0f / fixedStep.FixedDelta:0} hz");
         world.PushLog($"collision backend: {collision.BackendKind}");
