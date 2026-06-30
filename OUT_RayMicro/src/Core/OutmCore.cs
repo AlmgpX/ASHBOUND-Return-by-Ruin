@@ -173,6 +173,8 @@ public sealed class OutmWorld
     private int logCursor;
 
     public readonly OutmEventQueue Events = new(512);
+    public readonly OutmEntityStore Entities = new(512);
+    public EntityId PlayerEntity = EntityId.None;
     public OutmPlayerVitals PlayerVitals = OutmPlayerVitals.Default;
     public float Time;
     public int Tick;
