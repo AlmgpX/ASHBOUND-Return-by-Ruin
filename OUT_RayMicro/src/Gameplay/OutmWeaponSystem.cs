@@ -117,10 +117,12 @@ public sealed class OutmWeaponSystem
 
             if (collision.CollidesSphere(next, revolver.ProjectileRadius))
             {
-                Vector3 normal = EstimateCollisionNormal(previous, next, collision, revolver.ProjectileRadius);
-                string surfaceId = map.TryGetCollisionSurface(next, revolver.ProjectileRadius, out string hitSurface)
-                    ? hitSurface
-                    : OutmSurfaceId.Stone.Value;
+                Vector3 travel = next - previous;
+                OutmRayHit hit = travel.LengthSquared() > 0.000001f
+                    ? collision.Raycast(previous, travel, travel.Length() + revolver.ProjectileRadius)
+                    : OutmRayHit.None;
+                Vector3 normal = hit.Hit ? hit.Normal : EstimateCollisionNormal(previous, next, collision, revolver.ProjectileRadius);
+                string surfaceId = hit.Hit ? hit.SurfaceId : OutmSurfaceId.Stone.Value;
                 OutmSurfaceDef surface = surfaces.Get(surfaceId);
 
                 if (p.Bounces < revolver.MaxBounces)
