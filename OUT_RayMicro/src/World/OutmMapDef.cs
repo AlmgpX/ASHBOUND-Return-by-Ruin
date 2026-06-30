@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Raylib_cs;
+using OUT_RayMicro.Gameplay;
 using OUT_RayMicro.Runtime;
 
 namespace OUT_RayMicro.World;
@@ -14,6 +15,7 @@ public sealed class OutmMapDef
     public OutmBoxDef[] Boxes { get; set; } = Array.Empty<OutmBoxDef>();
     public OutmDoorDef[] Doors { get; set; } = Array.Empty<OutmDoorDef>();
     public OutmTriggerDef[] Triggers { get; set; } = Array.Empty<OutmTriggerDef>();
+    public OutmPickupDef[] Pickups { get; set; } = Array.Empty<OutmPickupDef>();
     public OutmMeshRefDef[] Meshes { get; set; } = Array.Empty<OutmMeshRefDef>();
 
     public Vector3 PlayerStartVector => ToVector3(PlayerStart, new Vector3(0, 1.2f, 7));
@@ -68,6 +70,17 @@ public sealed class OutmTriggerDef
     public string Target { get; set; } = "door.main";
     public float[] Center { get; set; } = { 0, 1, -7.2f };
     public float[] Size { get; set; } = { 2.2f, 2.0f, 0.8f };
+}
+
+public sealed class OutmPickupDef
+{
+    public string Id { get; set; } = "pickup";
+    public OutmPickupKind Kind { get; set; } = OutmPickupKind.Health;
+    public float[] Position { get; set; } = { 0, 0.5f, 0 };
+    public float Radius { get; set; } = 0.65f;
+    public int Amount { get; set; } = 25;
+    public OutmArmorTier ArmorTier { get; set; } = OutmArmorTier.Green;
+    public string Surface { get; set; } = "surface.stone";
 }
 
 public sealed class OutmMeshRefDef
@@ -167,7 +180,6 @@ public static class OutmMapLoader
             Boxes = new[]
             {
                 new OutmBoxDef { Id = "floor", Center = new[] { 0f, -0.1f, 0f }, Size = new[] { 18f, 0.2f, 18f }, Color = new[] { 42, 43, 45, 255 }, Solid = true, Surface = "surface.stone" },
-                new OutmBoxDef { Id = "block", Center = new[] { 0f, 0.6f, -2.5f }, Size = new[] { 3f, 1.2f, 2f }, Color = new[] { 92, 98, 110, 255 }, Solid = true, Surface = "surface.stone" },
                 new OutmBoxDef { Id = "crate", Center = new[] { -5f, 0.5f, 2f }, Size = new[] { 1.6f, 1f, 1.6f }, Color = new[] { 120, 85, 62, 255 }, Solid = true, Surface = "surface.wood" }
             },
             Doors = new[]
@@ -177,6 +189,10 @@ public static class OutmMapLoader
             Triggers = new[]
             {
                 new OutmTriggerDef { Id = "trigger.door.main", Kind = "door_toggle", Target = "door.main", Center = new[] { 0f, 1f, -7.2f }, Size = new[] { 2.2f, 2f, 0.8f } }
+            },
+            Pickups = new[]
+            {
+                new OutmPickupDef { Id = "pickup.health.demo", Kind = OutmPickupKind.Health, Position = new[] { 2.5f, 0.45f, 2.0f }, Radius = 0.75f, Amount = 25, Surface = "surface.stone" }
             }
         };
     }
