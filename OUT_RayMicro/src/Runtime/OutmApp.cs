@@ -30,13 +30,15 @@ public static class OutmApp
         OutmMapDef mapDef = OutmMapLoader.LoadOrDefault(mapEntry.Path);
         OutmMapValidationReport validation = OutmMapValidator.Validate(mapDef, world.PushLog);
         var map = OutmMapLoader.BuildDemoMap(mapDef);
-        IOutmCollisionWorld collision = new OutmJoltCollisionWorld(mapDef, map);
+        var joltCollision = new OutmJoltCollisionWorld(mapDef, map);
+        IOutmCollisionWorld collision = joltCollision;
         var camera = new OutmCameraMotor(map.PlayerStart);
         world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
         var logicTicks = new OutmLogicTickScheduler();
         var chunks = new OutmChunkStore();
         chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
         OutmMapRuntimeStores mapRuntime = OutmMapEntitySpawner.Spawn(world, mapDef, map, logicTicks);
+        BindPhysicsHandles(mapRuntime, joltCollision);
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
         var use = new OutmUseSystem();
         var triggers = new OutmTriggerSystem(use);
@@ -58,6 +60,7 @@ public static class OutmApp
         world.PushLog($"map: {map.DisplayName}");
         world.PushLog(validation.Summary);
         world.PushLog($"map entities: static {mapRuntime.StaticWorldEntities} doors {mapRuntime.DoorEntities} triggers {mapRuntime.TriggerEntities} pickups {mapRuntime.PickupEntities}");
+        world.PushLog($"physics bodies {joltCollision.BodyCount} shapes {joltCollision.ShapeCount} proxies {joltCollision.ProxyCount}");
         world.PushLog($"mesh refs: {mapDef.Meshes.Length}");
         world.PushLog($"chunks: active {chunks.ActiveCount} resident {chunks.ResidentCount} sleeping {chunks.SleepingCount}");
         world.PushLog($"logic ticks: mid/{logicTicks.Policy.MidEveryTicks} far/{logicTicks.Policy.FarEveryTicks} dormant/{logicTicks.Policy.DormantEveryTicks}");
@@ -140,6 +143,23 @@ public static class OutmApp
         OutmFontSystem.Unload();
         Raylib.EnableCursor();
         Raylib.CloseWindow();
+    }
+
+    private static void BindPhysicsHandles(OutmMapRuntimeStores runtime, OutmJoltCollisionWorld physics)
+    {
+        for (int i = 0; i < runtime.Doors.Count; i++)
+        {
+            OutmDoorRecord door = runtime.Doors.Doors[i];
+            if (physics.TryGetDoorBody(door.Id, out OutmBodyHandle body))
+                runtime.Doors.TryBindBody(door.Id, body);
+        }
+
+        for (int i = 0; i < runtime.Triggers.Count; i++)
+        {
+            OutmTriggerRecord trigger = runtime.Triggers.Triggers[i];
+            if (physics.TryGetSensorBody(trigger.Id, out OutmBodyHandle body))
+                runtime.Triggers.TryBindBody(trigger.Id, body);
+        }
     }
 
     private static void SimulateFixedTick(
