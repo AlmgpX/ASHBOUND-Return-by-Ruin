@@ -51,13 +51,13 @@ public sealed class OutmEditorShell
         if (!Visible)
             return;
 
-        Raylib.DrawRectangle(10, 10, 650, 376, new Color(0, 0, 0, 170));
-        Raylib.DrawRectangleLines(10, 10, 650, 376, OverlayCyan);
+        Raylib.DrawRectangle(10, 10, 650, 390, new Color(0, 0, 0, 170));
+        Raylib.DrawRectangleLines(10, 10, 650, 390, OverlayCyan);
         Text("OUT CORE // MAP ENTITY SLICE", 22, 20, 18, OverlayCyan);
         Text("WASD move  SPACE jump  CTRL/C crouch", 22, 46, 14, OverlayText);
-        Text("E use  LMB fire  F1 overlay  F2 damage  F3 armor", 22, 64, 14, OverlayText);
-        Text("F5 quicksave  F9 quickload", 22, 82, 14, OverlayText);
-        Text(OutmFontSystem.IsLoaded ? "FONT hud_unicode.ttf OK" : "FONT MISSING: data/fonts/hud_unicode.ttf", 22, 102, 14, OutmFontSystem.IsLoaded ? ManaAccent : Color.Orange);
+        Text("E use  LMB fire  F1 overlay  ESC pause  F11 fullscreen", 22, 64, 14, OverlayText);
+        Text("F5 quicksave  F9 quickload  F6 level panel  F7 next object", 22, 82, 14, OverlayText);
+        Text(OutmFontSystem.IsLoaded ? "FONT unicode loaded; ASCII UI uses safe default" : "FONT MISSING: data/fonts/hud_unicode.ttf", 22, 102, 14, OutmFontSystem.IsLoaded ? ManaAccent : Color.Orange);
         Text($"MAP {map.DisplayName}  boxes {map.Boxes.Count}  doors {map.Doors.Count}  triggers {map.Triggers.Count}", 22, 126, 14, OverlayText);
         Text($"STORES static {mapRuntime.StaticWorldEntities}  doors {mapRuntime.DoorEntities}  triggers {mapRuntime.TriggerEntities}  pickups {mapRuntime.PickupEntities}", 22, 148, 14, OverlayText);
         Text($"CHUNK {chunks.FocusChunk}  active {chunks.ActiveCount}  resident {chunks.ResidentCount}  sleeping {chunks.SleepingCount}  known {chunks.KnownCount}", 22, 170, 14, ManaAccent);
