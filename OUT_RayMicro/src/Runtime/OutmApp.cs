@@ -141,7 +141,7 @@ public static class OutmApp
                 UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
             }
 
-            HandleTriggers(world, map, camera.Position, ref currentTriggerId);
+            HandleUseTriggers(world, map, camera.Position, input, ref currentTriggerId);
 
             if (!world.PlayerVitals.IsDead)
             {
@@ -151,7 +151,7 @@ public static class OutmApp
         }
     }
 
-    private static void HandleTriggers(OutmWorld world, OutmDemoMap map, Vector3 position, ref string currentTriggerId)
+    private static void HandleUseTriggers(OutmWorld world, OutmDemoMap map, Vector3 position, in OutmInputFrame input, ref string currentTriggerId)
     {
         if (world.PlayerVitals.IsDead)
             return;
@@ -162,17 +162,20 @@ public static class OutmApp
             return;
         }
 
-        if (string.Equals(currentTriggerId, trigger.Id, StringComparison.OrdinalIgnoreCase))
-            return;
+        if (!string.Equals(currentTriggerId, trigger.Id, StringComparison.OrdinalIgnoreCase))
+        {
+            currentTriggerId = trigger.Id;
+            world.Emit(new OutmEvent(OutmEventType.TriggerEntered, EntityId.None, EntityId.None, position, 0, trigger.Id));
+        }
 
-        currentTriggerId = trigger.Id;
-        world.Emit(new OutmEvent(OutmEventType.TriggerEntered, EntityId.None, EntityId.None, position, 0, trigger.Id));
+        if (!input.IsPressed(OutmButtons.Use))
+            return;
 
         if (!string.Equals(trigger.Kind, "door_toggle", StringComparison.OrdinalIgnoreCase))
             return;
 
         bool open = map.TryToggleDoor(trigger.Target);
-        world.Emit(new OutmEvent(OutmEventType.DoorToggled, EntityId.None, EntityId.None, position, open ? 1 : 0, open ? "door opened" : "door closed"));
+        world.Emit(new OutmEvent(OutmEventType.DoorToggled, EntityId.None, EntityId.None, position, open ? 1 : 0, open ? "use: door opened" : "use: door closed"));
     }
 
     private static void UpdateFootsteps(OutmWorld world, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
