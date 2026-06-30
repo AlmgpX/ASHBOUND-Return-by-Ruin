@@ -26,13 +26,21 @@ public sealed class OutmMapDef
         return new Vector3(value[0], value[1], value[2]);
     }
 
-    public static Color ToColor(byte[]? value, Color fallback)
+    public static Color ToColor(int[]? value, Color fallback)
     {
         if (value == null || value.Length < 3)
             return fallback;
 
-        byte a = value.Length >= 4 ? value[3] : (byte)255;
-        return new Color(value[0], value[1], value[2], a);
+        byte r = ClampByte(value[0]);
+        byte g = ClampByte(value[1]);
+        byte b = ClampByte(value[2]);
+        byte a = value.Length >= 4 ? ClampByte(value[3]) : (byte)255;
+        return new Color(r, g, b, a);
+    }
+
+    private static byte ClampByte(int value)
+    {
+        return (byte)Math.Clamp(value, 0, 255);
     }
 }
 
@@ -41,7 +49,7 @@ public sealed class OutmBoxDef
     public string Id { get; set; } = "box";
     public float[] Center { get; set; } = { 0, 0, 0 };
     public float[] Size { get; set; } = { 1, 1, 1 };
-    public byte[] Color { get; set; } = { 96, 96, 96, 255 };
+    public int[] Color { get; set; } = { 96, 96, 96, 255 };
     public bool Solid { get; set; } = true;
 }
 
@@ -50,7 +58,7 @@ public sealed class OutmDoorDef
     public string Id { get; set; } = "door";
     public float[] Center { get; set; } = { 0, 2, -8.85f };
     public float[] Size { get; set; } = { 2.1f, 4.0f, 0.35f };
-    public byte[] Color { get; set; } = { 120, 62, 48, 255 };
+    public int[] Color { get; set; } = { 120, 62, 48, 255 };
     public bool StartsOpen { get; set; }
 }
 
@@ -87,10 +95,22 @@ public static class OutmMapLoader
     {
         string path = OutmAssetPaths.ResolveData(relativePath);
         if (!File.Exists(path))
+        {
+            OutmCrashLog.Write($"outmap missing, using fallback: {path}");
             return CreateFallbackDef();
+        }
 
-        OutmMapDef? def = JsonSerializer.Deserialize<OutmMapDef>(File.ReadAllText(path), Options);
-        return def ?? CreateFallbackDef();
+        try
+        {
+            OutmCrashLog.Write($"outmap load: {path}");
+            OutmMapDef? def = JsonSerializer.Deserialize<OutmMapDef>(File.ReadAllText(path), Options);
+            return def ?? CreateFallbackDef();
+        }
+        catch (Exception ex)
+        {
+            OutmCrashLog.Write($"outmap failed, using fallback: {path}\n{ex}");
+            return CreateFallbackDef();
+        }
     }
 
     public static OutmDemoMap BuildDemoMap(OutmMapDef def)
@@ -144,20 +164,20 @@ public static class OutmMapLoader
             PlayerStart = new[] { 0.0f, 1.2f, 7.0f },
             Boxes = new[]
             {
-                new OutmBoxDef { Id = "floor", Center = new[] { 0f, -0.1f, 0f }, Size = new[] { 18f, 0.2f, 18f }, Color = new byte[] { 42, 43, 45, 255 }, Solid = true },
-                new OutmBoxDef { Id = "ceiling", Center = new[] { 0f, 4.2f, 0f }, Size = new[] { 18f, 0.2f, 18f }, Color = new byte[] { 27, 30, 37, 255 }, Solid = false },
-                new OutmBoxDef { Id = "wall.left", Center = new[] { -9f, 2f, 0f }, Size = new[] { 0.4f, 4f, 18f }, Color = new byte[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "wall.right", Center = new[] { 9f, 2f, 0f }, Size = new[] { 0.4f, 4f, 18f }, Color = new byte[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "wall.back", Center = new[] { 0f, 2f, 9f }, Size = new[] { 18f, 4f, 0.4f }, Color = new byte[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "wall.front.left", Center = new[] { -4.5f, 2f, -9f }, Size = new[] { 9f, 4f, 0.4f }, Color = new byte[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "wall.front.right", Center = new[] { 4.5f, 2f, -9f }, Size = new[] { 9f, 4f, 0.4f }, Color = new byte[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "block.center", Center = new[] { 0f, 0.6f, -2.5f }, Size = new[] { 3f, 1.2f, 2f }, Color = new byte[] { 92, 98, 110, 255 }, Solid = true },
-                new OutmBoxDef { Id = "crate.left", Center = new[] { -5f, 0.5f, 2f }, Size = new[] { 1.6f, 1f, 1.6f }, Color = new byte[] { 120, 85, 62, 255 }, Solid = true },
-                new OutmBoxDef { Id = "crate.right", Center = new[] { 5f, 0.5f, 2f }, Size = new[] { 1.6f, 1f, 1.6f }, Color = new byte[] { 120, 85, 62, 255 }, Solid = true }
+                new OutmBoxDef { Id = "floor", Center = new[] { 0f, -0.1f, 0f }, Size = new[] { 18f, 0.2f, 18f }, Color = new[] { 42, 43, 45, 255 }, Solid = true },
+                new OutmBoxDef { Id = "ceiling", Center = new[] { 0f, 4.2f, 0f }, Size = new[] { 18f, 0.2f, 18f }, Color = new[] { 27, 30, 37, 255 }, Solid = false },
+                new OutmBoxDef { Id = "wall.left", Center = new[] { -9f, 2f, 0f }, Size = new[] { 0.4f, 4f, 18f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
+                new OutmBoxDef { Id = "wall.right", Center = new[] { 9f, 2f, 0f }, Size = new[] { 0.4f, 4f, 18f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
+                new OutmBoxDef { Id = "wall.back", Center = new[] { 0f, 2f, 9f }, Size = new[] { 18f, 4f, 0.4f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
+                new OutmBoxDef { Id = "wall.front.left", Center = new[] { -4.5f, 2f, -9f }, Size = new[] { 9f, 4f, 0.4f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
+                new OutmBoxDef { Id = "wall.front.right", Center = new[] { 4.5f, 2f, -9f }, Size = new[] { 9f, 4f, 0.4f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
+                new OutmBoxDef { Id = "block.center", Center = new[] { 0f, 0.6f, -2.5f }, Size = new[] { 3f, 1.2f, 2f }, Color = new[] { 92, 98, 110, 255 }, Solid = true },
+                new OutmBoxDef { Id = "crate.left", Center = new[] { -5f, 0.5f, 2f }, Size = new[] { 1.6f, 1f, 1.6f }, Color = new[] { 120, 85, 62, 255 }, Solid = true },
+                new OutmBoxDef { Id = "crate.right", Center = new[] { 5f, 0.5f, 2f }, Size = new[] { 1.6f, 1f, 1.6f }, Color = new[] { 120, 85, 62, 255 }, Solid = true }
             },
             Doors = new[]
             {
-                new OutmDoorDef { Id = "door.main", Center = new[] { 0f, 2f, -8.85f }, Size = new[] { 2.1f, 4f, 0.35f }, Color = new byte[] { 120, 62, 48, 255 }, StartsOpen = false }
+                new OutmDoorDef { Id = "door.main", Center = new[] { 0f, 2f, -8.85f }, Size = new[] { 2.1f, 4f, 0.35f }, Color = new[] { 120, 62, 48, 255 }, StartsOpen = false }
             },
             Triggers = new[]
             {
