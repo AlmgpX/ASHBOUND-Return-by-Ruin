@@ -20,7 +20,9 @@ public enum OutmButtons : uint
     DebugSave = 1 << 10,
     DebugLoad = 1 << 11,
     LevelDesign = 1 << 12,
-    LevelDesignNext = 1 << 13
+    LevelDesignNext = 1 << 13,
+    Pause = 1 << 14,
+    Fullscreen = 1 << 15
 }
 
 public readonly struct OutmInputFrame
@@ -99,6 +101,8 @@ public sealed class OutmInputSampler
         if (Raylib.IsKeyDown(KeyboardKey.F6)) buttons |= OutmButtons.LevelDesign;
         if (Raylib.IsKeyDown(KeyboardKey.F7)) buttons |= OutmButtons.LevelDesignNext;
         if (Raylib.IsKeyDown(KeyboardKey.F9)) buttons |= OutmButtons.DebugLoad;
+        if (Raylib.IsKeyDown(KeyboardKey.Escape)) buttons |= OutmButtons.Pause;
+        if (Raylib.IsKeyDown(KeyboardKey.F11)) buttons |= OutmButtons.Fullscreen;
 
         return buttons;
     }
