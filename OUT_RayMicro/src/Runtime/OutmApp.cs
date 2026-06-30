@@ -17,6 +17,7 @@ public static class OutmApp
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
         Raylib.InitWindow(1280, 720, "OUT CORE // map logic seed");
+        Raylib.SetExitKey(KeyboardKey.Null);
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         bool paused = false;
