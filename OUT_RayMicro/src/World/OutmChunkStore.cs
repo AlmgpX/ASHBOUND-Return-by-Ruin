@@ -36,15 +36,19 @@ public struct OutmChunkRuntime
 public sealed class OutmChunkStore
 {
     private readonly Dictionary<OutmChunkKey, OutmChunkRuntime> chunks = new();
-    private readonly List<OutmChunkKey> active = new(128);
-    private readonly List<OutmChunkKey> resident = new(512);
-    private readonly List<OutmChunkKey> sleeping = new(512);
+    private readonly List<OutmChunkKey> active = new(16);
+    private readonly List<OutmChunkKey> resident = new(64);
+    private readonly List<OutmChunkKey> sleeping = new(256);
     private readonly List<OutmChunkKey> keyScratch = new(512);
     private int revision;
 
-    public int ActiveRadiusChunks = 1;
-    public int ResidentRadiusChunks = 4;
+    // FPS default: central chunk is hot, 3x3 around it is resident, outer tracked ring is cheap/sleeping.
+    // Vertical chunking is off by default because ticking layers of empty air is a classic human hobby and we decline.
+    public int ActiveRadiusChunks = 0;
+    public int ResidentRadiusChunks = 1;
+    public int TrackedRadiusChunks = 4;
     public int SleepingAfterTicks = 240;
+    public bool UseVerticalChunking;
 
     public int ActiveCount => active.Count;
     public int ResidentCount => resident.Count;
@@ -63,19 +67,32 @@ public sealed class OutmChunkStore
         resident.Clear();
         sleeping.Clear();
 
-        FocusChunk = scheduler.PositionToChunk(focusPosition);
+        OutmChunkKey rawFocus = scheduler.PositionToChunk(focusPosition);
+        FocusChunk = UseVerticalChunking ? rawFocus : new OutmChunkKey(rawFocus.X, 0, rawFocus.Z);
+
         int activeRadius = Math.Max(0, ActiveRadiusChunks);
         int residentRadius = Math.Max(activeRadius, ResidentRadiusChunks);
+        int trackedRadius = Math.Max(residentRadius, TrackedRadiusChunks);
+        int yMin = UseVerticalChunking ? -trackedRadius : 0;
+        int yMax = UseVerticalChunking ? trackedRadius : 0;
 
-        for (int z = -residentRadius; z <= residentRadius; z++)
+        for (int z = -trackedRadius; z <= trackedRadius; z++)
         {
-            for (int y = -residentRadius; y <= residentRadius; y++)
+            for (int y = yMin; y <= yMax; y++)
             {
-                for (int x = -residentRadius; x <= residentRadius; x++)
+                for (int x = -trackedRadius; x <= trackedRadius; x++)
                 {
                     OutmChunkKey key = new(FocusChunk.X + x, FocusChunk.Y + y, FocusChunk.Z + z);
-                    int chebyshev = Math.Max(Math.Abs(x), Math.Max(Math.Abs(y), Math.Abs(z)));
-                    OutmChunkState state = chebyshev <= activeRadius ? OutmChunkState.Active : OutmChunkState.Resident;
+                    int chebyshev = UseVerticalChunking
+                        ? Math.Max(Math.Abs(x), Math.Max(Math.Abs(y), Math.Abs(z)))
+                        : Math.Max(Math.Abs(x), Math.Abs(z));
+
+                    OutmChunkState state = chebyshev <= activeRadius
+                        ? OutmChunkState.Active
+                        : chebyshev <= residentRadius
+                            ? OutmChunkState.Resident
+                            : OutmChunkState.Sleeping;
+
                     TouchChunk(scheduler, key, state, focusPosition, worldTick);
                 }
             }
@@ -142,8 +159,19 @@ public sealed class OutmChunkStore
         chunk.LastSeenRevision = revision;
         chunk.LastTouchedTick = worldTick;
         chunk.TickDecision = scheduler.DecideChunk(key, focusPosition, worldTick);
-        chunk.TickTier = chunk.TickDecision.Tier;
+        chunk.TickTier = ResolveTierForState(state, chunk.TickDecision.Tier);
         chunks[key] = chunk;
+    }
+
+    private static OutmLogicTickTier ResolveTierForState(OutmChunkState state, OutmLogicTickTier distanceTier)
+    {
+        return state switch
+        {
+            OutmChunkState.Active => OutmLogicTickTier.Always,
+            OutmChunkState.Resident => distanceTier < OutmLogicTickTier.Mid ? OutmLogicTickTier.Mid : distanceTier,
+            OutmChunkState.Sleeping => distanceTier < OutmLogicTickTier.Far ? OutmLogicTickTier.Far : distanceTier,
+            _ => OutmLogicTickTier.Dormant
+        };
     }
 
     private void RebuildViews()
