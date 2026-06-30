@@ -127,7 +127,7 @@ public static class OutmApp
             Raylib.EndMode3D();
 
             DrawWeaponHud(world);
-            editor.Draw(world, camera, map, chunks);
+            editor.Draw(world, camera, map, chunks, mapRuntime);
 
             Raylib.EndDrawing();
         }
