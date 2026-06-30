@@ -9,12 +9,13 @@ namespace OUT_RayMicro.Gameplay;
 
 public sealed class OutmSaveSnapshot
 {
-    public int Version { get; set; } = 1;
+    public int Version { get; set; } = 2;
     public string MapId { get; set; } = "";
     public int Tick { get; set; }
     public float Time { get; set; }
     public OutmPlayerSaveSnapshot Player { get; set; } = new();
     public OutmDoorSaveSnapshot[] Doors { get; set; } = Array.Empty<OutmDoorSaveSnapshot>();
+    public OutmProjectileSaveSnapshot[] Projectiles { get; set; } = Array.Empty<OutmProjectileSaveSnapshot>();
 }
 
 public sealed class OutmPlayerSaveSnapshot
@@ -37,6 +38,14 @@ public sealed class OutmDoorSaveSnapshot
 {
     public string Id { get; set; } = "";
     public bool Open { get; set; }
+}
+
+public sealed class OutmProjectileSaveSnapshot
+{
+    public OutmVector3Save Position { get; set; }
+    public OutmVector3Save Velocity { get; set; }
+    public float Life { get; set; }
+    public int Bounces { get; set; }
 }
 
 public readonly struct OutmVector3Save
@@ -65,7 +74,7 @@ public static class OutmSaveSystem
         Converters = { new JsonStringEnumConverter() }
     };
 
-    public static OutmSaveSnapshot Capture(OutmWorld world, OutmDemoMap map, Vector3 playerPosition, Vector3 playerVelocity, float yaw, float pitch)
+    public static OutmSaveSnapshot Capture(OutmWorld world, OutmDemoMap map, OutmWeaponSystem weapons, Vector3 playerPosition, Vector3 playerVelocity, float yaw, float pitch)
     {
         OutmPlayerVitals vitals = world.PlayerVitals;
         var doors = new OutmDoorSaveSnapshot[map.Doors.Count];
@@ -81,7 +90,7 @@ public static class OutmSaveSystem
 
         return new OutmSaveSnapshot
         {
-            Version = 1,
+            Version = 2,
             MapId = map.Id,
             Tick = world.Tick,
             Time = world.Time,
@@ -100,11 +109,12 @@ public static class OutmSaveSystem
                 ArmorTier = vitals.ArmorTier,
                 InputLocked = vitals.IsDead
             },
-            Doors = doors
+            Doors = doors,
+            Projectiles = weapons.CaptureProjectileSnapshot()
         };
     }
 
-    public static void ApplyWorldState(OutmWorld world, OutmDemoMap map, OutmSaveSnapshot snapshot)
+    public static void ApplyWorldState(OutmWorld world, OutmDemoMap map, OutmWeaponSystem weapons, OutmSaveSnapshot snapshot)
     {
         OutmPlayerSaveSnapshot player = snapshot.Player;
         world.PlayerVitals = new OutmPlayerVitals
@@ -125,6 +135,8 @@ public static class OutmSaveSystem
 
         for (int i = 0; i < snapshot.Doors.Length; i++)
             map.TrySetDoorOpen(snapshot.Doors[i].Id, snapshot.Doors[i].Open);
+
+        weapons.RestoreProjectileSnapshot(snapshot.Projectiles ?? Array.Empty<OutmProjectileSaveSnapshot>());
     }
 
     public static void SaveToDisk(OutmSaveSnapshot snapshot, string relativePath = "saves/quicksave.outsave.json")
