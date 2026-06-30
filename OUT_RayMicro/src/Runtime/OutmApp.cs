@@ -16,12 +16,13 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT CORE // chunked world seed");
+        Raylib.InitWindow(1280, 720, "OUT CORE // surface map seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
 
         var content = OutmContentRegistry.LoadDefault();
+        var surfaces = new OutmSurfaceRegistry();
         var world = new OutmWorld();
         world.PlayerEntity = world.Entities.Create(OutmEntityKind.Player, "player.local");
         OutmMapManifest manifest = OutmMapManifestLoader.LoadOrDefault();
@@ -72,8 +73,6 @@ public static class OutmApp
             OutmInputFrame sampledInput = inputSampler.Sample(frameDt);
             editor.Update(world, sampledInput);
 
-            // Fixed tick can skip a render frame when the accumulator has not reached 1/60 yet.
-            // Edge input must survive that gap, otherwise short Space taps vanish like dignity in a rush build.
             bufferedPressed |= sampledInput.Pressed;
             bufferedReleased |= sampledInput.Released;
             bufferedLook += sampledInput.LookDelta;
@@ -102,7 +101,7 @@ public static class OutmApp
                     released);
 
                 commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
-                SimulateFixedTick(world, map, collision, camera, weapons, triggers, chunks, logicTicks, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
+                SimulateFixedTick(world, map, collision, camera, weapons, triggers, chunks, logicTicks, surfaces, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
                 ticksThisFrame++;
             }
 
@@ -145,6 +144,7 @@ public static class OutmApp
         OutmTriggerSystem triggers,
         OutmChunkStore chunks,
         OutmLogicTickScheduler logicTicks,
+        OutmSurfaceRegistry surfaces,
         OutmCommandQueue commands,
         float fixedDt,
         ref float stepTimer,
@@ -163,7 +163,7 @@ public static class OutmApp
             {
                 camera.Update(input, collision);
                 world.Transforms.Set(world.PlayerEntity, camera.Position, new Vector3(0.0f, camera.Yaw, camera.Pitch));
-                UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
+                UpdateFootsteps(world, map, surfaces, camera, input, fixedDt, ref stepTimer);
             }
 
             chunks.UpdateAroundFocus(logicTicks, camera.Position, world.Tick);
@@ -173,7 +173,7 @@ public static class OutmApp
             if (!world.PlayerVitals.IsDead)
             {
                 Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
-                weapons.Update(input, muzzle, camera.Forward, collision, world);
+                weapons.Update(input, muzzle, camera.Forward, collision, map, surfaces, world);
             }
         }
     }
@@ -213,7 +213,7 @@ public static class OutmApp
         world.PushLog($"quick save loaded: projectiles {quickSave.Projectiles.Length}");
     }
 
-    private static void UpdateFootsteps(OutmWorld world, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
+    private static void UpdateFootsteps(OutmWorld world, OutmDemoMap map, OutmSurfaceRegistry surfaces, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
     {
         float speed = camera.HorizontalSpeed;
         if (!camera.Grounded || speed < 1.2f)
@@ -226,7 +226,11 @@ public static class OutmApp
         if (stepTimer > 0.0f)
             return;
 
-        world.Emit(new OutmEvent(OutmEventType.Footstep, EntityId.None, EntityId.None, camera.Position, speed, "footstep stone"));
+        string surfaceId = map.TryGetSurfaceAtFoot(camera.Position, out string footSurface)
+            ? footSurface
+            : OutmSurfaceId.Stone.Value;
+        OutmSurfaceDef surface = surfaces.Get(surfaceId);
+        world.Emit(new OutmEvent(OutmEventType.Footstep, EntityId.None, EntityId.None, camera.Position, speed, surface.FootstepTag));
 
         if (camera.IsCrouching)
             stepTimer = 0.56f;
