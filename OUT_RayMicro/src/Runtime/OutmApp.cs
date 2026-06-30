@@ -19,6 +19,8 @@ public static class OutmApp
         Raylib.InitWindow(1280, 720, "OUT CORE // map logic seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
+        bool paused = false;
+        bool cursorCaptured = true;
         OutmFontSystem.Load();
 
         var content = OutmContentRegistry.LoadDefault();
@@ -83,34 +85,58 @@ public static class OutmApp
         {
             float frameDt = Math.Clamp(Raylib.GetFrameTime(), 0.0f, 0.10f);
             OutmInputFrame sampledInput = inputSampler.Sample(frameDt);
-            editor.Update(world, sampledInput);
-            levelPanel.Update(world, mapDef, map, mapRuntime, sampledInput);
 
-            bufferedPressed |= sampledInput.Pressed;
-            bufferedReleased |= sampledInput.Released;
-            bufferedLook += sampledInput.LookDelta;
+            if (sampledInput.IsPressed(OutmButtons.Fullscreen))
+                Raylib.ToggleFullscreen();
 
-            fixedStep.AddFrameTime(frameDt);
-
-            int ticksThisFrame = 0;
-            while (ticksThisFrame < OutmFixedStep.MaxTicksPerRenderFrame && fixedStep.TryConsumeTick(out int simTick))
+            if (sampledInput.IsPressed(OutmButtons.Pause))
             {
-                OutmButtons pressed = bufferedPressed;
-                OutmButtons released = bufferedReleased;
-                Vector2 look = bufferedLook;
-
+                paused = !paused;
+                cursorCaptured = !paused;
+                if (cursorCaptured) Raylib.DisableCursor();
+                else Raylib.EnableCursor();
+                fixedStep.ClearAccumulator();
                 bufferedPressed = OutmButtons.None;
                 bufferedReleased = OutmButtons.None;
                 bufferedLook = Vector2.Zero;
-
-                var userCommand = new OutmUserCommand(sampledInput.Sequence, simTick, fixedStep.FixedDelta, sampledInput.Move, look, sampledInput.Down, pressed, released);
-                commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
-                SimulateFixedTick(world, map, mapRuntime, collision, camera, weapons, triggers, pickups, mapLogic, chunks, logicTicks, surfaces, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
-                ticksThisFrame++;
+                world.PushLog(paused ? "paused" : "unpaused");
             }
 
-            if (ticksThisFrame >= OutmFixedStep.MaxTicksPerRenderFrame)
-                fixedStep.ClampAfterSpiralLimit();
+            editor.Update(world, sampledInput);
+            levelPanel.Update(world, mapDef, map, mapRuntime, sampledInput);
+
+            if (!paused)
+            {
+                bufferedPressed |= sampledInput.Pressed;
+                bufferedReleased |= sampledInput.Released;
+                bufferedLook += cursorCaptured ? sampledInput.LookDelta : Vector2.Zero;
+
+                fixedStep.AddFrameTime(frameDt);
+
+                int ticksThisFrame = 0;
+                while (ticksThisFrame < OutmFixedStep.MaxTicksPerRenderFrame && fixedStep.TryConsumeTick(out int simTick))
+                {
+                    OutmButtons pressed = bufferedPressed;
+                    OutmButtons released = bufferedReleased;
+                    Vector2 look = bufferedLook;
+
+                    bufferedPressed = OutmButtons.None;
+                    bufferedReleased = OutmButtons.None;
+                    bufferedLook = Vector2.Zero;
+
+                    var userCommand = new OutmUserCommand(sampledInput.Sequence, simTick, fixedStep.FixedDelta, sampledInput.Move, look, sampledInput.Down, pressed, released);
+                    commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
+                    SimulateFixedTick(world, map, mapRuntime, collision, camera, weapons, triggers, pickups, mapLogic, chunks, logicTicks, surfaces, commands, fixedStep.FixedDelta, ref stepTimer, ref quickSave);
+                    ticksThisFrame++;
+                }
+
+                if (ticksThisFrame >= OutmFixedStep.MaxTicksPerRenderFrame)
+                    fixedStep.ClampAfterSpiralLimit();
+            }
+            else
+            {
+                fixedStep.ClearAccumulator();
+            }
 
             audio.ProcessEvents(world, camera.Position, camera.Right);
             audio.Update();
@@ -130,6 +156,8 @@ public static class OutmApp
             DrawWeaponHud(world);
             editor.Draw(world, camera, map, chunks, mapRuntime);
             levelPanel.Draw(mapDef, map, mapRuntime);
+            if (paused)
+                DrawPauseOverlay();
 
             Raylib.EndDrawing();
         }
@@ -265,6 +293,17 @@ public static class OutmApp
             stepTimer = 0.28f;
         else
             stepTimer = 0.38f;
+    }
+
+    private static void DrawPauseOverlay()
+    {
+        int w = Raylib.GetScreenWidth();
+        int h = Raylib.GetScreenHeight();
+        Raylib.DrawRectangle(0, 0, w, h, new Color(0, 0, 0, 80));
+        Raylib.DrawRectangle(w / 2 - 160, h / 2 - 54, 320, 108, new Color(0, 0, 0, 210));
+        Raylib.DrawRectangleLines(w / 2 - 160, h / 2 - 54, 320, 108, Color.SkyBlue);
+        OutmFontSystem.DrawText("PAUSED", w / 2 - 45, h / 2 - 32, 24, Color.SkyBlue);
+        OutmFontSystem.DrawText("ESC resume   F11 fullscreen", w / 2 - 118, h / 2 + 10, 14, Color.LightGray);
     }
 
     private static void DrawViewRay(OutmCameraMotor camera)
