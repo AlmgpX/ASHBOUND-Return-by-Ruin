@@ -9,12 +9,13 @@ namespace OUT_RayMicro.Gameplay;
 
 public sealed class OutmSaveSnapshot
 {
-    public int Version { get; set; } = 2;
+    public int Version { get; set; } = 3;
     public string MapId { get; set; } = "";
     public int Tick { get; set; }
     public float Time { get; set; }
     public OutmPlayerSaveSnapshot Player { get; set; } = new();
     public OutmDoorSaveSnapshot[] Doors { get; set; } = Array.Empty<OutmDoorSaveSnapshot>();
+    public OutmPickupSaveSnapshot[] Pickups { get; set; } = Array.Empty<OutmPickupSaveSnapshot>();
     public OutmProjectileSaveSnapshot[] Projectiles { get; set; } = Array.Empty<OutmProjectileSaveSnapshot>();
 }
 
@@ -38,6 +39,12 @@ public sealed class OutmDoorSaveSnapshot
 {
     public string Id { get; set; } = "";
     public bool Open { get; set; }
+}
+
+public sealed class OutmPickupSaveSnapshot
+{
+    public string Id { get; set; } = "";
+    public bool Collected { get; set; }
 }
 
 public sealed class OutmProjectileSaveSnapshot
@@ -74,13 +81,13 @@ public static class OutmSaveSystem
         Converters = { new JsonStringEnumConverter() }
     };
 
-    public static OutmSaveSnapshot Capture(OutmWorld world, OutmDemoMap map, OutmWeaponSystem weapons, Vector3 playerPosition, Vector3 playerVelocity, float yaw, float pitch)
+    public static OutmSaveSnapshot Capture(OutmWorld world, OutmDemoMap map, OutmDoorStore doorsStore, OutmPickupStore pickupsStore, OutmWeaponSystem weapons, Vector3 playerPosition, Vector3 playerVelocity, float yaw, float pitch)
     {
         OutmPlayerVitals vitals = world.PlayerVitals;
-        var doors = new OutmDoorSaveSnapshot[map.Doors.Count];
-        for (int i = 0; i < map.Doors.Count; i++)
+        var doors = new OutmDoorSaveSnapshot[doorsStore.Count];
+        for (int i = 0; i < doorsStore.Count; i++)
         {
-            OutmDoorRuntime door = map.Doors[i];
+            OutmDoorRecord door = doorsStore.Doors[i];
             doors[i] = new OutmDoorSaveSnapshot
             {
                 Id = door.Id,
@@ -88,9 +95,20 @@ public static class OutmSaveSystem
             };
         }
 
+        var pickups = new OutmPickupSaveSnapshot[pickupsStore.Count];
+        for (int i = 0; i < pickupsStore.Count; i++)
+        {
+            OutmPickupRecord pickup = pickupsStore.Pickups[i];
+            pickups[i] = new OutmPickupSaveSnapshot
+            {
+                Id = pickup.Id,
+                Collected = pickup.Collected
+            };
+        }
+
         return new OutmSaveSnapshot
         {
-            Version = 2,
+            Version = 3,
             MapId = map.Id,
             Tick = world.Tick,
             Time = world.Time,
@@ -110,11 +128,12 @@ public static class OutmSaveSystem
                 InputLocked = vitals.IsDead
             },
             Doors = doors,
+            Pickups = pickups,
             Projectiles = weapons.CaptureProjectileSnapshot()
         };
     }
 
-    public static void ApplyWorldState(OutmWorld world, OutmDemoMap map, OutmWeaponSystem weapons, OutmSaveSnapshot snapshot)
+    public static void ApplyWorldState(OutmWorld world, OutmDemoMap map, OutmDoorStore doors, OutmPickupStore pickups, OutmWeaponSystem weapons, OutmSaveSnapshot snapshot)
     {
         OutmPlayerSaveSnapshot player = snapshot.Player;
         world.PlayerVitals = new OutmPlayerVitals
@@ -134,7 +153,12 @@ public static class OutmSaveSystem
         world.Transforms.Set(world.PlayerEntity, player.Position.ToVector3(), new Vector3(0.0f, player.Yaw, player.Pitch));
 
         for (int i = 0; i < snapshot.Doors.Length; i++)
-            map.TrySetDoorOpen(snapshot.Doors[i].Id, snapshot.Doors[i].Open);
+            doors.TrySetOpen(snapshot.Doors[i].Id, snapshot.Doors[i].Open);
+        doors.SyncToDemoMap(map);
+
+        OutmPickupSaveSnapshot[] pickupSnapshots = snapshot.Pickups ?? Array.Empty<OutmPickupSaveSnapshot>();
+        for (int i = 0; i < pickupSnapshots.Length; i++)
+            pickups.TrySetCollected(pickupSnapshots[i].Id, pickupSnapshots[i].Collected);
 
         weapons.RestoreProjectileSnapshot(snapshot.Projectiles ?? Array.Empty<OutmProjectileSaveSnapshot>());
     }
