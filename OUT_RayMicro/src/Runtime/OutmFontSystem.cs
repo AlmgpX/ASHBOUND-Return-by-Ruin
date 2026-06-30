@@ -40,10 +40,27 @@ public static class OutmFontSystem
 
     public static void DrawText(string text, int x, int y, int fontSize, Color color)
     {
+        if (IsAscii(text))
+        {
+            Raylib.DrawText(text, x, y, fontSize, color);
+            return;
+        }
+
         if (IsLoaded)
             Raylib.DrawTextEx(hudFont, text, new Vector2(x, y), fontSize, 1.0f, color);
         else
             Raylib.DrawText(text, x, y, fontSize, color);
+    }
+
+    private static bool IsAscii(string text)
+    {
+        for (int i = 0; i < text.Length; i++)
+        {
+            if (text[i] > 0x7E || text[i] < 0x20)
+                return false;
+        }
+
+        return true;
     }
 
     private static string? FindHudFontPath()
@@ -86,23 +103,23 @@ public static class OutmFontSystem
     {
         var points = new List<int>(512);
 
-        AddRange(points, 0x0020, 0x007E); // Basic Latin and punctuation.
-        AddRange(points, 0x0400, 0x04FF); // Cyrillic.
+        AddRange(points, 0x0020, 0x007E);
+        AddRange(points, 0x0400, 0x04FF);
 
         points.Add(0x00A0);
-        points.Add(0x2665); // ♥
-        points.Add(0x2764); // ❤
-        points.Add(0x25B0); // ▰
-        points.Add(0x25A0); // ■
-        points.Add(0x25A1); // □
-        points.Add(0x25C6); // ◆
-        points.Add(0x25C7); // ◇
-        points.Add(0x2726); // ✦
-        points.Add(0x2022); // •
-        points.Add(0x2190); // ←
-        points.Add(0x2191); // ↑
-        points.Add(0x2192); // →
-        points.Add(0x2193); // ↓
+        points.Add(0x2665);
+        points.Add(0x2764);
+        points.Add(0x25B0);
+        points.Add(0x25A0);
+        points.Add(0x25A1);
+        points.Add(0x25C6);
+        points.Add(0x25C7);
+        points.Add(0x2726);
+        points.Add(0x2022);
+        points.Add(0x2190);
+        points.Add(0x2191);
+        points.Add(0x2192);
+        points.Add(0x2193);
 
         return points.Distinct().OrderBy(x => x).ToArray();
     }
