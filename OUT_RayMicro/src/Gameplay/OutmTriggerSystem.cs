@@ -16,7 +16,7 @@ public sealed class OutmTriggerSystem
         this.useSystem = useSystem;
     }
 
-    public void UpdateUseTriggers(OutmWorld world, OutmDemoMap map, IOutmCollisionWorld collision, OutmTriggerStore triggers, OutmDoorStore doors, Vector3 actorPosition, Vector3 actorForward, in OutmInputFrame input)
+    public void UpdateUseTriggers(OutmWorld world, OutmDemoMap map, IOutmCollisionWorld collision, OutmTriggerStore triggers, OutmDoorStore doors, OutmMapLogicSystem logic, Vector3 actorPosition, Vector3 actorForward, in OutmInputFrame input)
     {
         if (world.PlayerVitals.IsDead)
             return;
@@ -31,6 +31,7 @@ public sealed class OutmTriggerSystem
         {
             currentTriggerId = trigger.Id;
             world.Emit(new OutmEvent(OutmEventType.TriggerEntered, world.PlayerEntity, trigger.Entity, actorPosition, 0, trigger.Id));
+            logic.Fire(world, trigger.Id, "OnEnter");
         }
 
         if (!input.IsPressed(OutmButtons.Use))
@@ -38,5 +39,6 @@ public sealed class OutmTriggerSystem
 
         var request = new OutmUseRequest(world.PlayerEntity, actorPosition, actorForward, 0.0f, world.Tick);
         useSystem.UseTrigger(world, map, doors, trigger, request);
+        logic.Fire(world, trigger.Id, "OnUse");
     }
 }
