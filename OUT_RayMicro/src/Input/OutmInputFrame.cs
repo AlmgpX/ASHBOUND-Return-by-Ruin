@@ -18,7 +18,9 @@ public enum OutmButtons : uint
     DebugDamage = 1 << 8,
     DebugArmor = 1 << 9,
     DebugSave = 1 << 10,
-    DebugLoad = 1 << 11
+    DebugLoad = 1 << 11,
+    LevelDesign = 1 << 12,
+    LevelDesignNext = 1 << 13
 }
 
 public readonly struct OutmInputFrame
@@ -94,6 +96,8 @@ public sealed class OutmInputSampler
         if (Raylib.IsKeyDown(KeyboardKey.F2)) buttons |= OutmButtons.DebugDamage;
         if (Raylib.IsKeyDown(KeyboardKey.F3)) buttons |= OutmButtons.DebugArmor;
         if (Raylib.IsKeyDown(KeyboardKey.F5)) buttons |= OutmButtons.DebugSave;
+        if (Raylib.IsKeyDown(KeyboardKey.F6)) buttons |= OutmButtons.LevelDesign;
+        if (Raylib.IsKeyDown(KeyboardKey.F7)) buttons |= OutmButtons.LevelDesignNext;
         if (Raylib.IsKeyDown(KeyboardKey.F9)) buttons |= OutmButtons.DebugLoad;
 
         return buttons;
