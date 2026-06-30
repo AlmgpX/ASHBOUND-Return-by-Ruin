@@ -90,3 +90,491 @@ System.Text.Json.JsonException: The JSON value could not be converted to System.
 [2026-06-30 10:52:41.806] audio: load music D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Music\Final Rider - Video Driver.mp3
 [2026-06-30 10:52:41.865] audio: loaded 60 sounds
 [2026-06-30 10:53:56.908] Program clean exit
+[2026-06-30 12:20:01.975] Program start
+[2026-06-30 12:20:02.313] map manifest load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\maps.json
+[2026-06-30 12:20:02.317] outmap load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\test_room.outmap.json
+[2026-06-30 12:20:02.333] audio: init device
+[2026-06-30 12:20:02.391] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_01.wav
+[2026-06-30 12:20:02.392] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_02.wav
+[2026-06-30 12:20:02.392] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_03.wav
+[2026-06-30 12:20:02.393] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_04.wav
+[2026-06-30 12:20:02.393] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\BulletRicImpact.mp3
+[2026-06-30 12:20:02.396] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 12:20:02.397] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_01.wav
+[2026-06-30 12:20:02.398] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_02.wav
+[2026-06-30 12:20:02.399] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_03.wav
+[2026-06-30 12:20:02.399] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 12:20:02.400] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\DoorOpen.wav
+[2026-06-30 12:20:02.402] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 12:20:02.402] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 12:20:02.403] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 12:20:02.403] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 12:20:02.404] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 12:20:02.404] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:20:02.405] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:20:02.406] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:20:02.406] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:20:02.407] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:20:02.408] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:20:02.409] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:20:02.410] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:20:02.474] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:20:02.475] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:20:02.476] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:20:02.476] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:20:02.477] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:20:02.478] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 12:20:02.479] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 12:20:02.479] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 12:20:02.480] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 12:20:02.480] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 12:20:02.481] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:20:02.481] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:20:02.482] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:20:02.483] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:20:02.484] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:20:02.485] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:20:02.485] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:20:02.486] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:20:02.552] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:20:02.553] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:20:02.553] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:20:02.554] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:20:02.555] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:20:02.556] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:20:02.556] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:20:02.557] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:20:02.558] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:20:02.558] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:20:02.559] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:20:02.560] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:20:02.561] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:20:02.562] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:20:02.563] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:20:02.564] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:20:02.564] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:20:02.565] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:20:02.632] audio: load music D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Music\Final Rider - Video Driver.mp3
+[2026-06-30 12:20:02.635] audio: loaded 60 sounds
+[2026-06-30 12:20:02.645] model missing: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\meshes\rooms\test_room.glb
+[2026-06-30 12:20:19.072] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:35.805] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:36.489] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:36.757] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:36.974] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:37.191] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:37.674] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:41.203] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:42.355] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:43.773] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:46.918] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:20:53.393] Program clean exit
+[2026-06-30 12:28:34.060] Program start
+[2026-06-30 12:28:34.419] map manifest load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\maps.json
+[2026-06-30 12:28:34.424] outmap load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\test_room.outmap.json
+[2026-06-30 12:28:34.440] audio: init device
+[2026-06-30 12:28:34.481] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_01.wav
+[2026-06-30 12:28:34.482] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_02.wav
+[2026-06-30 12:28:34.482] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_03.wav
+[2026-06-30 12:28:34.482] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_04.wav
+[2026-06-30 12:28:34.483] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\BulletRicImpact.mp3
+[2026-06-30 12:28:34.486] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 12:28:34.487] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_01.wav
+[2026-06-30 12:28:34.488] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_02.wav
+[2026-06-30 12:28:34.489] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_03.wav
+[2026-06-30 12:28:34.489] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 12:28:34.490] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\DoorOpen.wav
+[2026-06-30 12:28:34.492] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 12:28:34.492] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 12:28:34.493] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 12:28:34.493] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 12:28:34.494] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 12:28:34.494] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:28:34.495] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:28:34.496] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:28:34.497] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:28:34.498] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:28:34.498] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:28:34.499] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:28:34.500] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:28:34.566] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:28:34.567] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:28:34.568] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:28:34.568] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:28:34.569] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:28:34.570] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 12:28:34.571] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 12:28:34.572] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 12:28:34.572] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 12:28:34.573] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 12:28:34.573] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:28:34.574] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:28:34.575] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:28:34.576] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:28:34.577] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:28:34.578] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:28:34.579] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:28:34.580] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:28:34.648] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:28:34.649] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:28:34.650] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:28:34.651] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:28:34.651] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:28:34.652] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:28:34.653] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:28:34.654] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:28:34.654] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:28:34.655] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:28:34.656] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:28:34.657] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:28:34.658] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:28:34.659] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:28:34.660] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:28:34.660] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:28:34.661] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:28:34.662] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:28:34.727] audio: load music D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Music\Final Rider - Video Driver.mp3
+[2026-06-30 12:28:34.731] audio: loaded 60 sounds
+[2026-06-30 12:28:34.743] model missing: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\meshes\rooms\test_room.glb
+[2026-06-30 12:29:16.433] save written: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\saves\quicksave.outsave.json
+[2026-06-30 12:29:22.740] Program clean exit
+[2026-06-30 12:48:11.487] Program start
+[2026-06-30 12:48:11.814] map manifest load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\maps.json
+[2026-06-30 12:48:11.818] outmap load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\test_room.outmap.json
+[2026-06-30 12:48:11.837] audio: init device
+[2026-06-30 12:48:11.897] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_01.wav
+[2026-06-30 12:48:11.897] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_02.wav
+[2026-06-30 12:48:11.898] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_03.wav
+[2026-06-30 12:48:11.898] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_04.wav
+[2026-06-30 12:48:11.899] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\BulletRicImpact.mp3
+[2026-06-30 12:48:11.902] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 12:48:11.903] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_01.wav
+[2026-06-30 12:48:11.903] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_02.wav
+[2026-06-30 12:48:11.904] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_03.wav
+[2026-06-30 12:48:11.905] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 12:48:11.905] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\DoorOpen.wav
+[2026-06-30 12:48:11.907] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 12:48:11.908] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 12:48:11.908] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 12:48:11.909] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 12:48:11.909] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 12:48:11.909] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:48:11.910] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:48:11.911] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:48:11.912] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:48:11.913] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:48:11.913] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:48:11.914] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:48:11.915] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:48:11.977] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:48:11.979] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:48:11.979] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:48:11.980] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:48:11.981] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:48:11.982] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 12:48:11.983] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 12:48:11.983] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 12:48:11.984] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 12:48:11.984] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 12:48:11.985] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:48:11.985] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:48:11.986] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:48:11.987] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:48:11.988] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:48:11.989] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:48:11.989] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:48:11.990] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:48:12.069] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:48:12.070] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:48:12.071] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:48:12.072] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:48:12.073] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:48:12.075] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 12:48:12.076] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 12:48:12.077] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 12:48:12.078] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 12:48:12.079] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 12:48:12.081] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 12:48:12.082] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 12:48:12.083] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 12:48:12.084] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 12:48:12.085] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 12:48:12.086] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 12:48:12.087] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 12:48:12.087] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 12:48:12.157] audio: load music D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Music\Final Rider - Video Driver.mp3
+[2026-06-30 12:48:12.161] audio: loaded 60 sounds
+[2026-06-30 12:48:12.171] model missing: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\meshes\rooms\test_room.glb
+[2026-06-30 12:48:47.668] Program clean exit
+[2026-06-30 13:05:07.746] Program start
+[2026-06-30 13:05:08.028] map manifest load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\maps.json
+[2026-06-30 13:05:08.032] outmap load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\test_room.outmap.json
+[2026-06-30 13:05:08.050] audio: init device
+[2026-06-30 13:05:08.096] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_01.wav
+[2026-06-30 13:05:08.097] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_02.wav
+[2026-06-30 13:05:08.097] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_03.wav
+[2026-06-30 13:05:08.098] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_04.wav
+[2026-06-30 13:05:08.098] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\BulletRicImpact.mp3
+[2026-06-30 13:05:08.102] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 13:05:08.103] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_01.wav
+[2026-06-30 13:05:08.103] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_02.wav
+[2026-06-30 13:05:08.104] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_03.wav
+[2026-06-30 13:05:08.105] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 13:05:08.105] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\DoorOpen.wav
+[2026-06-30 13:05:08.107] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 13:05:08.107] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 13:05:08.108] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 13:05:08.108] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 13:05:08.109] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 13:05:08.109] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 13:05:08.110] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 13:05:08.111] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 13:05:08.112] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 13:05:08.112] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 13:05:08.114] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 13:05:08.114] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 13:05:08.115] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 13:05:08.181] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 13:05:08.182] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 13:05:08.183] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 13:05:08.183] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 13:05:08.184] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 13:05:08.185] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 13:05:08.186] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 13:05:08.186] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 13:05:08.187] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 13:05:08.187] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 13:05:08.188] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 13:05:08.188] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 13:05:08.189] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 13:05:08.190] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 13:05:08.191] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 13:05:08.191] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 13:05:08.192] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 13:05:08.193] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 13:05:08.258] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 13:05:08.259] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 13:05:08.259] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 13:05:08.260] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 13:05:08.261] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 13:05:08.262] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 13:05:08.263] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 13:05:08.263] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 13:05:08.264] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 13:05:08.265] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 13:05:08.266] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 13:05:08.266] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 13:05:08.267] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 13:05:08.268] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 13:05:08.269] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 13:05:08.270] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 13:05:08.270] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 13:05:08.271] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 13:05:08.338] audio: load music D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Music\Final Rider - Video Driver.mp3
+[2026-06-30 13:05:08.342] audio: loaded 60 sounds
+[2026-06-30 13:05:08.352] model missing: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\meshes\rooms\test_room.glb
+[2026-06-30 13:05:34.766] Program clean exit
+[2026-06-30 14:05:53.059] Program start
+[2026-06-30 14:05:53.393] map manifest load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\maps.json
+[2026-06-30 14:05:53.397] outmap load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\test_room.outmap.json
+[2026-06-30 14:05:53.435] audio: init device
+[2026-06-30 14:05:53.469] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_01.wav
+[2026-06-30 14:05:53.471] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_02.wav
+[2026-06-30 14:05:53.471] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_03.wav
+[2026-06-30 14:05:53.472] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_04.wav
+[2026-06-30 14:05:53.472] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\BulletRicImpact.mp3
+[2026-06-30 14:05:53.476] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 14:05:53.477] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_01.wav
+[2026-06-30 14:05:53.478] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_02.wav
+[2026-06-30 14:05:53.479] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_03.wav
+[2026-06-30 14:05:53.479] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 14:05:53.480] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\DoorOpen.wav
+[2026-06-30 14:05:53.482] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 14:05:53.482] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 14:05:53.483] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 14:05:53.484] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 14:05:53.484] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 14:05:53.485] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 14:05:53.486] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 14:05:53.487] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 14:05:53.488] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 14:05:53.489] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 14:05:53.490] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 14:05:53.491] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 14:05:53.492] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 14:05:53.555] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 14:05:53.556] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 14:05:53.557] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 14:05:53.558] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 14:05:53.559] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 14:05:53.560] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 14:05:53.561] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 14:05:53.561] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 14:05:53.562] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 14:05:53.562] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 14:05:53.563] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 14:05:53.564] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 14:05:53.565] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 14:05:53.566] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 14:05:53.567] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 14:05:53.568] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 14:05:53.568] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 14:05:53.569] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 14:05:53.634] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 14:05:53.635] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 14:05:53.636] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 14:05:53.637] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 14:05:53.638] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 14:05:53.639] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 14:05:53.640] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 14:05:53.640] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 14:05:53.641] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 14:05:53.642] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 14:05:53.643] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 14:05:53.644] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 14:05:53.644] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 14:05:53.645] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 14:05:53.646] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 14:05:53.647] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 14:05:53.648] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 14:05:53.648] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 14:05:53.717] audio: load music D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Music\Final Rider - Video Driver.mp3
+[2026-06-30 14:05:53.721] audio: loaded 60 sounds
+[2026-06-30 14:05:53.730] model missing: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\meshes\rooms\test_room.glb
+[2026-06-30 14:06:28.936] Program clean exit
+[2026-06-30 19:55:32.221] Program start
+[2026-06-30 19:55:32.551] map manifest load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\maps.json
+[2026-06-30 19:55:32.555] outmap load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\test_room.outmap.json
+[2026-06-30 19:55:32.593] audio: init device
+[2026-06-30 19:55:32.654] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_01.wav
+[2026-06-30 19:55:32.655] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_02.wav
+[2026-06-30 19:55:32.655] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_03.wav
+[2026-06-30 19:55:32.655] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_04.wav
+[2026-06-30 19:55:32.656] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\BulletRicImpact.mp3
+[2026-06-30 19:55:32.660] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 19:55:32.660] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_01.wav
+[2026-06-30 19:55:32.661] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_02.wav
+[2026-06-30 19:55:32.662] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_03.wav
+[2026-06-30 19:55:32.662] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 19:55:32.663] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\DoorOpen.wav
+[2026-06-30 19:55:32.665] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 19:55:32.665] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 19:55:32.666] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 19:55:32.666] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 19:55:32.667] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 19:55:32.667] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 19:55:32.668] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 19:55:32.669] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 19:55:32.670] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 19:55:32.670] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 19:55:32.671] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 19:55:32.672] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 19:55:32.673] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 19:55:32.736] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 19:55:32.737] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 19:55:32.738] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 19:55:32.739] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 19:55:32.739] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 19:55:32.740] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 19:55:32.741] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 19:55:32.741] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 19:55:32.742] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 19:55:32.742] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 19:55:32.743] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 19:55:32.744] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 19:55:32.745] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 19:55:32.745] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 19:55:32.746] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 19:55:32.747] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 19:55:32.748] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 19:55:32.749] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 19:55:32.811] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 19:55:32.813] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 19:55:32.813] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 19:55:32.814] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 19:55:32.814] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 19:55:32.816] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 19:55:32.816] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 19:55:32.817] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 19:55:32.817] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 19:55:32.818] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 19:55:32.819] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 19:55:32.820] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 19:55:32.821] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 19:55:32.822] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 19:55:32.823] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 19:55:32.823] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 19:55:32.824] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 19:55:32.825] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 19:55:32.889] audio: load music D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Music\Final Rider - Video Driver.mp3
+[2026-06-30 19:55:32.893] audio: loaded 60 sounds
+[2026-06-30 19:55:32.903] model missing: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\meshes\rooms\test_room.glb
+[2026-06-30 19:56:19.143] Program clean exit
+[2026-06-30 20:04:34.252] Program start
+[2026-06-30 20:04:34.642] map manifest load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\maps.json
+[2026-06-30 20:04:34.647] outmap load: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\maps\test_room.outmap.json
+[2026-06-30 20:04:34.686] audio: init device
+[2026-06-30 20:04:34.721] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_01.wav
+[2026-06-30 20:04:34.722] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_02.wav
+[2026-06-30 20:04:34.722] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_03.wav
+[2026-06-30 20:04:34.723] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_BulletShot_04.wav
+[2026-06-30 20:04:34.723] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\BulletRicImpact.mp3
+[2026-06-30 20:04:34.727] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 20:04:34.727] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_01.wav
+[2026-06-30 20:04:34.728] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_02.wav
+[2026-06-30 20:04:34.729] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_03.wav
+[2026-06-30 20:04:34.729] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Weapon\OUT_Impact_Base.wav
+[2026-06-30 20:04:34.730] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Misc\DoorOpen.wav
+[2026-06-30 20:04:34.731] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 20:04:34.732] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 20:04:34.732] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 20:04:34.733] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 20:04:34.734] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 20:04:34.734] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 20:04:34.735] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 20:04:34.736] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 20:04:34.737] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 20:04:34.738] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 20:04:34.739] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 20:04:34.739] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 20:04:34.740] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 20:04:34.809] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 20:04:34.810] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 20:04:34.810] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 20:04:34.811] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 20:04:34.812] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 20:04:34.813] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_01.wav
+[2026-06-30 20:04:34.813] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_02.wav
+[2026-06-30 20:04:34.814] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_03.wav
+[2026-06-30 20:04:34.814] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_04.wav
+[2026-06-30 20:04:34.815] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\step_05.wav
+[2026-06-30 20:04:34.815] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 20:04:34.816] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 20:04:34.817] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 20:04:34.818] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 20:04:34.819] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 20:04:34.820] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 20:04:34.820] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 20:04:34.821] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 20:04:34.888] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 20:04:34.889] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 20:04:34.890] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 20:04:34.891] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 20:04:34.891] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 20:04:34.893] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_01.wav
+[2026-06-30 20:04:34.893] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_02.wav
+[2026-06-30 20:04:34.894] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_03.wav
+[2026-06-30 20:04:34.894] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_04.wav
+[2026-06-30 20:04:34.895] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Wood_05.wav
+[2026-06-30 20:04:34.896] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_01.wav
+[2026-06-30 20:04:34.897] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_02.wav
+[2026-06-30 20:04:34.898] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_03.wav
+[2026-06-30 20:04:34.899] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Carpet_04.wav
+[2026-06-30 20:04:34.900] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_01.wav
+[2026-06-30 20:04:34.900] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_02.wav
+[2026-06-30 20:04:34.901] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_03.wav
+[2026-06-30 20:04:34.902] audio: load sound D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Footstep\Step_Water_04.wav
+[2026-06-30 20:04:34.969] audio: load music D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\audio\Music\Final Rider - Video Driver.mp3
+[2026-06-30 20:04:34.973] audio: loaded 60 sounds
+[2026-06-30 20:04:34.983] model missing: D:\DeliriumInteractive\Game\ASHBOUND-Return-by-Ruin\OUT_RayMicro\bin\Release\net9.0\data\meshes\rooms\test_room.glb
+[2026-06-30 20:04:49.153] Program clean exit
