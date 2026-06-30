@@ -1,11 +1,13 @@
 using System.Numerics;
 using OUT_RayMicro.Core;
+using OUT_RayMicro.Physics;
 
 namespace OUT_RayMicro.World;
 
 public struct OutmTriggerRecord
 {
     public EntityId Entity;
+    public OutmBodyHandle Body;
     public string Id;
     public string Kind;
     public string Target;
@@ -26,21 +28,28 @@ public sealed class OutmTriggerStore
 
     public void Add(EntityId entity, string id, string kind, string target, Vector3 center, Vector3 size)
     {
-        if (string.IsNullOrWhiteSpace(id))
-            id = $"trigger.{triggers.Count}";
-
+        if (string.IsNullOrWhiteSpace(id)) id = $"trigger.{triggers.Count}";
         var record = new OutmTriggerRecord
         {
             Entity = entity,
+            Body = OutmBodyHandle.None,
             Id = id,
             Kind = string.IsNullOrWhiteSpace(kind) ? "door_toggle" : kind,
             Target = target,
             Center = center,
             Size = size
         };
-
         byId[id] = triggers.Count;
         triggers.Add(record);
+    }
+
+    public bool TryBindBody(string id, OutmBodyHandle body)
+    {
+        if (!byId.TryGetValue(id, out int index)) return false;
+        OutmTriggerRecord trigger = triggers[index];
+        trigger.Body = body;
+        triggers[index] = trigger;
+        return true;
     }
 
     public bool TryGet(string id, out OutmTriggerRecord trigger)
@@ -50,7 +59,6 @@ public sealed class OutmTriggerStore
             trigger = triggers[index];
             return true;
         }
-
         trigger = default;
         return false;
     }
@@ -60,18 +68,14 @@ public sealed class OutmTriggerStore
         for (int i = 0; i < triggers.Count; i++)
         {
             trigger = triggers[i];
-            if (PointInsideBox(position, trigger.Min, trigger.Max))
-                return true;
+            if (PointInsideBox(position, trigger.Min, trigger.Max)) return true;
         }
-
         trigger = default;
         return false;
     }
 
     private static bool PointInsideBox(Vector3 point, Vector3 min, Vector3 max)
     {
-        return point.X >= min.X && point.X <= max.X &&
-               point.Y >= min.Y && point.Y <= max.Y &&
-               point.Z >= min.Z && point.Z <= max.Z;
+        return point.X >= min.X && point.X <= max.X && point.Y >= min.Y && point.Y <= max.Y && point.Z >= min.Z && point.Z <= max.Z;
     }
 }
