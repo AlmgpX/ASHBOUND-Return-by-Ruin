@@ -15,7 +15,7 @@ public static class OutmApp
     public static void Run()
     {
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(1280, 720, "OUT RayMicro // Quake-room seed");
+        Raylib.InitWindow(1280, 720, "OUT RayMicro // fixed tick seed");
         Raylib.SetTargetFPS(120);
         Raylib.DisableCursor();
         OutmFontSystem.Load();
@@ -28,11 +28,14 @@ public static class OutmApp
         var weapons = new OutmWeaponSystem(content.GetWeapon("weapon.revolver"));
         var editor = new OutmEditorShell();
         var inputSampler = new OutmInputSampler();
+        var commands = new OutmCommandQueue();
+        var fixedStep = new OutmFixedStep();
         var audio = new OutmAudioSystem();
         audio.Load(world);
 
         world.PushLog("OUT RayMicro boot");
         world.PushLog($"defs: weapons {content.Weapons.Count}");
+        world.PushLog($"fixed tick: {1.0f / fixedStep.FixedDelta:0} hz");
         world.PushLog($"collision backend: {collision.BackendKind}");
         world.PushLog(OutmFontSystem.IsLoaded ? "unicode HUD font online" : "unicode HUD font missing");
 
@@ -41,30 +44,35 @@ public static class OutmApp
 
         while (!Raylib.WindowShouldClose())
         {
-            float dt = Math.Clamp(Raylib.GetFrameTime(), 0.0f, 0.05f);
-            world.BeginFrame(dt);
-            OutmInputFrame input = inputSampler.Sample(dt);
-            collision.Step(dt);
+            float frameDt = Math.Clamp(Raylib.GetFrameTime(), 0.0f, 0.10f);
+            OutmInputFrame sampledInput = inputSampler.Sample(frameDt);
+            editor.Update(world, sampledInput);
+            fixedStep.AddFrameTime(frameDt);
 
-            editor.Update(world, input);
-            if (!world.PlayerVitals.IsDead)
+            int ticksThisFrame = 0;
+            while (ticksThisFrame < OutmFixedStep.MaxTicksPerRenderFrame && fixedStep.TryConsumeTick(out int simTick))
             {
-                camera.Update(input, collision);
-                UpdateFootsteps(world, camera, input, dt, ref stepTimer);
+                OutmButtons pressed = ticksThisFrame == 0 ? sampledInput.Pressed : OutmButtons.None;
+                OutmButtons released = ticksThisFrame == 0 ? sampledInput.Released : OutmButtons.None;
+
+                var userCommand = new OutmUserCommand(
+                    sampledInput.Sequence,
+                    simTick,
+                    fixedStep.FixedDelta,
+                    sampledInput.Move,
+                    sampledInput.LookDelta,
+                    sampledInput.Down,
+                    pressed,
+                    released);
+
+                commands.Enqueue(new OutmCommand(OutmCommandType.UserInput, userCommand));
+                SimulateFixedTick(world, map, collision, camera, weapons, commands, fixedStep.FixedDelta, ref wasInTrigger, ref stepTimer);
+                ticksThisFrame++;
             }
 
-            bool inTrigger = map.IntersectsTrigger(camera.Position);
-            if (!world.PlayerVitals.IsDead && inTrigger && !wasInTrigger)
-            {
-                map.DoorOpen = !map.DoorOpen;
-                world.Emit(new OutmEvent(OutmEventType.TriggerEntered, EntityId.None, EntityId.None, camera.Position, map.DoorOpen ? 1 : 0, "door trigger"));
-                world.Emit(new OutmEvent(OutmEventType.DoorToggled, EntityId.None, EntityId.None, camera.Position, map.DoorOpen ? 1 : 0, map.DoorOpen ? "door opened" : "door closed"));
-            }
-            wasInTrigger = inTrigger;
+            if (ticksThisFrame >= OutmFixedStep.MaxTicksPerRenderFrame)
+                fixedStep.ClampAfterSpiralLimit();
 
-            Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
-            if (!world.PlayerVitals.IsDead)
-                weapons.Update(input, muzzle, camera.Forward, collision, world);
             audio.ProcessEvents(world, camera.Position, camera.Right);
             audio.Update();
 
@@ -88,6 +96,49 @@ public static class OutmApp
         OutmFontSystem.Unload();
         Raylib.EnableCursor();
         Raylib.CloseWindow();
+    }
+
+    private static void SimulateFixedTick(
+        OutmWorld world,
+        OutmDemoMap map,
+        IOutmCollisionWorld collision,
+        OutmCameraMotor camera,
+        OutmWeaponSystem weapons,
+        OutmCommandQueue commands,
+        float fixedDt,
+        ref bool wasInTrigger,
+        ref float stepTimer)
+    {
+        world.BeginFrame(fixedDt);
+        collision.Step(fixedDt);
+
+        while (commands.TryDequeue(out OutmCommand command))
+        {
+            if (command.Type != OutmCommandType.UserInput)
+                continue;
+
+            OutmInputFrame input = command.User.ToInputFrame();
+            if (!world.PlayerVitals.IsDead)
+            {
+                camera.Update(input, collision);
+                UpdateFootsteps(world, camera, input, fixedDt, ref stepTimer);
+            }
+
+            bool inTrigger = map.IntersectsTrigger(camera.Position);
+            if (!world.PlayerVitals.IsDead && inTrigger && !wasInTrigger)
+            {
+                map.DoorOpen = !map.DoorOpen;
+                world.Emit(new OutmEvent(OutmEventType.TriggerEntered, EntityId.None, EntityId.None, camera.Position, map.DoorOpen ? 1 : 0, "door trigger"));
+                world.Emit(new OutmEvent(OutmEventType.DoorToggled, EntityId.None, EntityId.None, camera.Position, map.DoorOpen ? 1 : 0, map.DoorOpen ? "door opened" : "door closed"));
+            }
+            wasInTrigger = inTrigger;
+
+            if (!world.PlayerVitals.IsDead)
+            {
+                Vector3 muzzle = camera.Position + new Vector3(0, -0.08f, 0) + camera.Right * 0.22f;
+                weapons.Update(input, muzzle, camera.Forward, collision, world);
+            }
+        }
     }
 
     private static void UpdateFootsteps(OutmWorld world, OutmCameraMotor camera, in OutmInputFrame input, float dt, ref float stepTimer)
