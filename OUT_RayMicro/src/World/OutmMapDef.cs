@@ -38,10 +38,7 @@ public sealed class OutmMapDef
         return new Color(r, g, b, a);
     }
 
-    private static byte ClampByte(int value)
-    {
-        return (byte)Math.Clamp(value, 0, 255);
-    }
+    private static byte ClampByte(int value) => (byte)Math.Clamp(value, 0, 255);
 }
 
 public sealed class OutmBoxDef
@@ -51,6 +48,7 @@ public sealed class OutmBoxDef
     public float[] Size { get; set; } = { 1, 1, 1 };
     public int[] Color { get; set; } = { 96, 96, 96, 255 };
     public bool Solid { get; set; } = true;
+    public string Surface { get; set; } = "surface.stone";
 }
 
 public sealed class OutmDoorDef
@@ -60,6 +58,7 @@ public sealed class OutmDoorDef
     public float[] Size { get; set; } = { 2.1f, 4.0f, 0.35f };
     public int[] Color { get; set; } = { 120, 62, 48, 255 };
     public bool StartsOpen { get; set; }
+    public string Surface { get; set; } = "surface.wood";
 }
 
 public sealed class OutmTriggerDef
@@ -79,6 +78,7 @@ public sealed class OutmMeshRefDef
     public float[] Rotation { get; set; } = { 0, 0, 0 };
     public float[] Scale { get; set; } = { 1, 1, 1 };
     public string Collision { get; set; } = "none";
+    public string Surface { get; set; } = "surface.stone";
 }
 
 public static class OutmMapLoader
@@ -129,7 +129,8 @@ public static class OutmMapLoader
                 OutmMapDef.ToVector3(box.Center, Vector3.Zero),
                 OutmMapDef.ToVector3(box.Size, Vector3.One),
                 OutmMapDef.ToColor(box.Color, new Color(96, 96, 96, 255)),
-                box.Solid));
+                box.Solid,
+                box.Surface));
         }
 
         foreach (OutmDoorDef door in def.Doors)
@@ -139,7 +140,8 @@ public static class OutmMapLoader
                 OutmMapDef.ToVector3(door.Center, new Vector3(0, 2, -8.85f)),
                 OutmMapDef.ToVector3(door.Size, new Vector3(2.1f, 4, 0.35f)),
                 OutmMapDef.ToColor(door.Color, new Color(120, 62, 48, 255)),
-                door.StartsOpen));
+                door.StartsOpen,
+                door.Surface));
         }
 
         foreach (OutmTriggerDef trigger in def.Triggers)
@@ -164,20 +166,13 @@ public static class OutmMapLoader
             PlayerStart = new[] { 0.0f, 1.2f, 7.0f },
             Boxes = new[]
             {
-                new OutmBoxDef { Id = "floor", Center = new[] { 0f, -0.1f, 0f }, Size = new[] { 18f, 0.2f, 18f }, Color = new[] { 42, 43, 45, 255 }, Solid = true },
-                new OutmBoxDef { Id = "ceiling", Center = new[] { 0f, 4.2f, 0f }, Size = new[] { 18f, 0.2f, 18f }, Color = new[] { 27, 30, 37, 255 }, Solid = false },
-                new OutmBoxDef { Id = "wall.left", Center = new[] { -9f, 2f, 0f }, Size = new[] { 0.4f, 4f, 18f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "wall.right", Center = new[] { 9f, 2f, 0f }, Size = new[] { 0.4f, 4f, 18f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "wall.back", Center = new[] { 0f, 2f, 9f }, Size = new[] { 18f, 4f, 0.4f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "wall.front.left", Center = new[] { -4.5f, 2f, -9f }, Size = new[] { 9f, 4f, 0.4f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "wall.front.right", Center = new[] { 4.5f, 2f, -9f }, Size = new[] { 9f, 4f, 0.4f }, Color = new[] { 74, 84, 96, 255 }, Solid = true },
-                new OutmBoxDef { Id = "block.center", Center = new[] { 0f, 0.6f, -2.5f }, Size = new[] { 3f, 1.2f, 2f }, Color = new[] { 92, 98, 110, 255 }, Solid = true },
-                new OutmBoxDef { Id = "crate.left", Center = new[] { -5f, 0.5f, 2f }, Size = new[] { 1.6f, 1f, 1.6f }, Color = new[] { 120, 85, 62, 255 }, Solid = true },
-                new OutmBoxDef { Id = "crate.right", Center = new[] { 5f, 0.5f, 2f }, Size = new[] { 1.6f, 1f, 1.6f }, Color = new[] { 120, 85, 62, 255 }, Solid = true }
+                new OutmBoxDef { Id = "floor", Center = new[] { 0f, -0.1f, 0f }, Size = new[] { 18f, 0.2f, 18f }, Color = new[] { 42, 43, 45, 255 }, Solid = true, Surface = "surface.stone" },
+                new OutmBoxDef { Id = "block", Center = new[] { 0f, 0.6f, -2.5f }, Size = new[] { 3f, 1.2f, 2f }, Color = new[] { 92, 98, 110, 255 }, Solid = true, Surface = "surface.stone" },
+                new OutmBoxDef { Id = "crate", Center = new[] { -5f, 0.5f, 2f }, Size = new[] { 1.6f, 1f, 1.6f }, Color = new[] { 120, 85, 62, 255 }, Solid = true, Surface = "surface.wood" }
             },
             Doors = new[]
             {
-                new OutmDoorDef { Id = "door.main", Center = new[] { 0f, 2f, -8.85f }, Size = new[] { 2.1f, 4f, 0.35f }, Color = new[] { 120, 62, 48, 255 }, StartsOpen = false }
+                new OutmDoorDef { Id = "door.main", Center = new[] { 0f, 2f, -8.85f }, Size = new[] { 2.1f, 4f, 0.35f }, Color = new[] { 120, 62, 48, 255 }, StartsOpen = false, Surface = "surface.wood" }
             },
             Triggers = new[]
             {
