@@ -2,6 +2,30 @@
   "id": "map.test_room",
   "displayName": "Test Room OUTMAP",
   "playerStart": [0.0, 1.2, 7.0],
+  "entities": [
+    {
+      "id": "player.start",
+      "class": "InfoPlayerStart",
+      "targetName": "player_start",
+      "position": [0.0, 1.2, 7.0]
+    },
+    {
+      "id": "relay.demo",
+      "class": "LogicRelay",
+      "targetName": "relay.demo",
+      "outputs": [
+        { "event": "OnTrigger", "target": "door.main", "input": "Toggle", "delay": 0.0 }
+      ]
+    },
+    {
+      "id": "button.demo",
+      "class": "FuncButton",
+      "targetName": "button.demo",
+      "outputs": [
+        { "event": "OnUse", "target": "relay.demo", "input": "Trigger", "delay": 0.0 }
+      ]
+    }
+  ],
   "boxes": [
     { "id": "floor", "center": [0.0, -0.1, 0.0], "size": [18.0, 0.2, 18.0], "color": [42, 43, 45, 255], "solid": true, "surface": "surface.stone" },
     { "id": "ceiling", "center": [0.0, 4.2, 0.0], "size": [18.0, 0.2, 18.0], "color": [27, 30, 37, 255], "solid": false, "surface": "surface.stone" },

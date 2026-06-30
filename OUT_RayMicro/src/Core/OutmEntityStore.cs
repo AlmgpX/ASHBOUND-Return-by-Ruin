@@ -9,7 +9,8 @@ public enum OutmEntityKind : ushort
     Projectile,
     Pickup,
     Actor,
-    StaticWorld
+    StaticWorld,
+    Logic
 }
 
 public sealed class OutmEntityStore
