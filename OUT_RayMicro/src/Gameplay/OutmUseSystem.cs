@@ -122,7 +122,7 @@ public sealed class OutmUseSystem
         string message = open ? "use door opened" : "use door closed";
 
         world.Emit(new OutmEvent(
-            OutmEventType.UsePerformed,
+            OutmEventType.TriggerEntered,
             request.User,
             EntityId.None,
             request.Origin,
@@ -143,7 +143,7 @@ public sealed class OutmUseSystem
     private static OutmUseResult Reject(OutmWorld world, in OutmUseRequest request, string message)
     {
         world.Emit(new OutmEvent(
-            OutmEventType.UseRejected,
+            OutmEventType.Debug,
             request.User,
             EntityId.None,
             request.Origin,
