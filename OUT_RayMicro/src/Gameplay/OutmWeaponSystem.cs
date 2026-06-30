@@ -27,6 +27,65 @@ public sealed class OutmWeaponSystem
         this.revolver = revolver;
     }
 
+    public int ActiveProjectileCount
+    {
+        get
+        {
+            int count = 0;
+            for (int i = 0; i < projectiles.Length; i++)
+            {
+                if (projectiles[i].Active)
+                    count++;
+            }
+            return count;
+        }
+    }
+
+    public OutmProjectileSaveSnapshot[] CaptureProjectileSnapshot()
+    {
+        var snapshot = new OutmProjectileSaveSnapshot[ActiveProjectileCount];
+        int cursor = 0;
+        for (int i = 0; i < projectiles.Length; i++)
+        {
+            OutmProjectile projectile = projectiles[i];
+            if (!projectile.Active)
+                continue;
+
+            snapshot[cursor++] = new OutmProjectileSaveSnapshot
+            {
+                Position = OutmVector3Save.From(projectile.Position),
+                Velocity = OutmVector3Save.From(projectile.Velocity),
+                Life = projectile.Life,
+                Bounces = projectile.Bounces
+            };
+        }
+
+        return snapshot;
+    }
+
+    public void RestoreProjectileSnapshot(OutmProjectileSaveSnapshot[] snapshot)
+    {
+        ClearProjectiles();
+        int count = Math.Min(projectiles.Length, snapshot.Length);
+        for (int i = 0; i < count; i++)
+        {
+            OutmProjectileSaveSnapshot saved = snapshot[i];
+            projectiles[i] = new OutmProjectile
+            {
+                Active = saved.Life > 0.0f,
+                Position = saved.Position.ToVector3(),
+                Velocity = saved.Velocity.ToVector3(),
+                Life = MathF.Max(0.0f, saved.Life),
+                Bounces = Math.Max(0, saved.Bounces)
+            };
+        }
+    }
+
+    public void ClearProjectiles()
+    {
+        Array.Clear(projectiles, 0, projectiles.Length);
+    }
+
     public void Update(in OutmInputFrame input, Vector3 muzzle, Vector3 forward, IOutmCollisionWorld collision, OutmWorld world)
     {
         float dt = Math.Clamp(input.DeltaTime, 0.0f, 0.05f);
@@ -88,7 +147,9 @@ public sealed class OutmWeaponSystem
                 continue;
 
             Raylib.DrawSphere(projectiles[i].Position, 0.055f, Color.Yellow);
-            Vector3 tail = projectiles[i].Position - Vector3.Normalize(projectiles[i].Velocity) * 0.45f;
+            Vector3 tail = projectiles[i].Velocity.LengthSquared() > 0.0001f
+                ? projectiles[i].Position - Vector3.Normalize(projectiles[i].Velocity) * 0.45f
+                : projectiles[i].Position;
             Raylib.DrawLine3D(tail, projectiles[i].Position, Color.Orange);
         }
     }
