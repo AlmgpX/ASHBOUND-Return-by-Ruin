@@ -1,0 +1,27 @@
+name: OUT NeuroSlop Beat Forge
+
+on:
+  push:
+    paths:
+      - 'tools/OUT_NeuroSlopBeatForge/**'
+      - '.github/workflows/out-neuroslop-beat-forge.yml'
+  pull_request:
+    paths:
+      - 'tools/OUT_NeuroSlopBeatForge/**'
+      - '.github/workflows/out-neuroslop-beat-forge.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build tool
+        run: dotnet build tools/OUT_NeuroSlopBeatForge/OUT_NeuroSlopBeatForge.csproj --configuration Release
